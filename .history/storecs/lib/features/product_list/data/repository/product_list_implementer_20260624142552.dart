@@ -1,0 +1,41 @@
+import 'package:flutter/services.dart';
+import 'package:storecs/features/product_list/data/data_source/product_list_data_source_implementer/product_list_Data_Source_implementer.dart';
+import 'package:storecs/features/product_list/domain/entities/product_list_entities.dart';
+import 'package:storecs/features/product_list/domain/repository/product_list_repo.dart';
+
+class ProductListImplementer implements ProductListRepo {
+  final ProductListDataSourceImplementer implementer;
+  ProductListImplementer({required this.implementer});
+  @override
+  Future<InsertProductListEntities> toInsertProductListRepo(
+    String id,
+    String name,
+    String brand,
+    String category,
+    String image,
+    String barcode,
+    String description,
+    double price,
+    double costPrice,
+    double stock,
+  ) async {
+    try {
+      final data = await implementer.toProductListDataSourceRepo(
+        id,
+        name,
+        brand,
+        category,
+        image,
+        barcode,
+        description,
+        price,
+        costPrice,
+        stock,
+      );
+      return data.toInsertProductListEntities();
+    } on PlatformException catch (e) {
+      print("any errors in ProductListImplementer ${e.toString()}");
+      throw e.message ?? "Authentication sign out failed";
+    }
+  }
+}

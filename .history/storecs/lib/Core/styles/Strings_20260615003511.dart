@@ -1,0 +1,23 @@
+    final Dashboard = 'Dashboard';
+final Revenues = 'Revenues';
+final Orders = 'Orders';
+final Visitors = 'Visitors';
+final NumberOfVisitors = '13.3K';
+final NumberOfOrders = '400';
+final NumberOfRevenues = '3922 JOD';
+final QuickActionsText = 'Quick Actions';
+final DoYouHaveAnyIssueOrSuggestionsText =
+    'Do You Have Any Issue Or Suggestions?';
+final ClickHereText = 'Click Here.';
+final EmailIsRequire = 'Email is Require';
+final PasswordIsRequire = 'Password is Require';
+final NameIsRequire = 'Name is Require';
+final PhoneIsRequire = 'Phone Number is Require';
+final LevelIsRequire = 'Level is Require';
+final EmployeeCreated = 'Employee Has been Created Successfull ';
+final EmailTextField = 'Email';
+final PasswordTextField = 'Password';
+final NameTextField = 'Name';
+final PhoneTextField = 'Phone Number';
+final LevelTextField = 'Level';
+final SignOut = 'Sign Out';

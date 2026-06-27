@@ -1,0 +1,26 @@
+import 'package:dio/dio.dart';
+import 'package:storecs/Core/config/env.dart';
+import 'package:storecs/features/staff_list/data/data_source/data_source_repo/staff_list_data_source_repo.dart';
+import 'package:storecs/features/staff_list/data/model/staff_list_model.dart';
+
+class StaffListDataSourceImplementer implements StaffListDataSourceRepo {
+  final Dio dio;
+  StaffListDataSourceImplementer({required this.dio});
+  @override
+  Future<List<StaffListModel>> toStaffListRepository() async {
+    final getStaff = '${Env.baseURL}getStaffListRoute';
+    final res = await dio.get(getStaff);
+    if (res.statusCode == 200 || res.statusCode == 201) {
+      if (res.data == null) {
+        return [];
+      } else {
+        List<dynamic> data = res.data;
+        return data.map((e) => StaffListModel.fromBackEnd(e)).toList();
+      }
+    } else {
+      throw Exception(
+        "Any issue with fetching staff list Server Error: ${res.statusCode}",
+      );
+    }
+  }
+}
