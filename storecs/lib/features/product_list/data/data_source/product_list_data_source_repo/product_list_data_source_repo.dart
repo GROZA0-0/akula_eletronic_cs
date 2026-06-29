@@ -12,4 +12,6 @@ abstract class ProductListDataSourceRepo {
     String costPrice,
     String stock,
   );
+
+  Future<List<ProductListModel>> toGetProductsByCategory(String category);
 }

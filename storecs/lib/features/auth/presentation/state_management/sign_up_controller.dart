@@ -24,10 +24,10 @@ class SignUpController extends GetxController {
   final TextEditingController phone = TextEditingController();
   final TextEditingController level = TextEditingController();
   final Alerts alerts = Alerts(messengerKey);
-  final Rx<File?> selectedFile = Rx<File?>(null);
   final RxBool whenLoading = false.obs;
   final RxString imageFileUrl = ''.obs;
   final ImagePicker picker = ImagePicker();
+  final Rx<File?> selectedFile = Rx<File?>(null);
   final FirebaseAuth auth = FirebaseAuth.instance;
 
   get newId => auth.currentUser?.uid ?? '';
@@ -63,24 +63,24 @@ class SignUpController extends GetxController {
         if (selectedFile.value != null && await selectedFile.value!.exists()) {
           final List<int> imageBytes = await selectedFile.value!.readAsBytes();
           base64Image = base64Encode(imageBytes);
+          await source.signUpWithEmail(email.text, password.text);
+          final currentMgr = auth.currentUser;
+          print('Manager still signed in: ${currentMgr?.email}');
+          String newIdToken = await auth.currentUser?.getIdToken() ?? '';
+          final newEmp = await repository.signUpUsingEmpEmail(
+            newId,
+            newIdToken,
+            email.text.trim(),
+            password.text.trim(),
+            name.text.trim(),
+            phone.text.trim(),
+            base64Image,
+            level.text.trim(),
+          );
+          imageFileUrl.value = newEmp.empPic;
+          alerts.ifSuccess(EmployeeCreated);
+          clearUi();
         }
-        await source.signUpWithEmail(email.text, password.text);
-        final currentMgr = auth.currentUser;
-        print('Manager still signed in: ${currentMgr?.email}');
-        String newIdToken = await auth.currentUser?.getIdToken() ?? '';
-        final newEmp = await repository.signUpUsingEmpEmail(
-          newId,
-          newIdToken,
-          email.text.trim(),
-          password.text.trim(),
-          name.text.trim(),
-          phone.text.trim(),
-          base64Image,
-          level.text.trim(),
-        );
-        imageFileUrl.value = newEmp.empPic;
-        alerts.ifSuccess(EmployeeCreated);
-        clearUi();
       } on PlatformException catch (e) {
         print('The Error Is: ${e.message.toString()}');
         alerts.ifErrors(e.message.toString());
@@ -101,6 +101,6 @@ class SignUpController extends GetxController {
     name.clear();
     phone.clear();
     level.clear();
-    selectedFile.value == null;
+    selectedFile.value = null;
   }
 }

@@ -208,29 +208,27 @@ class _CategoryTabsState extends State<CategoryTabs> {
         child: Row(
           children: categories.map((cat) {
             final isSelected = cat == selected;
-            return Padding(
-              padding: EdgeInsets.only(right: 8),
-              child: GestureDetector(
-                onTap: () => setState(() => selected = cat),
+            return GestureDetector(
+              onTap: () => setState(() => selected = cat),
 
-                child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  decoration: BoxDecoration(
-                    color: Colors.transparent,
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(
-                      color: isSelected ? greenColor : white,
-                      width: 2,
-                    ),
+              child: Container(
+                margin: EdgeInsets.only(right: size.width * 0.008),
+                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                decoration: BoxDecoration(
+                  color: Colors.transparent,
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(
+                    color: isSelected ? greenColor : white,
+                    width: 2,
                   ),
-                  child: Text(
-                    cat,
-                    style: TextStyle(
-                      color: isSelected ? greenColor : white,
-                      fontWeight: isSelected
-                          ? FontWeight.bold
-                          : FontWeight.normal,
-                    ),
+                ),
+                child: Text(
+                  cat,
+                  style: TextStyle(
+                    color: isSelected ? greenColor : white,
+                    fontWeight: isSelected
+                        ? FontWeight.bold
+                        : FontWeight.normal,
                   ),
                 ),
               ),

@@ -12,4 +12,7 @@ abstract class ProductListRepo {
     String costPrice,
     String stock,
   );
+
+  Future<List<GetProductWithCategoryListEntities>>
+  toGetProductWithGategoryistRepo(String category);
 }

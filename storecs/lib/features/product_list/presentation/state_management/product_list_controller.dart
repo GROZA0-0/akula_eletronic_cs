@@ -8,6 +8,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:storecs/Core/styles/Strings.dart';
 import 'package:storecs/Core/styles/alerts.dart';
 import 'package:storecs/Core/styles/loader.dart';
+import 'package:storecs/features/product_list/domain/entities/product_list_entities.dart';
 import 'package:storecs/features/product_list/domain/repository/product_list_repo.dart';
 import 'package:storecs/main.dart';
 
@@ -26,6 +27,7 @@ class ProductListController extends GetxController {
   final RxString imageFileUrl = ''.obs;
   final ImagePicker picker = ImagePicker();
   final Rx<File?> selectedFile = Rx<File?>(null);
+  List<GetProductWithCategoryListEntities> products = [];
 
   final List<String> categories = [
     "Phones",
@@ -98,6 +100,26 @@ class ProductListController extends GetxController {
         Loader.stopLoading();
       }
     }
+  }
+
+  Future<List<GetProductWithCategoryListEntities>> getCategories(
+    String category,
+  ) async {
+    try {
+      final result = await repo.toGetProductWithGategoryistRepo(category);
+      products = result.toList();
+      return products;
+    } catch (e) {
+      print("Something went wrong. $e");
+      throw e.toString();
+    }
+  }
+
+  void changeCategorySelect(String category) {
+    if (selectedCategory.value == category) {
+      return;
+    }
+    getCategories(category);
   }
 
   void cleanBody() {

@@ -51,4 +51,31 @@ class ProductListDataSourceImplementer implements ProductListDataSourceRepo {
       throw Exception("Any issue with creating product ? : ${res.statusCode}");
     }
   }
+
+  @override
+  Future<List<ProductListModel>> toGetProductsByCategory(
+    String category,
+  ) async {
+    final getByCategory =
+        '${Env.baseURL}getProductsByCategoryRoute/categories/$category';
+    final res = await client.get(
+      getByCategory,
+      options: Options(validateStatus: (status) => status! < 600),
+    );
+
+    if (res.statusCode == 200) {
+      if (res.data == null) {
+        return [];
+      } else {
+        final List list = res.data['data'] ?? '';
+        return list
+            .map((e) => ProductListModel.fromProductSnapShot(e))
+            .toList();
+      }
+    } else {
+      throw Exception(
+        "Any issue with fetching items list Server Error: ${res.statusCode}",
+      );
+    }
+  }
 }

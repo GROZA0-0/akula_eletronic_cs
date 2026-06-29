@@ -37,3 +37,21 @@ class InsertProductListEntities extends Equatable {
     stock,
   ];
 }
+
+class GetProductWithCategoryListEntities extends Equatable {
+  final String name;
+  final String category;
+  final String brand;
+  final String price;
+  final String img;
+
+  const GetProductWithCategoryListEntities({
+    required this.name,
+    required this.category,
+    required this.brand,
+    required this.price,
+    required this.img,
+  });
+  @override
+  List<Object?> get props => [name, category, brand, price, img];
+}

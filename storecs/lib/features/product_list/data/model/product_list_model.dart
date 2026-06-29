@@ -82,4 +82,14 @@ class ProductListModel {
       stock: stock,
     );
   }
+
+  GetProductWithCategoryListEntities toGetProductWithCategoryListEntities() {
+    return GetProductWithCategoryListEntities(
+      name: name,
+      category: category,
+      brand: brand,
+      price: price,
+      img: image,
+    );
+  }
 }

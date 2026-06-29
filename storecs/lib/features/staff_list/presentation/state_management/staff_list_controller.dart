@@ -12,7 +12,7 @@ class StaffListController extends GetxController {
   Future<List<StaffListEntities>> getStaff() async {
     try {
       final staff = await repository.toStaffListdomainRepo();
-      print("info of user [$staff]");
+      // print("info of user [$staff]");
       entities = staff.toList();
       return staff;
     } catch (e) {
