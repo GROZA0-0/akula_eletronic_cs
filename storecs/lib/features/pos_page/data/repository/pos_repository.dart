@@ -16,4 +16,18 @@ class PosRepository implements PosRepo {
       throw e.toString();
     }
   }
+
+  @override
+  Future<List<PosEntities>> toGetProductsWithCategoriesRepo(
+    String category,
+  ) async {
+    try {
+      final List<POSModel> model = await repo
+          .toPosRepositoryGetCateforyWithProducts(category);
+      return model.map((e) => e.toPosEntities()).toList();
+    } catch (e) {
+      print("any errors in Pos Repo Categories Implements  $e");
+      throw e.toString();
+    }
+  }
 }

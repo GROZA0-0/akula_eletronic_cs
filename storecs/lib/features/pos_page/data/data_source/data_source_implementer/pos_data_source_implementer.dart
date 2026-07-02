@@ -23,4 +23,29 @@ class PosDataSourceImplementer implements PosDataSourceRepo {
       );
     }
   }
+
+  @override
+  Future<List<POSModel>> toPosRepositoryGetCateforyWithProducts(
+    String category,
+  ) async {
+    final getItemsCategories =
+        '${Env.baseURL}getProductsByCategoryRoute/categories/$category';
+    final res = await dio.get(
+      getItemsCategories,
+      options: Options(validateStatus: (status) => status! < 600),
+    );
+    if (res.statusCode == 200 || res.statusCode == 201) {
+      if (res.data == null) {
+        return [];
+      } else {
+        final Map<String, dynamic> data = res.data;
+        final List<dynamic> list = data['data'] ?? '';
+        return list.map((e) => POSModel.fromPOSSnapshot(e)).toList();
+      }
+    } else {
+      throw Exception(
+        "Any issue with fetching items list with categories Server Error: ${res.statusCode}",
+      );
+    }
+  }
 }

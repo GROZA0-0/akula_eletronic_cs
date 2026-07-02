@@ -5,15 +5,53 @@ import 'package:storecs/features/pos_page/presentation/state_management/pos_cont
 
 class PosBloc extends Bloc<PosBlocEvent, PosBlocState> {
   final PosController controller;
-  PosBloc(this.controller) : super(PosBlocStateLoading()) {
+  String currentCategory = 'Phones';
+  PosBloc(this.controller, this.currentCategory)
+    : super(PosBlocStateLoading()) {
     on<PosBlocEventLoading>((event, emit) async {
-      emit(PosBlocStateLoading());
-      try {
-        final getProducts = await controller.getAllProducts();
-        emit(PosBlocStateLoaded(entities: getProducts));
-      } catch (e) {
-        emit(PosBlocStateError(err: e.toString()));
-      }
+      /* emit(PosBlocStateLoading()); */
+      add(PosBlocEventLoaded(category: currentCategory));
     });
+    on<PosBlocEventLoaded>(onFetchByCategory);
+    on<PosBlocEventChangeCategory>(onChangeCategory);
+  }
+  Future<void> onFetchByCategory(
+    PosBlocEventLoaded event,
+    Emitter<PosBlocState> emit,
+  ) async {
+    try {
+      emit(PosBlocStateLoading());
+      currentCategory = event.category;
+      final product = await controller.getCategoriesWithItems(event.category);
+      if (product.isEmpty) {
+        emit(PosBlocStateEmpty());
+      } else {
+        emit(PosBlocStateLoaded(entities: product, category: event.category));
+      }
+    } catch (e) {
+      print('BLoC  onFetchByCategory error: $e');
+      emit(PosBlocStateError(err: e.toString()));
+    }
+  }
+
+  Future<void> onChangeCategory(
+    PosBlocEventChangeCategory change,
+    Emitter<PosBlocState> emit,
+  ) async {
+    try {
+      if (currentCategory == change.category) return;
+      // emit(PosBlocStateLoading());
+      add(PosBlocEventLoaded(category: change.category));
+    } catch (e) {
+      print('BLoC onChangeCategory error: $e');
+      emit(PosBlocStateError(err: e.toString()));
+    }
+  }
+
+  Future<void> onRefreh(
+    PosBlocStateLoading event,
+    Emitter<PosBlocState> emit,
+  ) async {
+    add(PosBlocEventRefresh(current: currentCategory));
   }
 }

@@ -10,9 +10,10 @@ class PosBlocStateLoading extends PosBlocState {
 
 class PosBlocStateLoaded extends PosBlocState {
   final List<PosEntities> entities;
-  PosBlocStateLoaded({required this.entities});
+  final String category;
+  PosBlocStateLoaded({required this.entities, required this.category});
   @override
-  List<Object?> get props => [entities];
+  List<Object?> get props => [entities, category];
 }
 
 class PosBlocStateEmpty extends PosBlocState {

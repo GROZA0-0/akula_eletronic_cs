@@ -1,18 +1,29 @@
 import 'package:card_loading/card_loading.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:iconsax/iconsax.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:storecs/Core/styles/colors.dart';
 
 class DrawerIconAnimation extends StatefulWidget {
-  const DrawerIconAnimation({super.key});
+  final IconData iconData;
+  final VoidCallback voidCallback;
+  const DrawerIconAnimation({
+    super.key,
+    required this.iconData,
+    required this.voidCallback,
+  });
 
   @override
-  State<DrawerIconAnimation> createState() => _DrawerIconAnimationState();
+  State<DrawerIconAnimation> createState() =>
+      // ignore: no_logic_in_create_state
+      _DrawerIconAnimationState(iconData, voidCallback);
 }
 
 class _DrawerIconAnimationState extends State<DrawerIconAnimation>
     with SingleTickerProviderStateMixin {
+  final VoidCallback voidCallback;
+  final IconData iconData;
+  _DrawerIconAnimationState(this.iconData, this.voidCallback);
   late AnimationController controller;
   bool isanimating = false;
 
@@ -48,12 +59,12 @@ class _DrawerIconAnimationState extends State<DrawerIconAnimation>
           });
         },
         child: GestureDetector(
-          onTap: () => Scaffold.of(context).openDrawer(),
+          onTap: voidCallback /* () => Scaffold.of(context).openDrawer() */,
           child: RotationTransition(
             filterQuality: FilterQuality.high,
             alignment: Alignment.center,
             turns: Tween(begin: 0.0, end: 1.1).animate(controller),
-            child: Icon(Iconsax.menu, color: isanimating ? green : white),
+            child: Icon(iconData, color: isanimating ? green : white),
           ),
         ),
       ),
@@ -77,6 +88,10 @@ Widget loadingStateBlocMethod(Size siz) {
       borderRadius: const BorderRadius.all(Radius.circular(15)),
     ),
   );
+}
+
+Widget loadingStateBodies() {
+  return Center(child: LoadingAnimationWidget.beat(color: white, size: 55));
 }
 
 final naviStyleToAnotherPage = Transition.rightToLeftWithFade;

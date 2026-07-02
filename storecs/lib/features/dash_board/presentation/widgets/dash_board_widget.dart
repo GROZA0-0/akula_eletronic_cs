@@ -106,7 +106,14 @@ class _DashboardWidgetsState extends State<DashboardWidgets> {
             ),
           ),
         ],
-        leading: DrawerIconAnimation(),
+        leading: Builder(
+          builder: (context) {
+            return DrawerIconAnimation(
+              iconData: Iconsax.menu,
+              voidCallback: () => Scaffold.of(context).openDrawer(),
+            );
+          },
+        ),
       ),
       drawer: AppDrawer(id: id),
       body: SafeArea(

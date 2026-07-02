@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get_instance/get_instance.dart';
 import 'package:get/state_manager.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -283,10 +284,34 @@ void showProductsModal(BuildContext context, String categoryName) {
                         ),
                       );
                     } else if (state is ProductListStateBlocLoadedEmpty) {
-                      return const Center(
-                        child: Text(
-                          "No products found in this category.",
-                          style: TextStyle(color: white),
+                      return SizedBox(
+                        width: size.width,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Stack(
+                              children: [
+                                Positioned(
+                                  top: size.height * 0.01,
+                                  left: size.width * 0.0045,
+                                  child: Icon(
+                                    size: 15,
+                                    FontAwesomeIcons.x,
+                                    color: white,
+                                  ),
+                                ),
+                                Icon(
+                                  size: 30,
+                                  Iconsax.search_normal_1,
+                                  color: white,
+                                ),
+                              ],
+                            ),
+                            Text(
+                              "No products found in this category.",
+                              style: textBodiesStyle,
+                            ),
+                          ],
                         ),
                       );
                     } else if (state is ProductListStateBlocLoaded) {
@@ -398,10 +423,15 @@ class CreatingProductWidget extends StatelessWidget {
           () => InkWell(
             onTap: () => productListController.uploadProductPic(),
             child: productListController.selectedFile.value != null
-                ? CircleAvatar(
-                    radius: 60,
-                    foregroundImage: FileImage(
-                      productListController.selectedFile.value!,
+                ? ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child: SizedBox(
+                      width: size.height / 4,
+                      height: size.height / 4,
+                      child: Image.file(
+                        productListController.selectedFile.value!,
+                        fit: BoxFit.cover,
+                      ),
                     ),
                   )
                 : Column(

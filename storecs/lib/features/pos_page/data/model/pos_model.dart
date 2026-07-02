@@ -8,9 +8,9 @@ class POSModel {
   final String image;
   final String barcode;
   final String description;
-  final double price;
-  final double costPrice;
-  final double stock;
+  final String price;
+  final String costPrice;
+  final String stock;
 
   POSModel({
     required this.id,
@@ -47,24 +47,24 @@ class POSModel {
       image: '',
       barcode: '',
       description: '',
-      price: 0,
-      costPrice: 0,
-      stock: 0,
+      price: '',
+      costPrice: '',
+      stock: '',
     );
   }
 
   factory POSModel.fromPOSSnapshot(Map<String, dynamic> map) {
     return POSModel(
-      id: map['pId'],
-      name: map['pName'],
-      brand: map['pBrand'],
-      category: map['category'],
-      image: map['pImage'],
-      barcode: map['pBarcode'],
-      description: map['pDescription'],
-      price: map['pPrice'],
-      costPrice: map['pCostPrice'],
-      stock: map['pStock'],
+      id: map['pId'].toString(),
+      name: map['pName'].toString(),
+      brand: map['pBrand'].toString(),
+      category: map['category'].toString(),
+      image: map['pImage'].toString(),
+      barcode: map['pBarcode'].toString(),
+      description: map['pDescription'].toString(),
+      price: map['pPrice'].toString(),
+      costPrice: map['pCostPrice'].toString(),
+      stock: map['pStock'].toString(),
     );
   }
 

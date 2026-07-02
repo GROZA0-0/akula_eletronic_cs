@@ -17,4 +17,15 @@ class PosController extends GetxController {
       throw e.toString();
     }
   }
+
+  Future<List<PosEntities>> getCategoriesWithItems(String category) async {
+    try {
+      final product = await repo.toGetProductsWithCategoriesRepo(category);
+      entities = product;
+      return entities;
+    } catch (e) {
+      print("error in getCategoriesWithItems controller $e");
+      throw e.toString();
+    }
+  }
 }

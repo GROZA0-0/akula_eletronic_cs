@@ -76,10 +76,15 @@ class _SignUpWidgetState extends State<SignUpWidget> {
                   () => InkWell(
                     onTap: () => signUpController.uploadPic(),
                     child: signUpController.selectedFile.value != null
-                        ? CircleAvatar(
-                            radius: 60,
-                            foregroundImage: FileImage(
-                              signUpController.selectedFile.value!,
+                        ? ClipRRect(
+                            borderRadius: BorderRadius.circular(12),
+                            child: SizedBox(
+                              width: size.height / 4,
+                              height: size.height / 4,
+                              child: Image.file(
+                                signUpController.selectedFile.value!,
+                                fit: BoxFit.cover,
+                              ),
                             ),
                           )
                         : Column(
