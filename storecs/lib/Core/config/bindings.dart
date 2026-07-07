@@ -13,10 +13,15 @@ import 'package:storecs/features/dash_board/data/data_source/data_source_repo/em
 import 'package:storecs/features/dash_board/data/repository/employee_info_repository.dart';
 import 'package:storecs/features/dash_board/domain/repository/employee_info_repo.dart';
 import 'package:storecs/features/dash_board/presentation/state_management/fetch_employee_info_dash_board_controller.dart';
+import 'package:storecs/features/pos_page/data/data_source/data_sorce_repo/list_of_items_purchased_data_source_repo.dart';
 import 'package:storecs/features/pos_page/data/data_source/data_sorce_repo/pos_data_source_repo.dart';
+import 'package:storecs/features/pos_page/data/data_source/data_source_implementer/list_of_items_purchased_data_source_implementer.dart';
 import 'package:storecs/features/pos_page/data/data_source/data_source_implementer/pos_data_source_implementer.dart';
+import 'package:storecs/features/pos_page/data/repository/list_of_items_purchased_repository.dart';
 import 'package:storecs/features/pos_page/data/repository/pos_repository.dart';
+import 'package:storecs/features/pos_page/domain/repository/list_of_items_purchased_repo.dart';
 import 'package:storecs/features/pos_page/domain/repository/pos_repo.dart';
+import 'package:storecs/features/pos_page/presentation/state_management/cart_controller.dart';
 import 'package:storecs/features/pos_page/presentation/state_management/pos_controller.dart';
 import 'package:storecs/features/product_list/data/data_source/product_list_data_source_implementer/product_list_Data_Source_implementer.dart';
 import 'package:storecs/features/product_list/data/data_source/product_list_data_source_repo/product_list_data_source_repo.dart';
@@ -106,6 +111,20 @@ class AppBindingsControllers extends Bindings {
     //////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////
 
+    Get.lazyPut<ListOfItemsPurchasedDataSourceRepo>(
+      () => ListOfItemsPurchasedDataSourceImplementer(dio: dio),
+    );
+    Get.lazyPut<ListOfItemsPurchasedRepo>(
+      () => ListOfItemsPurchasedRepository(
+        implementer: Get.find<ListOfItemsPurchasedDataSourceRepo>(),
+      ),
+    );
+
+    //////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////
+
     Get.lazyPut<SignInController>(
       () => SignInController(Get.find<AuthRepo>()),
       fenix: true,
@@ -133,5 +152,8 @@ class AppBindingsControllers extends Bindings {
       ProductListController(Get.find<ProductListRepo>()),
     );
     Get.lazyPut<PosController>(() => PosController(repo: Get.find<PosRepo>()));
+    Get.lazyPut<CartController>(
+      () => CartController(repo: Get.find<ListOfItemsPurchasedRepo>()),
+    );
   }
 }

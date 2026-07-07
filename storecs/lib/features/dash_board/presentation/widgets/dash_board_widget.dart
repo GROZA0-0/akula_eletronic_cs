@@ -516,26 +516,37 @@ class AppDrawer extends StatelessWidget {
                 return loadingStateBlocMethod(size);
               } else if (state is DashboardBlocStateLoaded) {
                 final cashierAccess = state.enitities.level == 'Cashier';
-                final baristaAccess = state.enitities.level == 'Barista';
+                final baristaAccess = state.enitities.level == 'Sales';
                 final supervisorAccess = state.enitities.level == 'Supervisor';
 
                 return Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Column(
-                      children: [
-                        checkoutExpansionTile(),
-                        productsExpansionTile(),
-                        ordersAndTransactions(),
-                        cashierAccess || baristaAccess || supervisorAccess
-                            ? Container()
-                            : employees(),
-                        reports(),
-                        cashierAccess || baristaAccess
-                            ? Container()
-                            : settings(),
-                      ],
+                    SizedBox(
+                      width: size.width / 1.2,
+                      height: size.height / 1.09,
+                      child: ListView(
+                        scrollDirection: Axis.vertical,
+                        shrinkWrap: true,
+                        children: [
+                          Column(
+                            children: [
+                              checkoutExpansionTile(),
+                              productsExpansionTile(),
+                              ordersAndTransactions(),
+                              cashierAccess || baristaAccess || supervisorAccess
+                                  ? Container()
+                                  : employees(),
+                              reports(),
+                              cashierAccess || baristaAccess
+                                  ? Container()
+                                  : settings(),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
+                    Divider(),
                     signOutButton(),
                   ],
                 );

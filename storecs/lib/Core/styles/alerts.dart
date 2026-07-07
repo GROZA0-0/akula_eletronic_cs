@@ -9,6 +9,7 @@ class Alerts {
   Alerts(this.messengerKey);
   ifErrors(String e) => messengerKey.currentState?.showSnackBar(
     SnackBar(
+      duration: Duration(seconds: 1),
       dismissDirection: DismissDirection.down,
       width: widthOfButton / 1.3 + 20,
       behavior: SnackBarBehavior.floating,
@@ -31,6 +32,7 @@ class Alerts {
 
   ifSuccess(String e) => messengerKey.currentState?.showSnackBar(
     SnackBar(
+      duration: Duration(seconds: 1),
       dismissDirection: DismissDirection.down,
       width: widthOfButton / 1.3 + 20,
       behavior: SnackBarBehavior.floating,

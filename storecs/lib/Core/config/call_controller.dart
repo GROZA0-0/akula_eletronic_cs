@@ -3,6 +3,7 @@ import 'package:storecs/features/auth/presentation/state_management/sign_in_cont
 import 'package:storecs/features/auth/presentation/state_management/sign_out_controller.dart';
 import 'package:storecs/features/auth/presentation/state_management/sign_up_controller.dart';
 import 'package:storecs/features/dash_board/presentation/state_management/fetch_employee_info_dash_board_controller.dart';
+import 'package:storecs/features/pos_page/presentation/state_management/cart_controller.dart';
 import 'package:storecs/features/pos_page/presentation/state_management/pos_controller.dart';
 import 'package:storecs/features/product_list/presentation/state_management/product_list_controller.dart';
 import 'package:storecs/features/staff_list/presentation/state_management/staff_list_controller.dart';
@@ -15,3 +16,4 @@ final fetchEmployeeInfoDashBoardController =
 final staffListController = Get.find<StaffListController>();
 final productListController = Get.find<ProductListController>();
 final posController = Get.find<PosController>();
+final cartController = Get.find<CartController>();

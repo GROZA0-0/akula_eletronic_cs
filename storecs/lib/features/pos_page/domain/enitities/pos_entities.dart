@@ -8,8 +8,8 @@ class PosEntities extends Equatable {
   final String image;
   final String barcode;
   final String description;
-  final String price;
-  final String stock;
+  final double price;
+  final int stock;
   const PosEntities({
     required this.id,
     required this.name,

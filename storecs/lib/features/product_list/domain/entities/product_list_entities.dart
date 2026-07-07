@@ -8,9 +8,9 @@ class InsertProductListEntities extends Equatable {
   final String image;
   final String barcode;
   final String description;
-  final String price;
-  final String costPrice;
-  final String stock;
+  final double price;
+  final int costPrice;
+  final int stock;
   const InsertProductListEntities({
     required this.id,
     required this.name,
@@ -42,7 +42,7 @@ class GetProductWithCategoryListEntities extends Equatable {
   final String name;
   final String category;
   final String brand;
-  final String price;
+  final double price;
   final String img;
 
   const GetProductWithCategoryListEntities({

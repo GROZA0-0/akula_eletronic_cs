@@ -59,12 +59,49 @@ class _SignUpWidgetState extends State<SignUpWidget> {
                   passVisible: false,
                   icon: Icon(RemixIcons.user_2_line, color: white),
                 ),
-                SignUpTextFieldTemplate(
+                SizedBox(
+                  width: size.width / 4,
+                  child: Obx(
+                    () => DropdownButton<String>(
+                      dropdownColor: grey,
+                      hint: Text(
+                        "Category",
+                        style: GoogleFonts.aleo(
+                          color: white,
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                      value: signUpController.selectedlevel.value.isEmpty
+                          ? null
+                          : signUpController.selectedlevel.value,
+                      items: signUpController.staffLevels.map((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(
+                            value,
+                            style: GoogleFonts.aleo(
+                              color: white,
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                      onChanged: (newValue) {
+                        if (newValue != null) {
+                          signUpController.changeLevel(
+                            newValue,
+                          ); // Updates controller state
+                        }
+                      },
+                    ),
+                  ),
+                ),
+                /* SignUpTextFieldTemplate(
                   text: LevelTextField,
                   controller: signUpController.level,
                   passVisible: false,
                   icon: Icon(FontAwesomeIcons.typo3, color: white),
-                ),
+                ), */
                 SignUpTextFieldTemplate(
                   text: PhoneTextField,
                   controller: signUpController.phone,

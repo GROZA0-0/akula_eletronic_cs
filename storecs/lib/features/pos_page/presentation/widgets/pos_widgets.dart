@@ -4,6 +4,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:storecs/Core/config/call_controller.dart';
 import 'package:storecs/Core/styles/Strings.dart';
@@ -11,6 +13,7 @@ import 'package:storecs/Core/styles/animations.dart';
 import 'package:storecs/Core/styles/colors.dart';
 import 'package:storecs/Core/styles/sizes.dart';
 import 'package:storecs/Core/styles/text_styles.dart';
+import 'package:storecs/features/pos_page/domain/enitities/cart_entities.dart';
 import 'package:storecs/features/pos_page/domain/enitities/pos_entities.dart';
 import 'package:storecs/features/pos_page/presentation/state_management/pos_bloc/pos_bloc.dart';
 import 'package:storecs/features/pos_page/presentation/state_management/pos_bloc/pos_bloc_event.dart';
@@ -137,13 +140,18 @@ class CartSection extends StatelessWidget {
                     children: [
                       /* customer Order */
                       Text("Customer Order", style: textBodiesStyle),
-                      IconButton(
-                        icon: DrawerIconAnimation(
-                          iconData: Iconsax.refresh1,
-                          voidCallback: () {},
+                      Obx(
+                        () => Text(
+                          '${cartController.totalItems} items',
+                          style: GoogleFonts.aleo(
+                            color: greenColor,
+                            fontWeight: FontWeight.w400,
+                          ),
                         ),
-                        color: white,
-                        onPressed: () {},
+                      ),
+                      DrawerIconAnimation(
+                        iconData: Iconsax.refresh1,
+                        voidCallback: () => cartController.clearCart(),
                       ),
                     ],
                   ),
@@ -154,11 +162,35 @@ class CartSection extends StatelessWidget {
                 ),
               ],
             ),
-            /* List of items in order */
-            //
-            //
-            //
-            /* Paying ofr order */
+
+            Expanded(
+              child: Obx(() {
+                if (cartController.cartItems.isEmpty) {
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.shopping_cart_outlined,
+                          color: white,
+                          size: 50,
+                        ),
+                        SizedBox(height: 8),
+                        Text('Cart is empty', style: textBodiesStyle),
+                      ],
+                    ),
+                  );
+                } else {
+                  return ListView.builder(
+                    itemCount: cartController.cartItems.length,
+                    itemBuilder: (context, index) {
+                      final item = cartController.cartItems[index];
+                      return CartItemWidget(item: item);
+                    },
+                  );
+                }
+              }),
+            ),
             Container(
               width: size.width / 3.1,
               height: size.height / 3,
@@ -169,29 +201,53 @@ class CartSection extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  Container(
-                    width: size.width,
-                    margin: EdgeInsets.symmetric(horizontal: size.width * 0.02),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text("Order Price :-", style: textBodiesStyle),
-                        sizeBoxHeight(size.height * 0.02),
-                        Text("Taxs :-", style: textBodiesStyle),
-                        sizeBoxHeight(size.height * 0.02),
-                        Text("Total Price :-", style: textBodiesStyle),
-                      ],
+                  Obx(
+                    () => Container(
+                      width: size.width,
+                      margin: EdgeInsets.symmetric(
+                        horizontal: size.width * 0.02,
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          PriceRow(
+                            label: 'Order Price :-',
+                            value:
+                                '${cartController.subTotal.toStringAsFixed(2)} JOD',
+                          ),
+
+                          sizeBoxHeight(size.height * 0.02),
+                          PriceRow(
+                            label: 'Tax (16%) :-',
+                            value:
+                                '${cartController.taxAmount.toStringAsFixed(2)} JOD',
+                          ),
+
+                          sizeBoxHeight(size.height * 0.02),
+                          PriceRow(
+                            label: 'Total Price :-',
+                            value:
+                                '${cartController.total.toStringAsFixed(2)} JOD',
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                  Container(
-                    width: size.width / 3.5,
-                    height: size.height / 14,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      border: Border.all(color: white, width: 2),
-                    ),
-                    child: Center(
-                      child: Text("Confirm Processed", style: textBodiesStyle),
+                  InkWell(
+                    onTap: () async => await cartController.purchase(),
+                    child: Container(
+                      width: size.width / 3.5,
+                      height: size.height / 14,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(color: white, width: 2),
+                      ),
+                      child: Center(
+                        child: Text(
+                          "Confirm Processed",
+                          style: textBodiesStyle,
+                        ),
+                      ),
                     ),
                   ),
                 ],
@@ -200,6 +256,146 @@ class CartSection extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+class CartItemWidget extends StatelessWidget {
+  final CartEntities item;
+  const CartItemWidget({super.key, required this.item});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.symmetric(
+        horizontal: size.width * 0.008,
+        vertical: size.height * 0.006,
+      ),
+      padding: EdgeInsets.all(8),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: white.withOpacity(0.3)),
+      ),
+      child: Row(
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(8),
+            child: item.image.isNotEmpty
+                ? Image.memory(
+                    base64Decode(item.image),
+                    width: 45,
+                    height: 45,
+                    fit: BoxFit.contain,
+                  )
+                : Icon(Icons.phone_android, color: white, size: 45),
+          ),
+
+          sizeBoxWidth(size.width * 0.005),
+
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  color: invisible,
+                  child: Expanded(
+                    child: Text(
+                      "${item.brand}-${item.name}",
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: textBodiesStyle,
+                    ),
+                  ),
+                ),
+                Text(
+                  '${item.price} JOD',
+                  style: TextStyle(color: greenColor, fontSize: 12),
+                ),
+              ],
+            ),
+          ),
+
+          Row(
+            children: [
+              // Decrease
+              GestureDetector(
+                onTap: () => cartController.decreaseQty(item.id),
+                child: Container(
+                  width: 24,
+                  height: 24,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(color: white),
+                  ),
+                  child: Icon(Icons.remove, color: white, size: 14),
+                ),
+              ),
+
+              // Quantity
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 8),
+                child: Obx(
+                  () => Text("${item.quantity}", style: textBodiesStyle),
+                ),
+              ),
+
+              GestureDetector(
+                onTap: () => cartController.increaseQty(item.id),
+                child: Container(
+                  width: 24,
+                  height: 24,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(color: white),
+                  ),
+                  child: Icon(Icons.add, color: white, size: 14),
+                ),
+              ),
+            ],
+          ),
+
+          sizeBoxWidth(size.width * 0.004),
+
+          GestureDetector(
+            onTap: () => cartController.removeItem(item.id),
+            child: Icon(Icons.close, color: redColor, size: 18),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class PriceRow extends StatelessWidget {
+  final String label;
+  final String value;
+  final bool isBold;
+  const PriceRow({
+    required this.label,
+    required this.value,
+    this.isBold = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          label,
+          style: TextStyle(
+            color: white,
+            fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
+          ),
+        ),
+        Text(
+          value,
+          style: TextStyle(
+            color: isBold ? greenColor : white,
+            fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
+          ),
+        ),
+      ],
     );
   }
 }
@@ -332,7 +528,7 @@ class ProductCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {},
+      onTap: () => cartController.addToCart(entities),
       child: Container(
         height: size.height / 2,
         decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
@@ -384,9 +580,23 @@ class ProductCard extends StatelessWidget {
 
                     sizeBoxHeight(size.height * 0.002),
 
-                    Text(
-                      '${entities.price.toString()} JOD',
-                      style: textBodiesStyle,
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          '${entities.price.toString()} JOD',
+                          style: textBodiesStyle,
+                        ),
+                        sizeBoxWidth(size.width * 0.003),
+                        Text(
+                          entities.stock > 0 ? 'In Stock' : 'Out of stock',
+                          style: GoogleFonts.aleo(
+                            color: entities.stock > 0 ? greenColor : redColor,
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),

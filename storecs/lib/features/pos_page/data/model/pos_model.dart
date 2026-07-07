@@ -1,3 +1,4 @@
+import 'package:storecs/features/pos_page/domain/enitities/cart_entities.dart';
 import 'package:storecs/features/pos_page/domain/enitities/pos_entities.dart';
 
 class POSModel {
@@ -8,9 +9,9 @@ class POSModel {
   final String image;
   final String barcode;
   final String description;
-  final String price;
-  final String costPrice;
-  final String stock;
+  final double price;
+  final double costPrice;
+  final int stock;
 
   POSModel({
     required this.id,
@@ -47,24 +48,24 @@ class POSModel {
       image: '',
       barcode: '',
       description: '',
-      price: '',
-      costPrice: '',
-      stock: '',
+      price: 0,
+      costPrice: 0,
+      stock: 0,
     );
   }
 
   factory POSModel.fromPOSSnapshot(Map<String, dynamic> map) {
     return POSModel(
-      id: map['pId'].toString(),
+      id: map['_id'].toString(),
       name: map['pName'].toString(),
       brand: map['pBrand'].toString(),
       category: map['category'].toString(),
       image: map['pImage'].toString(),
       barcode: map['pBarcode'].toString(),
       description: map['pDescription'].toString(),
-      price: map['pPrice'].toString(),
-      costPrice: map['pCostPrice'].toString(),
-      stock: map['pStock'].toString(),
+      price: (map['pPrice'] as num).toDouble(),
+      costPrice: (map['pCostPrice'] as num).toDouble(),
+      stock: map['pStock'],
     );
   }
 
@@ -79,6 +80,18 @@ class POSModel {
       description: description,
       price: price,
       stock: stock,
+    );
+  }
+
+  CartEntities toCartEntities() {
+    return CartEntities(
+      id: id,
+      name: name,
+      brand: brand,
+      image: image,
+      price: price,
+      stock: stock,
+      initialQuantity: stock,
     );
   }
 }

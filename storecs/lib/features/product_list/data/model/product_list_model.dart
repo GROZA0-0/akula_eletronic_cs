@@ -8,9 +8,9 @@ class ProductListModel {
   final String image;
   final String barcode;
   final String description;
-  final String price;
-  final String costPrice;
-  final String stock;
+  final double price;
+  final int costPrice;
+  final int stock;
   ProductListModel({
     this.id,
     required this.name,
@@ -48,9 +48,9 @@ class ProductListModel {
       image: '',
       barcode: '',
       description: '',
-      price: '',
-      costPrice: '',
-      stock: '',
+      price: 0.0,
+      costPrice: 0,
+      stock: 0,
     );
   }
 

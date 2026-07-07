@@ -29,6 +29,20 @@ class SignUpController extends GetxController {
   final ImagePicker picker = ImagePicker();
   final Rx<File?> selectedFile = Rx<File?>(null);
   final FirebaseAuth auth = FirebaseAuth.instance;
+  final selectedlevel = ''.obs;
+  final List<String> staffLevels = [
+    "Manager",
+    "Supervisor",
+    "Q/A",
+    "Cashier",
+    "Sales",
+    "HR",
+    "Accountant",
+    "IT",
+    "Warehouse keeper",
+  ];
+
+  void changeLevel(String level) => selectedlevel.value = level;
 
   get newId => auth.currentUser?.uid ?? '';
 
@@ -52,7 +66,7 @@ class SignUpController extends GetxController {
       alerts.ifErrors(NameIsRequire);
     } else if (phone.text.trim().isEmpty) {
       alerts.ifErrors(PhoneIsRequire);
-    } else if (level.text.trim().isEmpty) {
+    } else if (selectedlevel.value.isEmpty) {
       alerts.ifErrors(LevelIsRequire);
     } else if (selectedFile.value == null) {
       alerts.ifErrors('Product Picture is require');
@@ -75,7 +89,7 @@ class SignUpController extends GetxController {
             name.text.trim(),
             phone.text.trim(),
             base64Image,
-            level.text.trim(),
+            selectedlevel.value,
           );
           imageFileUrl.value = newEmp.empPic;
           alerts.ifSuccess(EmployeeCreated);
