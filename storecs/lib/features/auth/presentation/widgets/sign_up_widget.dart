@@ -59,13 +59,16 @@ class _SignUpWidgetState extends State<SignUpWidget> {
                   passVisible: false,
                   icon: Icon(RemixIcons.user_2_line, color: white),
                 ),
-                SizedBox(
+                Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                   width: size.width / 4,
                   child: Obx(
                     () => DropdownButton<String>(
                       dropdownColor: grey,
                       hint: Text(
-                        "Category",
+                        "Postions",
                         style: GoogleFonts.aleo(
                           color: white,
                           fontWeight: FontWeight.w400,
@@ -96,12 +99,6 @@ class _SignUpWidgetState extends State<SignUpWidget> {
                     ),
                   ),
                 ),
-                /* SignUpTextFieldTemplate(
-                  text: LevelTextField,
-                  controller: signUpController.level,
-                  passVisible: false,
-                  icon: Icon(FontAwesomeIcons.typo3, color: white),
-                ), */
                 SignUpTextFieldTemplate(
                   text: PhoneTextField,
                   controller: signUpController.phone,

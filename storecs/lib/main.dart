@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:firebase_core/firebase_core.dart';
+import 'package:storecs/Core/Styles/themes.dart';
 import 'package:storecs/Core/config/windows_manager.dart';
 import 'package:storecs/features/splash/splash_screen.dart';
 import 'package:window_manager/window_manager.dart';
@@ -36,7 +37,7 @@ class MyApp extends StatelessWidget {
       getPages: [
         GetPage(
           name: '/splash',
-          page: () => SplashScreen(),
+          page: () => GradientBackground(child: SplashScreen()),
           binding: AppBindingsControllers(),
         ),
       ],

@@ -1,0 +1,216 @@
+import 'dart:convert';
+
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:storecs/Core/config/call_controller.dart';
+import 'package:storecs/Core/styles/colors.dart';
+import 'package:storecs/Core/styles/sizes.dart';
+import 'package:storecs/Core/styles/text_styles.dart';
+import 'package:storecs/features/order_purchased_history/domain/entities/order_purchased_history_entities.dart';
+
+class OrderPurchasedHistoryWidgets extends StatefulWidget {
+  const OrderPurchasedHistoryWidgets({super.key});
+
+  @override
+  State<OrderPurchasedHistoryWidgets> createState() =>
+      _OrderPurchasedHistoryWidgetsState();
+}
+
+class _OrderPurchasedHistoryWidgetsState
+    extends State<OrderPurchasedHistoryWidgets> {
+  @override
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: invisible,
+        title: Text("Orders Sold Historical", style: textAppBar),
+        iconTheme: IconThemeData(color: white),
+      ),
+      body: SafeArea(
+        child: Obx(() {
+          final groupedMap = orderPurchasedHistoryController.groupedOrders;
+          final dateHeadersList = groupedMap.keys.toList();
+
+          if (orderPurchasedHistoryController.entities.isEmpty) {
+            return noOrderReviewedtext();
+          }
+
+          return ListView.builder(
+            shrinkWrap: true,
+            physics: const AlwaysScrollableScrollPhysics(),
+            itemCount: dateHeadersList.length,
+            itemBuilder: (context, outerIndex) {
+              String dateHeader = dateHeadersList[outerIndex];
+
+              List<OrderPurchasedHistoryEntities> orderEntities =
+                  groupedMap[dateHeader]!;
+
+              return Column(
+                children: [
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Divider(),
+                      Container(
+                        width: size.width / 2,
+                        height: size.height * 0.076,
+                        padding: EdgeInsets.all(size.height * 0.012),
+                        child: Text(
+                          dateHeader,
+                          style: GoogleFonts.aleo(
+                            fontSize: 20,
+                            color: white,
+                            fontWeight: FontWeight.w400,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  ListView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: orderEntities.length,
+                    itemBuilder: (context, innerIndex) {
+                      final order = orderEntities[innerIndex];
+
+                      return Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(color: grey, width: 5),
+                        ),
+                        padding: const EdgeInsets.all(12.0),
+                        margin: EdgeInsets.symmetric(
+                          vertical: size.height * 0.02,
+                          horizontal: size.width * 0.1,
+                        ),
+                        height: size.height / 1.3,
+                        width: size.width / 1.3,
+                        child: Column(
+                          children: [
+                            Text(
+                              'Order ID: ${order.orderId}',
+                              style: GoogleFonts.aleo(
+                                color: white,
+                                fontSize: 25,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            const Divider(),
+                            Column(
+                              children: [
+                                SizedBox(
+                                  width: size.width,
+                                  child: Text(
+                                    'Items: ${order.items.length}',
+                                    style: GoogleFonts.aleo(
+                                      fontSize: 21,
+                                      color: white,
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: size.width,
+                                  child: Text(
+                                    'Total Price: ${order.totalPrice} JOD',
+                                    style: GoogleFonts.aleo(
+                                      fontSize: 20,
+                                      color: white,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            sizeBoxHeight(size.height * 0.02),
+                            Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                border: Border.all(color: grey, width: 3),
+                              ),
+                              width: size.width,
+                              height: size.height / 1.89,
+                              child: SingleChildScrollView(
+                                child: Column(
+                                  children: order.items.map((item) {
+                                    return Container(
+                                      // color: redColor,
+                                      padding: EdgeInsets.symmetric(
+                                        vertical: size.height * 0.01,
+                                        horizontal: size.width * 0.02,
+                                      ),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Container(
+                                            color: invisible,
+                                            child: Container(
+                                              clipBehavior: Clip.antiAlias,
+                                              decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(12),
+                                                color: white,
+                                              ),
+                                              width: size.width / 11,
+                                              height: size.height / 11,
+                                              child: Image.memory(
+                                                base64Decode(item.image),
+                                                fit: BoxFit.contain,
+                                              ),
+                                            ),
+                                          ),
+                                          Expanded(
+                                            child: Text(
+                                              "${item.brand} ${item.name}",
+                                              style: GoogleFonts.aleo(
+                                                fontSize: 14,
+                                                color: white,
+                                              ),
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          ),
+                                          Text(
+                                            "${item.price} JOD",
+                                            style: GoogleFonts.aleo(
+                                              fontSize: 14,
+                                              color: white,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  }).toList(),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                ],
+              );
+            },
+          );
+        }),
+      ),
+    );
+  }
+
+  Widget noOrderReviewedtext() {
+    return Container(
+      margin: EdgeInsets.only(top: size.height * 4),
+      child: Text(
+        "No Orders in Purchased",
+        style: GoogleFonts.aleo(
+          fontSize: 30,
+          color: black,
+          fontWeight: FontWeight.w300,
+        ),
+      ),
+    );
+  }
+}

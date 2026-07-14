@@ -11,6 +11,7 @@ import 'package:storecs/Core/Styles/Strings.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:storecs/Core/Styles/themes.dart';
 import 'package:storecs/Core/config/call_controller.dart';
+import 'package:storecs/Core/config/permissions.dart';
 import 'package:storecs/Core/styles/animations.dart';
 import 'package:storecs/Core/styles/sizes.dart';
 import 'package:storecs/Core/styles/text_styles.dart';
@@ -20,6 +21,7 @@ import 'package:storecs/features/dash_board/presentation/state_management/dashbo
 import 'package:storecs/features/dash_board/presentation/state_management/dashboard_bloc/dashboard_bloc_event.dart';
 import 'package:storecs/features/dash_board/presentation/state_management/dashboard_bloc/dashboard_bloc_state.dart';
 import 'package:storecs/features/dash_board/presentation/state_management/fetch_employee_info_dash_board_controller.dart';
+import 'package:storecs/features/order_purchased_history/presentation/pages/order_purchased_history.dart';
 import 'package:storecs/features/pos_page/presentation/page/pos_page.dart';
 import 'package:storecs/features/product_list/presentation/pages/product_list.dart';
 import 'package:storecs/features/staff_list/presentation/page/staff_list.dart';
@@ -493,6 +495,7 @@ class QuickActionsSection extends StatelessWidget {
 
 class AppDrawer extends StatelessWidget {
   final String id;
+
   const AppDrawer({super.key, required this.id});
 
   @override
@@ -515,10 +518,6 @@ class AppDrawer extends StatelessWidget {
               if (state is DashboardBlocStateLoading) {
                 return loadingStateBlocMethod(size);
               } else if (state is DashboardBlocStateLoaded) {
-                final cashierAccess = state.enitities.level == 'Cashier';
-                final baristaAccess = state.enitities.level == 'Sales';
-                final supervisorAccess = state.enitities.level == 'Supervisor';
-
                 return Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -533,12 +532,20 @@ class AppDrawer extends StatelessWidget {
                             children: [
                               checkoutExpansionTile(),
                               productsExpansionTile(),
-                              ordersAndTransactions(),
-                              cashierAccess || baristaAccess || supervisorAccess
+                              Permissions(
+                                    state: state.enitities,
+                                  ).orderActionsAccCondition()
+                                  ? Container()
+                                  : ordersAndTransactions(),
+                              Permissions(
+                                    state: state.enitities,
+                                  ).empPagesAccCondition()
                                   ? Container()
                                   : employees(),
                               reports(),
-                              cashierAccess || baristaAccess
+                              Permissions(
+                                    state: state.enitities,
+                                  ).settingsPageAccCondition()
                                   ? Container()
                                   : settings(),
                             ],
@@ -701,11 +708,18 @@ class AppDrawer extends StatelessWidget {
         Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            ButtonsMenuDrawer(
-              mainPageWidget: Text(''),
-              size: size,
-              text: "Orders List Page",
-              iconn: Icons.line_style_rounded,
+            InkWell(
+              splashColor: deepViolet.withOpacity(0.4),
+              onTap: () => Get.to(
+                () => GradientBackground(child: OrderPurchasedHistory()),
+                transition: naviStyleToAnotherPage,
+              ),
+              child: ButtonsMenuDrawer(
+                mainPageWidget: Text(''),
+                size: size,
+                text: "Orders Puschased Page",
+                iconn: Icons.line_style_rounded,
+              ),
             ),
             sizeBoxHeight(size.height * 0.012),
             ButtonsMenuDrawer(

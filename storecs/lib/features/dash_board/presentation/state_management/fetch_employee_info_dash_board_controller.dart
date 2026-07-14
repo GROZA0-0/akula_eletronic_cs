@@ -26,7 +26,7 @@ class FetchEmployeeInfoDashBoardController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    print('profile Controller onInit');
+    // print('profile Controller onInit');
     if (currentUid.isNotEmpty) {
       getEmployeeInfo(currentUid);
     } else {
@@ -57,7 +57,7 @@ class FetchEmployeeInfoDashBoardController extends GetxController {
   Future<EmployeeInfoEntities> getEmployeeInfo(String id) async {
     try {
       final infoOfDash = await repository.toEmployeeInfoRepo(id);
-      print("info of user ${infoOfDash.name}${infoOfDash.level}");
+      // print("info of user ${infoOfDash.name}${infoOfDash.level}");
       blocEntities = infoOfDash;
       // entities.value = infoOfDash;
       return blocEntities;
