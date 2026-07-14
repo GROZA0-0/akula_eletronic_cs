@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
 @immutable
+// ignore: must_be_immutable
 class CartEntities extends Equatable {
   final String id;
   final String name;

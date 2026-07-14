@@ -1,5 +1,3 @@
-import 'package:get/get.dart';
-
 class OrderPurchasedHistoryItemsDetails {
   final String id;
   final String name;
@@ -43,9 +41,9 @@ class OrderPurchasedHistoryItemsDetails {
 
       image: map['pImage'] ?? '',
 
-      price: (map['pPrice'] as num)?.toDouble() ?? 0.0,
+      price: (map['pPrice'] as num).toDouble(),
 
-      stock: (map['pStock'] as num)?.toInt() ?? 0,
+      stock: (map['pStock'] as num).toInt(),
       initialQuantity: (map['quantity'] as num).toInt(),
     );
   }
