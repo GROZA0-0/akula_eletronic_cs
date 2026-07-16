@@ -33,6 +33,15 @@ import 'package:storecs/features/product_list/data/data_source/product_list_data
 import 'package:storecs/features/product_list/data/repository/product_list_implementer.dart';
 import 'package:storecs/features/product_list/domain/repository/product_list_repo.dart';
 import 'package:storecs/features/product_list/presentation/state_management/product_list_controller.dart';
+import 'package:storecs/features/returns&refunds/data/data_source/get_order_details_data_source_implementer/get_order_details_data_source_implementer.dart';
+import 'package:storecs/features/returns&refunds/data/data_source/get_order_details_data_source_implementer/store_return_and_refund_info_data_source_implementer.dart';
+import 'package:storecs/features/returns&refunds/data/data_source/get_order_details_data_source_repository/get_order_details_data_source_repository.dart';
+import 'package:storecs/features/returns&refunds/data/data_source/get_order_details_data_source_repository/store_return_and_refund_info_data_source_repository.dart';
+import 'package:storecs/features/returns&refunds/data/repository/order_details_repo_implementer.dart';
+import 'package:storecs/features/returns&refunds/data/repository/store_return_and_refund_info_implementer.dart';
+import 'package:storecs/features/returns&refunds/domain/repository/order_details_repo.dart';
+import 'package:storecs/features/returns&refunds/domain/repository/store_return_and_refund_info_repository.dart';
+import 'package:storecs/features/returns&refunds/presentation/state_management/return_and_refund_controller.dart';
 import 'package:storecs/features/staff_list/data/data_source/data_source_implementer/staff_list_data_source_implementer.dart';
 import 'package:storecs/features/staff_list/data/data_source/data_source_repo/staff_list_data_source_repo.dart';
 import 'package:storecs/features/staff_list/data/repository/staff_list_repository.dart';
@@ -130,6 +139,19 @@ class AppBindingsControllers extends Bindings {
     //////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////
 
+    Get.lazyPut<GetOrderDetailsDataSourceRepository>(
+      () => GetOrderDetailsDataSourceImplementer(dio: dio),
+    );
+    Get.lazyPut<OrderDetailsRepo>(
+      () => OrderDetailsRepoImplementer(
+        repository: Get.find<GetOrderDetailsDataSourceRepository>(),
+      ),
+    );
+    //////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////
+
     Get.lazyPut<OrderPurchasedHistoryDataSourceRepo>(
       () => OrderPurchasedHistoryDataSourceImplementer(dio: dio),
     );
@@ -138,6 +160,23 @@ class AppBindingsControllers extends Bindings {
         sourceRepo: Get.find<OrderPurchasedHistoryDataSourceRepo>(),
       ),
     );
+    //////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////
+
+    Get.lazyPut<StoreReturnAndRefundInfoDataSourceRepository>(
+      () => StoreReturnAndRefundInfoDataSourceImplementer(dio: dio),
+    );
+    Get.lazyPut<StoreReturnAndRefundInfoRepository>(
+      () => StoreReturnAndRefundInfoImplementer(
+        repository: Get.find<StoreReturnAndRefundInfoDataSourceRepository>(),
+      ),
+    );
+    //////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////
 
     Get.lazyPut<SignInController>(
       () => SignInController(Get.find<AuthRepo>()),
@@ -172,6 +211,12 @@ class AppBindingsControllers extends Bindings {
     Get.lazyPut<OrderPurchasedHistoryController>(
       () => OrderPurchasedHistoryController(
         repo: Get.find<OrderPurchasedHistoryRepo>(),
+      ),
+    );
+    Get.lazyPut<ReturnAndRefundController>(
+      () => ReturnAndRefundController(
+        repo: Get.find<OrderDetailsRepo>(),
+        refundRepo: Get.find<StoreReturnAndRefundInfoRepository>(),
       ),
     );
   }

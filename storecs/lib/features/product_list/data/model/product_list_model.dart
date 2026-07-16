@@ -63,7 +63,7 @@ class ProductListModel {
       image: map['pImage'] ?? '',
       barcode: map['pBarcode'] ?? '',
       description: map['pDescription'] ?? '',
-      price: map['pPrice'] ?? '',
+      price: (map['pPrice'] as num).toDouble(),
       costPrice: map['pCostPrice'] ?? '',
       stock: map['pStock'] ?? '',
     );

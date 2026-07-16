@@ -326,7 +326,7 @@ void showProductsModal(BuildContext context, String categoryName) {
                               style: const TextStyle(color: white),
                             ),
                             subtitle: Text(
-                              "${product.brand} - \$${product.price}",
+                              "${product.brand} - \$${product.price.toDouble()}",
                               style: const TextStyle(color: grey),
                             ),
                             leading: Image.memory(

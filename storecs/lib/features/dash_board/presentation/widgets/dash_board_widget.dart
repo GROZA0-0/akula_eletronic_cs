@@ -24,6 +24,7 @@ import 'package:storecs/features/dash_board/presentation/state_management/fetch_
 import 'package:storecs/features/order_purchased_history/presentation/pages/order_purchased_history.dart';
 import 'package:storecs/features/pos_page/presentation/page/pos_page.dart';
 import 'package:storecs/features/product_list/presentation/pages/product_list.dart';
+import 'package:storecs/features/returns&refunds/presentation/page/returns_and_refunds_page.dart';
 import 'package:storecs/features/staff_list/presentation/page/staff_list.dart';
 
 class DashboardWidgets extends StatefulWidget {
@@ -722,11 +723,18 @@ class AppDrawer extends StatelessWidget {
               ),
             ),
             sizeBoxHeight(size.height * 0.012),
-            ButtonsMenuDrawer(
-              mainPageWidget: Text(''),
-              size: size,
-              text: "Returns / Refunds",
-              iconn: Icons.compare_arrows,
+            InkWell(
+              splashColor: deepViolet.withOpacity(0.4),
+              onTap: () => Get.to(
+                () => GradientBackground(child: ReturnsAndRefundsPage()),
+                transition: naviStyleToAnotherPage,
+              ),
+              child: ButtonsMenuDrawer(
+                mainPageWidget: Text(''),
+                size: size,
+                text: "Returns / Refunds",
+                iconn: Icons.compare_arrows,
+              ),
             ),
           ],
         ),
@@ -741,30 +749,18 @@ class AppDrawer extends StatelessWidget {
       collapsedBackgroundColor: white,
       title: textDrawerStyle('Products / Inventory'),
       children: [
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            InkWell(
-              splashColor: deepViolet.withOpacity(0.4),
-              onTap: () => Get.to(
-                () => const GradientBackground(child: ProductListPage()),
-                transition: naviStyleToAnotherPage,
-              ),
-              child: ButtonsMenuDrawer(
-                mainPageWidget: Text(''),
-                size: size,
-                text: "Products List Page",
-                iconn: Icons.line_style_rounded,
-              ),
-            ),
-            sizeBoxHeight(size.height * 0.012),
-            ButtonsMenuDrawer(
-              mainPageWidget: Text(''),
-              size: size,
-              text: "Categories Page",
-              iconn: Iconsax.category,
-            ),
-          ],
+        InkWell(
+          splashColor: deepViolet.withOpacity(0.4),
+          onTap: () => Get.to(
+            () => const GradientBackground(child: ProductListPage()),
+            transition: naviStyleToAnotherPage,
+          ),
+          child: ButtonsMenuDrawer(
+            mainPageWidget: Text(''),
+            size: size,
+            text: "Products List Page",
+            iconn: Icons.line_style_rounded,
+          ),
         ),
       ],
     );

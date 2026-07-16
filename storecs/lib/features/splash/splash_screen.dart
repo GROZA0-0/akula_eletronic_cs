@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:storecs/Core/config/wrapper.dart';
-import 'package:storecs/Core/styles/colors.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -32,7 +30,10 @@ class _SplashScreenState extends State<SplashScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Image.asset('assets/images/app_icon.ico'),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(100),
+              child: Image.asset('assets/images/app_icon.ico'),
+            ),
             const SizedBox(height: 24),
             const Text(
               '''
