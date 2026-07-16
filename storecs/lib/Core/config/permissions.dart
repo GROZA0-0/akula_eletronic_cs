@@ -30,6 +30,14 @@ class Permissions {
   }
 
   bool orderActionsAccCondition() {
-    return salesAccess || cashierAccess || qaAccess | accAccess;
+    return salesAccess || cashierAccess || qaAccess || accAccess;
+  }
+
+  bool productsAndInventoryCondition() {
+    return salesAccess || qaAccess || accAccess || hrAccess;
+  }
+
+  bool reportsCondition() {
+    return salesAccess;
   }
 }

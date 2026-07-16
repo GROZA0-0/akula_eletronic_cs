@@ -532,7 +532,11 @@ class AppDrawer extends StatelessWidget {
                           Column(
                             children: [
                               checkoutExpansionTile(),
-                              productsExpansionTile(),
+                              Permissions(
+                                    state: state.enitities,
+                                  ).productsAndInventoryCondition()
+                                  ? Container()
+                                  : productsExpansionTile(),
                               Permissions(
                                     state: state.enitities,
                                   ).orderActionsAccCondition()
@@ -543,7 +547,11 @@ class AppDrawer extends StatelessWidget {
                                   ).empPagesAccCondition()
                                   ? Container()
                                   : employees(),
-                              reports(),
+                              Permissions(
+                                    state: state.enitities,
+                                  ).reportsCondition()
+                                  ? Container()
+                                  : reports(),
                               Permissions(
                                     state: state.enitities,
                                   ).settingsPageAccCondition()
