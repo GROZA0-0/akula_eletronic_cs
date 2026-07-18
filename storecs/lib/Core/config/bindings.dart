@@ -33,6 +33,11 @@ import 'package:storecs/features/product_list/data/data_source/product_list_data
 import 'package:storecs/features/product_list/data/repository/product_list_implementer.dart';
 import 'package:storecs/features/product_list/domain/repository/product_list_repo.dart';
 import 'package:storecs/features/product_list/presentation/state_management/product_list_controller.dart';
+import 'package:storecs/features/report_page/data/data_source/report_data_source_implementer/report_data_source_implementer.dart';
+import 'package:storecs/features/report_page/data/data_source/report_data_source_repository/report_data_source_repository.dart';
+import 'package:storecs/features/report_page/data/repository/report_implementer.dart';
+import 'package:storecs/features/report_page/domain/repository/report_repository.dart';
+import 'package:storecs/features/report_page/presentation/state_management/report_controller.dart';
 import 'package:storecs/features/returns&refunds/data/data_source/get_order_details_data_source_implementer/get_order_details_data_source_implementer.dart';
 import 'package:storecs/features/returns&refunds/data/data_source/get_order_details_data_source_implementer/store_return_and_refund_info_data_source_implementer.dart';
 import 'package:storecs/features/returns&refunds/data/data_source/get_order_details_data_source_repository/get_order_details_data_source_repository.dart';
@@ -178,6 +183,19 @@ class AppBindingsControllers extends Bindings {
     //////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////
 
+    Get.lazyPut<ReportDataSourceRepository>(
+      () => ReportDataSourceImplementer(dio: dio),
+    );
+    Get.lazyPut<ReportRepository>(
+      () => ReportImplementer(
+        reportDataSourceRepository: Get.find<ReportDataSourceRepository>(),
+      ),
+    );
+    //////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////
+    ///
     Get.lazyPut<SignInController>(
       () => SignInController(Get.find<AuthRepo>()),
       fenix: true,
@@ -218,6 +236,9 @@ class AppBindingsControllers extends Bindings {
         repo: Get.find<OrderDetailsRepo>(),
         refundRepo: Get.find<StoreReturnAndRefundInfoRepository>(),
       ),
+    );
+    Get.lazyPut<ReportController>(
+      () => ReportController(repository: Get.find<ReportRepository>()),
     );
   }
 }

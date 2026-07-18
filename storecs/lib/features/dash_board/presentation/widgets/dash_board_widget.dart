@@ -24,6 +24,7 @@ import 'package:storecs/features/dash_board/presentation/state_management/fetch_
 import 'package:storecs/features/order_purchased_history/presentation/pages/order_purchased_history.dart';
 import 'package:storecs/features/pos_page/presentation/page/pos_page.dart';
 import 'package:storecs/features/product_list/presentation/pages/product_list.dart';
+import 'package:storecs/features/report_page/presentation/page/report_page.dart';
 import 'package:storecs/features/returns&refunds/presentation/page/returns_and_refunds_page.dart';
 import 'package:storecs/features/staff_list/presentation/page/staff_list.dart';
 
@@ -424,22 +425,38 @@ class QuickActionsSection extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            isSupervisor
+            Permissions(state: employee).empPagesAccCondition()
                 ? QuickActionsButton(
-                    mainPageWidget: () {},
-                    size: size,
-                    text: 'Staff List Page',
-                    iconn: Iconsax.user,
-                  )
-                : QuickActionsButton(
-                    mainPageWidget: () {},
+                    mainPageWidget: () => Get.to(
+                      () => GradientBackground(child: PosPage()),
+                      transition: naviStyleToAnotherPage,
+                    ),
                     size: size,
                     text: 'POS Page',
                     iconn: Iconsax.card_pos,
+                  )
+                : QuickActionsButton(
+                    mainPageWidget: () => Get.to(
+                      () => GradientBackground(child: StaffListPage()),
+                      transition: naviStyleToAnotherPage,
+                    ),
+                    size: size,
+                    text: 'Staff List Page',
+                    iconn: Iconsax.user,
                   ),
+
             sizeBoxWidth(size.width * 0.01),
-            isSupervisor
+            Permissions(state: employee).empPagesAccCondition()
                 ? QuickActionsButton(
+                    mainPageWidget: () => Get.to(
+                      () => GradientBackground(child: ProductListPage()),
+                      transition: naviStyleToAnotherPage,
+                    ),
+                    size: size,
+                    text: 'order List Page',
+                    iconn: Icons.list,
+                  )
+                : QuickActionsButton(
                     mainPageWidget: () => Get.to(
                       () => GradientBackground(child: SignUpPage()),
                       transition: naviStyleToAnotherPage,
@@ -447,22 +464,26 @@ class QuickActionsSection extends StatelessWidget {
                     size: size,
                     text: 'Add/Edit Staff',
                     iconn: Icons.add,
-                  )
-                : QuickActionsButton(
-                    mainPageWidget: () {},
-                    size: size,
-                    text: 'order List Page',
-                    iconn: Icons.list,
                   ),
             sizeBoxWidth(size.width * 0.01),
-            QuickActionsButton(
-              mainPageWidget: () {},
-              size: size,
-              text: 'Sales Report',
-              iconn: Iconsax.export,
-            ),
+            Permissions(state: employee).empPagesAccCondition()
+                ? QuickActionsButton(
+                    mainPageWidget: () {},
+                    size: size,
+                    text: 'Card Page',
+                    iconn: Iconsax.export,
+                  )
+                : QuickActionsButton(
+                    mainPageWidget: () => Get.to(
+                      () => GradientBackground(child: ReportPage()),
+                      transition: naviStyleToAnotherPage,
+                    ),
+                    size: size,
+                    text: 'Sales Report',
+                    iconn: Iconsax.export,
+                  ),
             sizeBoxWidth(size.width * 0.01),
-            isSupervisor
+            Permissions(state: employee).empPagesAccCondition()
                 ? QuickActionsButton(
                     mainPageWidget: () {},
                     size: size,
@@ -470,7 +491,10 @@ class QuickActionsSection extends StatelessWidget {
                     iconn: Icons.arrow_outward,
                   )
                 : QuickActionsButton(
-                    mainPageWidget: () {},
+                    mainPageWidget: () => Get.to(
+                      () => GradientBackground(child: ReturnsAndRefundsPage()),
+                      transition: naviStyleToAnotherPage,
+                    ),
                     size: size,
                     text: 'Returns & Refunds',
                     iconn: Icons.compare_arrows,
@@ -638,11 +662,18 @@ class AppDrawer extends StatelessWidget {
         Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            ButtonsMenuDrawer(
-              mainPageWidget: Text(''),
-              size: size,
-              text: "Sales Report",
-              iconn: Iconsax.paperclip,
+            InkWell(
+              splashColor: deepViolet.withOpacity(0.4),
+              onTap: () => Get.to(
+                () => GradientBackground(child: ReportPage()),
+                transition: naviStyleToAnotherPage,
+              ),
+              child: ButtonsMenuDrawer(
+                mainPageWidget: Text(''),
+                size: size,
+                text: "Sales Report",
+                iconn: Iconsax.ticket,
+              ),
             ),
             sizeBoxHeight(size.height * 0.012),
             ButtonsMenuDrawer(
