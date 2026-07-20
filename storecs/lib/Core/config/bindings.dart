@@ -63,15 +63,16 @@ class AppBindingsControllers extends Bindings {
 
     //////////////////////////////////////////////////////////
     Get.lazyPut<AuthDataSource>(() => AuthDataSource());
+
     Get.lazyPut<EmployeeInfoDataSourceImplemter>(
       () => EmployeeInfoDataSourceImplemter(client: dio),
     );
-    Get.put<AuthRepo>(
-      AuthImplement(
+    Get.lazyPut<AuthRepo>(
+      () => AuthImplement(
         authDataSource: Get.find<AuthDataSource>(),
         employeeInfoDataSource: Get.find<EmployeeInfoDataSourceImplemter>(),
       ),
-      permanent: true,
+      // permanent: true,
     );
     /////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////
@@ -79,14 +80,14 @@ class AppBindingsControllers extends Bindings {
     /////////////////////////////////////////////////////////
 
     Get.lazyPut<EmployeeInfoDataSourceRepo>(
-      () => EmployeeInfoDataSourceImplementer(dio: Get.find<Dio>()),
-      fenix: true,
+      () => EmployeeInfoDataSourceImplementer(dio: dio),
+      /*  fenix: true, */
     );
     Get.lazyPut<EmployeeInfoRepo>(
       () => EmployeeInfoImplement(
         dataSource: Get.find<EmployeeInfoDataSourceRepo>(),
       ),
-      fenix: true,
+      /* fenix: true, */
     );
 
     //////////////////////////////////////////////////////////
@@ -195,13 +196,15 @@ class AppBindingsControllers extends Bindings {
     //////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////
-    ///
+
     Get.lazyPut<SignInController>(
       () => SignInController(Get.find<AuthRepo>()),
       fenix: true,
     );
     Get.lazyPut<SignUpController>(
-      () => SignUpController(Get.find<AuthRepo>(), Get.find<AuthDataSource>()),
+      () => SignUpController(
+        /* Get.find<AuthRepo>(), Get.find<AuthDataSource>() */
+      ),
       fenix: true,
     );
     Get.lazyPut<SignOutController>(

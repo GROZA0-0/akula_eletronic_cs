@@ -14,9 +14,12 @@ import 'package:storecs/features/auth/domain/repository/employee_repo.dart';
 import 'package:storecs/main.dart';
 
 class SignUpController extends GetxController {
-  final AuthRepo repository;
-  final AuthDataSource source;
-  SignUpController(this.repository, this.source);
+  /* final AuthRepo repository;
+  final AuthDataSource source; */
+  final AuthRepo repository = Get.find<AuthRepo>();
+  final AuthDataSource source = Get.find<AuthDataSource>();
+
+  SignUpController(/* this.repository, this.source */);
 
   final TextEditingController email = TextEditingController();
   final TextEditingController password = TextEditingController();

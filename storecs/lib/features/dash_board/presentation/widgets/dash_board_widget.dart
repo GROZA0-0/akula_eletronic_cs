@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:storecs/Core/Styles/Colors.dart';
 import 'package:storecs/Core/Styles/Strings.dart';
@@ -285,7 +286,36 @@ class _DashboardWidgetsState extends State<DashboardWidgets> {
               borderRadius: BorderRadius.circular(6),
               border: Border.all(color: white),
             ),
-            child: Text('Will be a list of yesterday report'),
+            child: SingleChildScrollView(
+              child: Obx(() {
+                return Container(
+                  margin: EdgeInsets.symmetric(
+                    horizontal: size.width * 0.002,
+                    vertical: size.height * 0.002,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        reportController.entities.value.title,
+                        style: GoogleFonts.aleo(
+                          fontSize: 24,
+                          color: white,
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                      Text(
+                        reportController.entities.value.subTitle,
+                        style: GoogleFonts.aleo(
+                          color: white,
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }),
+            ),
           ),
         ],
       ),
@@ -412,7 +442,6 @@ class QuickActionsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bool isSupervisor = employee.level == 'Manager';
     return Column(
       children: [
         Container(
@@ -827,13 +856,6 @@ class AppDrawer extends StatelessWidget {
                 text: "POS Page",
                 iconn: Iconsax.card_pos,
               ),
-            ),
-            sizeBoxHeight(size.height * 0.012),
-            ButtonsMenuDrawer(
-              mainPageWidget: Text(''),
-              size: size,
-              text: "Card Page",
-              iconn: Iconsax.card,
             ),
 
             sizeBoxHeight(size.height * 0.012),

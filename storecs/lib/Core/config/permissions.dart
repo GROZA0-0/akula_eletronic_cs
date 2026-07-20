@@ -40,4 +40,6 @@ class Permissions {
   bool reportsCondition() {
     return salesAccess;
   }
+
+  final reportPer = 'tVZb5HcYx6h8HVwZGTUrsgaM77y2';
 }
