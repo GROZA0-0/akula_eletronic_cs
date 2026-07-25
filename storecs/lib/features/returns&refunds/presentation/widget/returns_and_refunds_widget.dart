@@ -214,7 +214,7 @@ class ReturnsAndRefundsWidget extends StatelessWidget {
 
                     Expanded(
                       flex: 1,
-                      child: Text("£${item.price.toStringAsFixed(2)}"),
+                      child: Text("${item.price.toStringAsFixed(2)} JOD"),
                     ),
 
                     Expanded(

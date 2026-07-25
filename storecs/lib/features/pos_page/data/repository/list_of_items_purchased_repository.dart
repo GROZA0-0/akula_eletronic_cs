@@ -9,16 +9,25 @@ class ListOfItemsPurchasedRepository implements ListOfItemsPurchasedRepo {
   ListOfItemsPurchasedRepository({required this.implementer});
   @override
   Future<ListOfItemsPurchasedEntities> toListOfItemsPurchasedEntities(
-    String orderId,
     List<CartEntities> items,
     double totalPrice,
   ) async {
     try {
       final data = await implementer.toListOfItemsPurchasedDataSourceRepo(
-        orderId,
         items,
         totalPrice,
       );
+      return data.toListOfItemsPurchasedEntities();
+    } catch (e) {
+      print(e.toString());
+      throw e.toString();
+    }
+  }
+
+  @override
+  Future<ListOfItemsPurchasedEntities> toGetReceiptRepo(String orderId) async {
+    try {
+      final data = await implementer.toGetNewestReceipt(orderId);
       return data.toListOfItemsPurchasedEntities();
     } catch (e) {
       print(e.toString());

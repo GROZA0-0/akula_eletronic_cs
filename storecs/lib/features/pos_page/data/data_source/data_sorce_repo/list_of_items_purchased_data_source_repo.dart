@@ -3,8 +3,8 @@ import 'package:storecs/features/pos_page/domain/enitities/cart_entities.dart';
 
 abstract class ListOfItemsPurchasedDataSourceRepo {
   Future<CartModel> toListOfItemsPurchasedDataSourceRepo(
-    String orderId,
     List<CartEntities> items,
     double totalPrice,
   );
+  Future<CartModel> toGetNewestReceipt(String orderId);
 }

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:storecs/Core/styles/colors.dart';
+import 'package:storecs/Core/styles/sizes.dart';
 
 class DrawerIconAnimation extends StatefulWidget {
   final IconData iconData;
@@ -92,6 +93,39 @@ Widget loadingStateBlocMethod(Size siz) {
 
 Widget loadingStateBodies() {
   return Center(child: LoadingAnimationWidget.beat(color: white, size: 55));
+}
+
+Widget reportSectionLoading() {
+  return Container(
+    margin: EdgeInsets.symmetric(
+      horizontal: size.width * 0.01,
+      vertical: size.height * 0.01,
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          height: size.height * 0.05,
+          width: size.width / 6,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            color: grey,
+          ),
+          child: Text('sedrfgeriogene', style: TextStyle(color: invisible)),
+        ),
+        sizeBoxHeight(size.height * 0.03),
+        Container(
+          height: size.height / 2.5,
+          width: size.width / 2,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            color: grey,
+          ),
+          child: Text('sedrfgeriogene', style: TextStyle(color: invisible)),
+        ),
+      ],
+    ),
+  );
 }
 
 final naviStyleToAnotherPage = Transition.rightToLeftWithFade;

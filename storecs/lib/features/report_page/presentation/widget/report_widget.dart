@@ -1,3 +1,4 @@
+import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:iconsax/iconsax.dart';
@@ -20,30 +21,32 @@ class _ReportWidgetState extends State<ReportWidget> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: invisible,
-        title: Text("Sales Reports", style: textAppBar),
+        title: FadeInLeft(child: Text("Sales Reports", style: textAppBar)),
         iconTheme: IconThemeData(color: white),
       ),
       body: SafeArea(
         child: SingleChildScrollView(
-          child: Center(
-            child: Column(
-              children: [
-                ReportFieldTemplate(
-                  text: 'Title',
-                  icon: Icon(Iconsax.ticket, color: white),
-                  controller: reportController.title,
-                  lines: 1,
-                  txtFieldSize: size.height / 10,
-                ),
-                ReportFieldTemplate(
-                  text: 'Title',
-                  icon: Icon(Iconsax.ticket, color: white),
-                  controller: reportController.subTitle,
-                  lines: 200,
-                  txtFieldSize: size.height / 2,
-                ),
-                reportStoreMethod(),
-              ],
+          child: FadeInUp(
+            child: Center(
+              child: Column(
+                children: [
+                  ReportFieldTemplate(
+                    text: 'Title',
+                    icon: Icon(Iconsax.ticket, color: white),
+                    controller: reportController.title,
+                    lines: 1,
+                    txtFieldSize: size.height / 10,
+                  ),
+                  ReportFieldTemplate(
+                    text: 'SubTitle',
+                    icon: Icon(Iconsax.ticket, color: white),
+                    controller: reportController.subTitle,
+                    lines: 200,
+                    txtFieldSize: size.height / 2,
+                  ),
+                  reportStoreMethod(),
+                ],
+              ),
             ),
           ),
         ),

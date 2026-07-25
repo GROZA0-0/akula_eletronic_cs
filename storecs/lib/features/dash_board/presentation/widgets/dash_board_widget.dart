@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:animate_do/animate_do.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -26,6 +27,10 @@ import 'package:storecs/features/order_purchased_history/presentation/pages/orde
 import 'package:storecs/features/pos_page/presentation/page/pos_page.dart';
 import 'package:storecs/features/product_list/presentation/pages/product_list.dart';
 import 'package:storecs/features/report_page/presentation/page/report_page.dart';
+import 'package:storecs/features/report_page/presentation/state_management/report_bloc/report_bloc.dart';
+import 'package:storecs/features/report_page/presentation/state_management/report_bloc/report_bloc_event.dart';
+import 'package:storecs/features/report_page/presentation/state_management/report_bloc/report_bloc_state.dart';
+import 'package:storecs/features/report_page/presentation/state_management/report_controller.dart';
 import 'package:storecs/features/returns&refunds/presentation/page/returns_and_refunds_page.dart';
 import 'package:storecs/features/staff_list/presentation/page/staff_list.dart';
 
@@ -43,15 +48,15 @@ class _DashboardWidgetsState extends State<DashboardWidgets> {
     final id = FirebaseAuth.instance.currentUser!.uid;
     final List<Map<String, dynamic>> salesData = [
       {'label': 'iPhone', 'value': 40.0, 'color': Color(0xFF6C63FF)},
-      {'label': 'Samsung', 'value': 25.0, 'color': Color(0xFF43E97B)},
-      {'label': 'Xiaomi', 'value': 20.0, 'color': Color(0xFFFA709A)},
-      {'label': 'Huawei', 'value': 10.0, 'color': Color(0xFF4FACFE)},
+      {'label': "Pc's conponents", 'value': 25.0, 'color': Color(0xFF43E97B)},
+      {'label': 'PS5', 'value': 20.0, 'color': Color(0xFFFA709A)},
+      {'label': 'Accessories', 'value': 10.0, 'color': Color(0xFF4FACFE)},
       {'label': 'Others', 'value': 5.0, 'color': Color(0xFFFFC107)},
     ];
     return Scaffold(
       appBar: AppBar(
         backgroundColor: invisible,
-        title: Text(Dashboard, style: textAppBar),
+        title: FadeInLeft(child: Text(Dashboard, style: textAppBar)),
         actions: [
           Container(
             margin: EdgeInsets.symmetric(
@@ -59,7 +64,7 @@ class _DashboardWidgetsState extends State<DashboardWidgets> {
               vertical: size.width * 0.0011,
             ),
 
-            width: size.width / 6,
+            width: size.width / 4,
             height: size.width * 0.2,
             child: MultiBlocProvider(
               providers: [
@@ -83,7 +88,7 @@ class _DashboardWidgetsState extends State<DashboardWidgets> {
                       margin: EdgeInsets.only(right: size.width * 0.03),
                       child: const CircleAvatar(
                         radius: 20,
-                        backgroundColor: Colors.redAccent,
+                        backgroundColor: redColor,
                         child: Icon(
                           Icons.error_outline,
                           color: white,
@@ -93,12 +98,20 @@ class _DashboardWidgetsState extends State<DashboardWidgets> {
                     );
                   } else if (empState is DashboardBlocStateLoaded) {
                     final emp = empState.enitities;
-                    return Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        Text(emp.name, style: textBodiesStyle),
-                        buildProfileImage(emp.userPic),
-                      ],
+                    return FadeInRight(
+                      child: Container(
+                        margin: EdgeInsets.symmetric(
+                          horizontal: size.width * 0.04,
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            Text(emp.name, style: textBodiesStyle),
+                            // sizeBoxWidth(size.width * 0.003),
+                            buildProfileImage(emp.userPic),
+                          ],
+                        ),
+                      ),
                     );
                   }
                   return const CircleAvatar(
@@ -113,34 +126,38 @@ class _DashboardWidgetsState extends State<DashboardWidgets> {
         ],
         leading: Builder(
           builder: (context) {
-            return DrawerIconAnimation(
-              iconData: Iconsax.menu,
-              voidCallback: () => Scaffold.of(context).openDrawer(),
+            return FadeInLeft(
+              child: DrawerIconAnimation(
+                iconData: Iconsax.menu,
+                voidCallback: () => Scaffold.of(context).openDrawer(),
+              ),
             );
           },
         ),
       ),
       drawer: AppDrawer(id: id),
       body: SafeArea(
-        child: Container(
-          margin: screenSize,
-          child: SingleChildScrollView(
-            child: Container(
-              decoration: BoxDecoration(
-                border: Border.all(color: white, width: 3),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              width: double.infinity,
-              padding: EdgeInsets.symmetric(
-                vertical: size.height * 0.030,
-                horizontal: size.width * 0.008,
-              ),
-              child: Column(
-                children: [
-                  RowOfReviewsSection(),
-                  chartAndMostItemSold(touchedIndex, salesData),
-                  quickActionsSectionBloc(id),
-                ],
+        child: FadeInUp(
+          child: Container(
+            margin: screenSize,
+            child: SingleChildScrollView(
+              child: Container(
+                decoration: BoxDecoration(
+                  border: Border.all(color: white, width: 3),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                width: double.infinity,
+                padding: EdgeInsets.symmetric(
+                  vertical: size.height * 0.030,
+                  horizontal: size.width * 0.008,
+                ),
+                child: Column(
+                  children: [
+                    RowOfReviewsSection(),
+                    chartAndMostItemSold(touchedIndex, salesData),
+                    quickActionsSectionBloc(id),
+                  ],
+                ),
               ),
             ),
           ),
@@ -287,34 +304,57 @@ class _DashboardWidgetsState extends State<DashboardWidgets> {
               border: Border.all(color: white),
             ),
             child: SingleChildScrollView(
-              child: Obx(() {
-                return Container(
-                  margin: EdgeInsets.symmetric(
-                    horizontal: size.width * 0.002,
-                    vertical: size.height * 0.002,
+              child: MultiBlocProvider(
+                providers: [
+                  BlocProvider(
+                    create: (context) =>
+                        ReportBloc(controller: Get.find<ReportController>())
+                          ..add(ReportBlocEventLoading()),
                   ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        reportController.entities.value.title,
-                        style: GoogleFonts.aleo(
-                          fontSize: 24,
-                          color: white,
-                          fontWeight: FontWeight.w400,
+                ],
+                child: BlocBuilder<ReportBloc, ReportBlocState>(
+                  builder: (context, state) {
+                    if (state is ReportBlocStateLoading) {
+                      return reportSectionLoading();
+                    } else if (state is ReportBlocStateError) {
+                      return Center(
+                        child: Text(
+                          "Somthing went wrong!",
+                          style: textBodiesStyle2,
                         ),
-                      ),
-                      Text(
-                        reportController.entities.value.subTitle,
-                        style: GoogleFonts.aleo(
-                          color: white,
-                          fontWeight: FontWeight.w400,
+                      );
+                    } else if (state is ReportBlocStateLoaded) {
+                      return Container(
+                        margin: EdgeInsets.symmetric(
+                          horizontal: size.width * 0.002,
+                          vertical: size.height * 0.002,
                         ),
-                      ),
-                    ],
-                  ),
-                );
-              }),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              state.entities.title,
+                              style: GoogleFonts.aleo(
+                                fontSize: 24,
+                                color: white,
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+                            Text(
+                              state.entities.subTitle,
+                              style: GoogleFonts.aleo(
+                                color: white,
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    }
+                    return Container();
+                  },
+                ),
+              ),
             ),
           ),
         ],
@@ -574,50 +614,7 @@ class AppDrawer extends StatelessWidget {
               } else if (state is DashboardBlocStateLoaded) {
                 return Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    SizedBox(
-                      width: size.width / 1.2,
-                      height: size.height / 1.09,
-                      child: ListView(
-                        scrollDirection: Axis.vertical,
-                        shrinkWrap: true,
-                        children: [
-                          Column(
-                            children: [
-                              checkoutExpansionTile(),
-                              Permissions(
-                                    state: state.enitities,
-                                  ).productsAndInventoryCondition()
-                                  ? Container()
-                                  : productsExpansionTile(),
-                              Permissions(
-                                    state: state.enitities,
-                                  ).orderActionsAccCondition()
-                                  ? Container()
-                                  : ordersAndTransactions(),
-                              Permissions(
-                                    state: state.enitities,
-                                  ).empPagesAccCondition()
-                                  ? Container()
-                                  : employees(),
-                              Permissions(
-                                    state: state.enitities,
-                                  ).reportsCondition()
-                                  ? Container()
-                                  : reports(),
-                              Permissions(
-                                    state: state.enitities,
-                                  ).settingsPageAccCondition()
-                                  ? Container()
-                                  : settings(),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                    Divider(),
-                    signOutButton(),
-                  ],
+                  children: [drawerList(state), Divider(), signOutButton()],
                 );
               }
               return Container();
@@ -628,7 +625,50 @@ class AppDrawer extends StatelessWidget {
     );
   }
 
-  Container signOutButton() {
+  Widget drawerList(DashboardBlocStateLoaded state) {
+    return SizedBox(
+      width: size.width / 1.2,
+      height: size.height / 1.09,
+      child: ListView(
+        scrollDirection: Axis.vertical,
+        shrinkWrap: true,
+        children: [
+          Column(
+            children: [
+              Text(
+                "Akula",
+                style: GoogleFonts.pixelifySans(
+                  color: deepViolet,
+                  fontSize: 27,
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+              checkoutExpansionTile(),
+              Permissions(
+                    state: state.enitities,
+                  ).productsAndInventoryCondition()
+                  ? Container()
+                  : productsExpansionTile(),
+              Permissions(state: state.enitities).orderActionsAccCondition()
+                  ? Container()
+                  : ordersAndTransactions(),
+              Permissions(state: state.enitities).empPagesAccCondition()
+                  ? Container()
+                  : employees(),
+              Permissions(state: state.enitities).reportsCondition()
+                  ? Container()
+                  : reports(state.enitities),
+              Permissions(state: state.enitities).settingsPageAccCondition()
+                  ? Container()
+                  : settings(),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget signOutButton() {
     return Container(
       width: size.width * 0.07,
       margin: EdgeInsets.only(right: size.width * 0.14),
@@ -681,7 +721,7 @@ class AppDrawer extends StatelessWidget {
     );
   }
 
-  Widget reports() {
+  Widget reports(EmployeeInfoEntities state) {
     return ExpansionTile(
       splashColor: invisible,
       collapsedIconColor: black,
@@ -697,11 +737,17 @@ class AppDrawer extends StatelessWidget {
                 () => GradientBackground(child: ReportPage()),
                 transition: naviStyleToAnotherPage,
               ),
-              child: ButtonsMenuDrawer(
-                mainPageWidget: Text(''),
-                size: size,
-                text: "Sales Report",
-                iconn: Iconsax.ticket,
+              child: Column(
+                children: [
+                  Permissions(state: state).salesReportCondition()
+                      ? Container()
+                      : ButtonsMenuDrawer(
+                          mainPageWidget: Text(''),
+                          size: size,
+                          text: "Sales Report",
+                          iconn: Iconsax.ticket,
+                        ),
+                ],
               ),
             ),
             sizeBoxHeight(size.height * 0.012),
@@ -841,39 +887,18 @@ class AppDrawer extends StatelessWidget {
       collapsedBackgroundColor: white,
       title: textDrawerStyle('Sales / Checkout'),
       children: [
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            InkWell(
-              splashColor: deepViolet.withOpacity(0.4),
-              onTap: () => Get.to(
-                () => const GradientBackground(child: PosPage()),
-                transition: naviStyleToAnotherPage,
-              ),
-              child: ButtonsMenuDrawer(
-                mainPageWidget: Text(''),
-                size: size,
-                text: "POS Page",
-                iconn: Iconsax.card_pos,
-              ),
-            ),
-
-            sizeBoxHeight(size.height * 0.012),
-            ButtonsMenuDrawer(
-              mainPageWidget: Text(''),
-              size: size,
-              text: "Payment Page",
-              iconn: Icons.payment,
-            ),
-
-            sizeBoxHeight(size.height * 0.012),
-            ButtonsMenuDrawer(
-              mainPageWidget: Text(''),
-              size: size,
-              text: "Receipt Page",
-              iconn: Iconsax.receipt,
-            ),
-          ],
+        InkWell(
+          splashColor: deepViolet.withOpacity(0.4),
+          onTap: () => Get.to(
+            () => const GradientBackground(child: PosPage()),
+            transition: naviStyleToAnotherPage,
+          ),
+          child: ButtonsMenuDrawer(
+            mainPageWidget: Text(''),
+            size: size,
+            text: "POS Page",
+            iconn: Iconsax.card_pos,
+          ),
         ),
       ],
     );

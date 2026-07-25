@@ -8,6 +8,7 @@ class FetchEmployeeInfoDashBoardController extends GetxController {
   FetchEmployeeInfoDashBoardController({required this.repository});
   Rx<EmployeeInfoEntities> entities = const EmployeeInfoEntities(
     id: '',
+    email: '',
     name: '',
     phone: '',
     userPic: '',
@@ -15,6 +16,7 @@ class FetchEmployeeInfoDashBoardController extends GetxController {
   ).obs;
   EmployeeInfoEntities blocEntities = const EmployeeInfoEntities(
     id: '',
+    email: '',
     name: '',
     phone: '',
     userPic: '',
@@ -46,6 +48,7 @@ class FetchEmployeeInfoDashBoardController extends GetxController {
     ); */
     blocEntities = const EmployeeInfoEntities(
       id: '',
+      email: '',
       name: '',
       phone: '',
       userPic: '',

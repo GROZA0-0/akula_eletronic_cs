@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
@@ -34,7 +35,7 @@ class _StaffListWidgetsState extends State<StaffListWidgets> {
       appBar: AppBar(
         backgroundColor: invisible,
         iconTheme: IconThemeData(color: white),
-        title: Text(StaffList, style: textAppBar),
+        title: FadeInLeft(child: Text(StaffList, style: textAppBar)),
       ),
       body: SafeArea(
         child: Container(
@@ -43,121 +44,115 @@ class _StaffListWidgetsState extends State<StaffListWidgets> {
           height: size.height / 1.1,
           child: SingleChildScrollView(
             physics: const BouncingScrollPhysics(),
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: white),
-              ),
-              child: MultiBlocProvider(
-                providers: [
-                  BlocProvider(
-                    create: (context) =>
-                        StaffListBloc(Get.find<StaffListController>())
-                          ..add(StaffListBlocEventLoading()),
+            child: FadeInUp(
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: white),
+                ),
+                child: MultiBlocProvider(
+                  providers: [
+                    BlocProvider(
+                      create: (context) =>
+                          StaffListBloc(Get.find<StaffListController>())
+                            ..add(StaffListBlocEventLoading()),
+                    ),
+                  ],
+                  child: BlocBuilder<StaffListBloc, StaffListBlocState>(
+                    builder: (context, state) {
+                      if (state is StaffListBlocStateLoading) {
+                        return loadingStateBlocMethod(size);
+                      } else if (state is StaffListBlocStateError) {
+                        return alerts.ifErrors(state.err.toString());
+                      } else if (state is StaffListBlocStateLoaded) {
+                        List<StaffListEntities> list = List.from(
+                          state.entities,
+                        );
+                        return Column(
+                          children: [empColumns(), empData(list, state)],
+                        );
+                      }
+                      return Container();
+                    },
                   ),
-                ],
-                child: BlocBuilder<StaffListBloc, StaffListBlocState>(
-                  builder: (context, state) {
-                    if (state is StaffListBlocStateLoading) {
-                      return loadingStateBlocMethod(size);
-                    } else if (state is StaffListBlocStateError) {
-                      return alerts.ifErrors(state.err.toString());
-                    } else if (state is StaffListBlocStateLoaded) {
-                      List<StaffListEntities> list = List.from(state.entities);
-                      return Column(
-                        children: [
-                          Container(
-                            margin: EdgeInsets.symmetric(
-                              horizontal: size.width * 0.02,
-                            ),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  'Employee Picture',
-                                  style: textBodiesStyle,
-                                ),
-                                // sizeBoxWidth(size.width * 0.165),
-                                Text('Employee Name', style: textBodiesStyle),
-                                // sizeBoxWidth(size.width * 0.165),
-                                Text('Employee Phone', style: textBodiesStyle),
-                                // sizeBoxWidth(size.width * 0.165),
-                                Text(
-                                  'Employee department',
-                                  style: textBodiesStyle,
-                                ),
-                              ],
-                            ),
-                          ),
-                          ListView.builder(
-                            shrinkWrap: true,
-                            physics: const BouncingScrollPhysics(),
-                            itemCount: list.length,
-                            itemBuilder: (context, index) {
-                              return Column(
-                                children: [
-                                  Container(
-                                    margin: EdgeInsets.symmetric(
-                                      horizontal: size.width * 0.05,
-                                    ),
-                                    child: Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Container(
-                                          child: buildProfileImage(
-                                            state.entities[index].pic,
-                                            index,
-                                          ),
-                                        ),
-
-                                        SizedBox(
-                                          width: size.width * 0.1,
-
-                                          child: Text(
-                                            state.entities[index].name,
-                                            style: textBodiesStyle,
-                                          ),
-                                        ),
-
-                                        SizedBox(
-                                          width: size.width * 0.1,
-
-                                          child: Text(
-                                            state.entities[index].phone,
-                                            style: textBodiesStyle,
-                                          ),
-                                        ),
-
-                                        SizedBox(
-                                          width: size.width * 0.1,
-
-                                          child: Text(
-                                            state.entities[index].level,
-                                            style: textBodiesStyle,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  Divider(color: white),
-                                ],
-                              );
-                            },
-                          ),
-                        ],
-                      );
-                    }
-                    return Container();
-                  },
                 ),
               ),
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  Widget empData(List<StaffListEntities> list, StaffListBlocStateLoaded state) {
+    return ListView.builder(
+      shrinkWrap: true,
+      physics: const BouncingScrollPhysics(),
+      itemCount: list.length,
+      itemBuilder: (context, index) {
+        return Column(
+          children: [
+            Container(
+              margin: EdgeInsets.symmetric(horizontal: size.width * 0.05),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Container(
+                    child: buildProfileImage(state.entities[index].pic, index),
+                  ),
+
+                  SizedBox(
+                    width: size.width * 0.1,
+
+                    child: Text(
+                      state.entities[index].name,
+                      style: textBodiesStyle,
+                    ),
+                  ),
+
+                  SizedBox(
+                    width: size.width * 0.1,
+
+                    child: Text(
+                      state.entities[index].phone,
+                      style: textBodiesStyle,
+                    ),
+                  ),
+
+                  SizedBox(
+                    width: size.width * 0.1,
+
+                    child: Text(
+                      state.entities[index].level,
+                      style: textBodiesStyle,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Divider(color: white),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget empColumns() {
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: size.width * 0.02),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text('Employee Picture', style: textBodiesStyle),
+          // sizeBoxWidth(size.width * 0.165),
+          Text('Employee Name', style: textBodiesStyle),
+          // sizeBoxWidth(size.width * 0.165),
+          Text('Employee Phone', style: textBodiesStyle),
+          // sizeBoxWidth(size.width * 0.165),
+          Text('Employee department', style: textBodiesStyle),
+        ],
       ),
     );
   }

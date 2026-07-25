@@ -38,13 +38,25 @@ class CartModel {
           : null,
       items: (json['items'] as List? ?? []).map((item) {
         return CartEntities(
-          id: item['_id'],
-          name: item['pName'],
-          brand: item['pBrand'],
-          image: item['pImage'],
-          price: item['pPrice'],
-          stock: item['pStock'],
-          initialQuantity: item['quantity'],
+          id: item['id']?.toString() ?? item['_id']?.toString() ?? '',
+
+          name: item['pName'] ?? item['name'] ?? '',
+
+          brand: item['pBrand'] ?? item['brand'] ?? '',
+
+          image: item['pImage'] ?? item['image'] ?? '',
+
+          price:
+              (item['pPrice'] as num?)?.toDouble() ??
+              (item['price'] as num?)?.toDouble() ??
+              0.0,
+
+          stock:
+              (item['pStock'] as num?)?.toInt() ??
+              (item['stock'] as num?)?.toInt() ??
+              0,
+
+          initialQuantity: (item['quantity'] as num?)?.toInt() ?? 1,
         );
       }).toList(),
     );

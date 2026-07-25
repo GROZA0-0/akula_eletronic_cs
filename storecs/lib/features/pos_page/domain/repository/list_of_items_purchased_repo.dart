@@ -3,8 +3,8 @@ import 'package:storecs/features/pos_page/domain/enitities/list_of_items_purchas
 
 abstract class ListOfItemsPurchasedRepo {
   Future<ListOfItemsPurchasedEntities> toListOfItemsPurchasedEntities(
-    String orderId,
     List<CartEntities> items,
     double totalPrice,
   );
+  Future<ListOfItemsPurchasedEntities> toGetReceiptRepo(String orderId);
 }

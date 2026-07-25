@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:storecs/Core/styles/alerts.dart';
 import 'package:storecs/Core/styles/loader.dart';
 import 'package:storecs/features/pos_page/domain/enitities/cart_entities.dart';
+import 'package:storecs/features/pos_page/domain/enitities/list_of_items_purchased_entities.dart';
 import 'package:storecs/features/pos_page/domain/enitities/pos_entities.dart';
 import 'package:storecs/features/pos_page/domain/repository/list_of_items_purchased_repo.dart';
 import 'package:storecs/main.dart';
@@ -19,6 +20,7 @@ class CartController extends GetxController {
   double get total => subTotal + taxAmount;
   int get totalItems =>
       cartItems.fold(0, (sum, item) => sum + item.quantity.value);
+  ListOfItemsPurchasedEntities? purchasedReceipt;
   final Alerts alerts = Alerts(messengerKey);
   final TextEditingController controller = TextEditingController();
   void addToCart(PosEntities entities) {
@@ -82,14 +84,39 @@ class CartController extends GetxController {
   }
 
   Future<void> purchase() async {
+    if (cartItems.isEmpty) {
+      alerts.ifErrors("Cart Is Empty.");
+      return;
+    }
     Loader.startLoading();
     try {
-      await repo.toListOfItemsPurchasedEntities(
-        controller.text,
+      final result = await repo.toListOfItemsPurchasedEntities(
         cartItems,
         total,
       );
+      print(
+        "Sending ${cartItems.length} items with order ID: '${controller.text}'",
+      );
+      purchasedReceipt = result;
+      cartItems.clear();
       alerts.ifSuccess('Purchase Successfully');
+    } on PlatformException catch (e) {
+      print('The Error Is: ${e.message.toString()}');
+      alerts.ifErrors(e.message.toString());
+      Loader.stopLoading();
+    } catch (e) {
+      Loader.stopLoading();
+      print("Something went wrong. $e");
+      alerts.ifErrors("Something went wrong.");
+    } finally {
+      Loader.stopLoading();
+    }
+  }
+
+  Future<void> fetchReceipt(String orderId) async {
+    try {
+      final result = await repo.toGetReceiptRepo(orderId);
+      purchasedReceipt = result;
     } on PlatformException catch (e) {
       print('The Error Is: ${e.message.toString()}');
       alerts.ifErrors(e.message.toString());

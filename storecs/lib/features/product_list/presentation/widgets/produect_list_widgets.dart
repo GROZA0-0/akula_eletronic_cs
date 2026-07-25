@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -32,7 +33,7 @@ class _ProduectListWidgetsState extends State<ProduectListWidgets> {
       appBar: AppBar(
         backgroundColor: invisible,
         iconTheme: IconThemeData(color: white),
-        title: Text(ProductListPageText, style: textAppBar),
+        title: FadeInLeft(child: Text(ProductListPageText, style: textAppBar)),
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -74,71 +75,73 @@ class _SwapSectionState extends State<SwapSection> {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: size.width / 1.2,
-      height: size.height / 0.75,
-      child: Column(
-        children: [
-          SizedBox(
-            width: size.width / 1.2,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: productActions.asMap().entries.map((entry) {
-                final indx = entry.key;
-                final action = entry.value;
-                final isSelected = action == selected;
-                return GestureDetector(
-                  onTap: () => setState(() {
-                    selected = action;
-                    pageController.animateToPage(
-                      indx,
-                      duration: Duration(milliseconds: 300),
-                      curve: Curves.easeInOut,
-                    );
-                  }),
-                  child: Container(
-                    margin: EdgeInsets.only(
-                      top: size.height * 0.01,
-                      right: size.width * 0.008,
-                    ),
-                    padding: EdgeInsets.symmetric(
-                      horizontal: size.width * 0.016,
-                      vertical: size.width * 0.005,
-                    ),
-                    decoration: BoxDecoration(
-                      color: invisible,
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(
-                        color: isSelected ? greenColor : white,
-                        width: 2,
+    return FadeInUp(
+      child: SizedBox(
+        width: size.width / 1.2,
+        height: size.height / 0.75,
+        child: Column(
+          children: [
+            SizedBox(
+              width: size.width / 1.2,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: productActions.asMap().entries.map((entry) {
+                  final indx = entry.key;
+                  final action = entry.value;
+                  final isSelected = action == selected;
+                  return GestureDetector(
+                    onTap: () => setState(() {
+                      selected = action;
+                      pageController.animateToPage(
+                        indx,
+                        duration: Duration(milliseconds: 300),
+                        curve: Curves.easeInOut,
+                      );
+                    }),
+                    child: Container(
+                      margin: EdgeInsets.only(
+                        top: size.height * 0.01,
+                        right: size.width * 0.008,
+                      ),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: size.width * 0.016,
+                        vertical: size.width * 0.005,
+                      ),
+                      decoration: BoxDecoration(
+                        color: invisible,
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(
+                          color: isSelected ? greenColor : white,
+                          width: 2,
+                        ),
+                      ),
+                      child: Text(
+                        action,
+                        style: TextStyle(
+                          color: isSelected ? greenColor : white,
+                          fontWeight: isSelected
+                              ? FontWeight.bold
+                              : FontWeight.normal,
+                        ),
                       ),
                     ),
-                    child: Text(
-                      action,
-                      style: TextStyle(
-                        color: isSelected ? greenColor : white,
-                        fontWeight: isSelected
-                            ? FontWeight.bold
-                            : FontWeight.normal,
-                      ),
-                    ),
-                  ),
-                );
-              }).toList(),
+                  );
+                }).toList(),
+              ),
             ),
-          ),
-          sizeBoxHeight(size.height * 0.02),
-          Expanded(
-            child: PageView(
-              physics: NeverScrollableScrollPhysics(),
-              controller: pageController,
-              children: [
-                SingleChildScrollView(child: CreatingProductWidget()),
-                CategoriesSection(),
-              ],
+            sizeBoxHeight(size.height * 0.02),
+            Expanded(
+              child: PageView(
+                physics: NeverScrollableScrollPhysics(),
+                controller: pageController,
+                children: [
+                  SingleChildScrollView(child: CreatingProductWidget()),
+                  CategoriesSection(),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -182,70 +185,84 @@ class CategoriesSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) =>
-          ProductListBloc(repo: Get.find<ProductListController>())
-            ..add(ProductListEventBlocLoading()),
-      child: Builder(
-        builder: (context) {
-          return Container(
-            margin: EdgeInsets.symmetric(
-              horizontal: size.width * 0.016,
-              vertical: size.width * 0.016,
-            ),
-            child: GridView.builder(
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 3,
-                crossAxisSpacing: 16,
-                mainAxisSpacing: 16,
-                childAspectRatio: 1.2,
+    return FadeInUp(
+      child: BlocProvider(
+        create: (context) =>
+            ProductListBloc(repo: Get.find<ProductListController>())
+              ..add(ProductListEventBlocLoading()),
+        child: Builder(
+          builder: (context) {
+            return Container(
+              margin: EdgeInsets.symmetric(
+                horizontal: size.width * 0.016,
+                vertical: size.width * 0.016,
               ),
-              itemCount: categories.length,
-              itemBuilder: (context, index) {
-                final cat = categories[index];
-                final color = (cat['color']);
-                final bool isGrad = color is List;
-                final List<Color> colors = isGrad
-                    ? List<Color>.from(color)
-                    : [color as Color];
+              child: GridView.builder(
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 3,
+                  crossAxisSpacing: 16,
+                  mainAxisSpacing: 16,
+                  childAspectRatio: 1.2,
+                ),
+                itemCount: categories.length,
+                itemBuilder: (context, index) {
+                  final cat = categories[index];
+                  final color = (cat['color']);
+                  final bool isGrad = color is List;
+                  final List<Color> colors = isGrad
+                      ? List<Color>.from(color)
+                      : [color as Color];
 
-                final firstColor = color[0];
+                  final firstColor = color[0];
 
-                return InkWell(
-                  onTap: () {
-                    context.read<ProductListBloc>().add(
-                      ProductListEventBlocLoaded(category: cat['name']),
-                    );
+                  return InkWell(
+                    onTap: () {
+                      context.read<ProductListBloc>().add(
+                        ProductListEventBlocLoaded(category: cat['name']),
+                      );
 
-                    showProductsModal(context, cat['name']);
-                  },
-                  child: Container(
-                    decoration: BoxDecoration(
-                      gradient: isGrad
-                          ? LinearGradient(
-                              colors: colors
-                                  .map((e) => e.withOpacity(0.1))
-                                  .toList(),
-                            )
-                          : null,
-                      color: isGrad ? null : firstColor.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(10),
-                      border: Border.all(color: firstColor),
+                      showProductsModal(context, cat['name']);
+                    },
+                    child: listOfItemsWithCategories(
+                      isGrad,
+                      colors,
+                      firstColor,
+                      cat,
                     ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(cat['icon'], color: firstColor, size: 40),
-                        SizedBox(height: 8),
-                        Text(cat['name'], style: textBodiesStyle),
-                      ],
-                    ),
-                  ),
-                );
-              },
-            ),
-          );
-        },
+                  );
+                },
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget listOfItemsWithCategories(
+    bool isGrad,
+    List<Color> colors,
+    firstColor,
+    Map<String, dynamic> cat,
+  ) {
+    return Container(
+      decoration: BoxDecoration(
+        gradient: isGrad
+            ? LinearGradient(
+                colors: colors.map((e) => e.withOpacity(0.1)).toList(),
+              )
+            : null,
+        color: isGrad ? null : firstColor.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: firstColor),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(cat['icon'], color: firstColor, size: 40),
+          SizedBox(height: 8),
+          Text(cat['name'], style: textBodiesStyle),
+        ],
       ),
     );
   }
@@ -326,7 +343,7 @@ void showProductsModal(BuildContext context, String categoryName) {
                               style: const TextStyle(color: white),
                             ),
                             subtitle: Text(
-                              "${product.brand} - \$${product.price.toDouble()}",
+                              "${product.brand} - ${product.price.toDouble()} JOD",
                               style: const TextStyle(color: grey),
                             ),
                             leading: Image.memory(

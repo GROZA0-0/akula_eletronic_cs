@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:storecs/features/pos_page/domain/enitities/cart_entities.dart';
 import 'package:storecs/features/pos_page/domain/enitities/pos_entities.dart';
 import 'package:storecs/features/pos_page/domain/repository/pos_repo.dart';
 
@@ -7,6 +8,7 @@ class PosController extends GetxController {
   PosController({required this.repo});
 
   List<PosEntities> entities = [];
+  final List<CartEntities> cartItems = [];
   Future<List<PosEntities>> getAllProducts() async {
     try {
       final products = await repo.toGetAllProductsRepo();

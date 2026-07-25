@@ -41,5 +41,14 @@ class Permissions {
     return salesAccess;
   }
 
-  final reportPer = 'tVZb5HcYx6h8HVwZGTUrsgaM77y2';
+  bool salesReportCondition() {
+    return salesAccess ||
+        qaAccess ||
+        accAccess ||
+        hrAccess ||
+        cashierAccess ||
+        whAccess;
+  }
+
+  final reportPer = 'MPtdEpBYCMaUnyv33bZbl2ryTov2';
 }

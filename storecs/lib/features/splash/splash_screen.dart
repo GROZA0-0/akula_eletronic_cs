@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:storecs/Core/config/wrapper.dart';
+import 'package:storecs/Core/styles/colors.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -35,16 +37,15 @@ class _SplashScreenState extends State<SplashScreen> {
               child: Image.asset('assets/images/app_icon.ico'),
             ),
             const SizedBox(height: 24),
-            const Text(
+            Text(
               '''
-      Akula
+          Akula
 For Electronics
               ''',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 28,
-                fontWeight: FontWeight.bold,
-                letterSpacing: 3,
+              style: GoogleFonts.pixelifySans(
+                color: white,
+                fontSize: 27,
+                fontWeight: FontWeight.w400,
               ),
             ),
             const SizedBox(height: 40),

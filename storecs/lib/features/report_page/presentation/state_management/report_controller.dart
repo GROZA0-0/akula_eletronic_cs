@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:storecs/Core/config/call_controller.dart';
-import 'package:storecs/Core/config/permissions.dart';
 import 'package:storecs/Core/styles/alerts.dart';
 import 'package:storecs/Core/styles/loader.dart';
 import 'package:storecs/features/dash_board/domain/entities/employee_info_entities.dart';
@@ -28,18 +27,14 @@ class ReportController extends GetxController {
         title: '',
         subTitle: '',
       ).obs;
-  Rx<EmployeeInfoEntities> perEntities = const EmployeeInfoEntities(
+  EmployeeInfoEntities perEntities = const EmployeeInfoEntities(
     id: '',
+    email: '',
     name: '',
     phone: '',
     userPic: '',
     level: '',
-  ).obs;
-  @override
-  void onInit() {
-    super.onInit();
-    getSuperReport(Permissions(state: perEntities.value).reportPer);
-  }
+  );
 
   Future<void> storeReport() async {
     if (title.text.isEmpty || subTitle.text.isEmpty) {

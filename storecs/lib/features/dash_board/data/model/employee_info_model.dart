@@ -53,6 +53,7 @@ class EmployeeInfoModel {
   EmployeeInfoEntities toEmployeeInfoEntities() {
     return EmployeeInfoEntities(
       id: empId,
+      email: empEmail,
       name: empName,
       phone: empPhone,
       userPic: empPic,

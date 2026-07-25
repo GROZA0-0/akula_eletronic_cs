@@ -11,13 +11,11 @@ class ListOfItemsPurchasedDataSourceImplementer
 
   @override
   Future<CartModel> toListOfItemsPurchasedDataSourceRepo(
-    String orderId,
     List<CartEntities> items,
     double totalPrice,
   ) async {
     final storeOrder = '${Env.baseURL}insertOrderToDatabaseController';
     final Map<String, dynamic> body = {
-      'orderId': orderId,
       'items': items.map((e) => e.toJson()).toList(),
       'totalPrice': totalPrice,
     };
@@ -38,6 +36,29 @@ class ListOfItemsPurchasedDataSourceImplementer
       }
     } else {
       throw Exception("Any issue with creating order ? : ${res.statusCode}");
+    }
+  }
+
+  @override
+  Future<CartModel> toGetNewestReceipt(String orderId) async {
+    final getReceipt =
+        '${Env.baseURL}getNewestReceiptAfterPurchasingRoute/$orderId';
+    final res = await dio.get(
+      getReceipt,
+      options: Options(
+        contentType: 'application/json',
+        validateStatus: (status) => status! < 600,
+      ),
+    );
+    if (res.statusCode == 200 || res.statusCode == 201) {
+      if (res.data == null) {
+        return CartModel.storeEmpty();
+      } else {
+        final data = res.data;
+        return CartModel.fromJson(data);
+      }
+    } else {
+      throw Exception("Any issue with newest receipt ? : ${res.statusCode}");
     }
   }
 }
