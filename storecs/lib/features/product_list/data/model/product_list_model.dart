@@ -65,7 +65,7 @@ class ProductListModel {
       description: map['pDescription'] ?? '',
       price: (map['pPrice'] as num).toDouble(),
       costPrice: map['pCostPrice'] ?? '',
-      stock: map['pStock'] ?? '',
+      stock: (map['pStock'] as num).toInt(),
     );
   }
   InsertProductListEntities toInsertProductListEntities() {
@@ -89,6 +89,7 @@ class ProductListModel {
       category: category,
       brand: brand,
       price: price,
+      qty: stock,
       img: image,
     );
   }

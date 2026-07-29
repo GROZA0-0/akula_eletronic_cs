@@ -99,7 +99,7 @@ class ListSoldOrderData extends StatelessWidget {
     );
   }
 
-  ListView listOfOrdersData(List<OrderPurchasedHistoryEntities> orderEntities) {
+  Widget listOfOrdersData(List<OrderPurchasedHistoryEntities> orderEntities) {
     return ListView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
@@ -184,6 +184,7 @@ class ListSoldOrderData extends StatelessWidget {
                                 ),
                               ),
                             ),
+                            sizeBoxWidth(size.width * 0.002),
                             Expanded(
                               child: Text(
                                 "${item.brand} ${item.name}",
@@ -215,7 +216,7 @@ class ListSoldOrderData extends StatelessWidget {
     );
   }
 
-  Column dateHeaderData(String dateHeader) {
+  Widget dateHeaderData(String dateHeader) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [

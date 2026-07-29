@@ -61,9 +61,10 @@ class FetchEmployeeInfoDashBoardController extends GetxController {
     try {
       final infoOfDash = await repository.toEmployeeInfoRepo(id);
       // print("info of user ${infoOfDash.name}${infoOfDash.level}");
-      blocEntities = infoOfDash;
+      /* blocEntities =  */
+      return infoOfDash;
       // entities.value = infoOfDash;
-      return blocEntities;
+      /*  return blocEntities; */
     } catch (e) {
       print("error in dashboard controller $e");
       throw e.toString();

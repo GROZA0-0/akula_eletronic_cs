@@ -43,6 +43,7 @@ class GetProductWithCategoryListEntities extends Equatable {
   final String category;
   final String brand;
   final double price;
+  final int qty;
   final String img;
 
   const GetProductWithCategoryListEntities({
@@ -50,8 +51,9 @@ class GetProductWithCategoryListEntities extends Equatable {
     required this.category,
     required this.brand,
     required this.price,
+    required this.qty,
     required this.img,
   });
   @override
-  List<Object?> get props => [name, category, brand, price, img];
+  List<Object?> get props => [name, category, brand, price, qty, img];
 }

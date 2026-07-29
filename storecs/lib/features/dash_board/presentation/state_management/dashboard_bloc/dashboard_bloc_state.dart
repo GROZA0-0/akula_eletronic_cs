@@ -12,10 +12,11 @@ class DashboardBlocStateLoading extends DashboardBlocState {
 
 class DashboardBlocStateLoaded extends DashboardBlocState {
   final EmployeeInfoEntities enitities;
-  DashboardBlocStateLoaded({required this.enitities});
+  final DateTime timestamp;
+  DashboardBlocStateLoaded({required this.enitities, DateTime?timestamp}):timestamp= timestamp??DateTime.now();
 
   @override
-  List<Object?> get props => [enitities];
+  List<Object?> get props => [enitities,timestamp];
 }
 
 class DashboardBlocStateError extends DashboardBlocState {

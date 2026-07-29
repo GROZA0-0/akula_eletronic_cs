@@ -32,6 +32,7 @@ import 'package:storecs/features/report_page/presentation/state_management/repor
 import 'package:storecs/features/report_page/presentation/state_management/report_bloc/report_bloc_state.dart';
 import 'package:storecs/features/report_page/presentation/state_management/report_controller.dart';
 import 'package:storecs/features/returns&refunds/presentation/page/returns_and_refunds_page.dart';
+import 'package:storecs/features/settings_page/presentation/page/settings_page.dart';
 import 'package:storecs/features/staff_list/presentation/page/staff_list.dart';
 
 class DashboardWidgets extends StatefulWidget {
@@ -57,73 +58,7 @@ class _DashboardWidgetsState extends State<DashboardWidgets> {
       appBar: AppBar(
         backgroundColor: invisible,
         title: FadeInLeft(child: Text(Dashboard, style: textAppBar)),
-        actions: [
-          Container(
-            margin: EdgeInsets.symmetric(
-              horizontal: size.width * 0.03,
-              vertical: size.width * 0.0011,
-            ),
-
-            width: size.width / 4,
-            height: size.width * 0.2,
-            child: MultiBlocProvider(
-              providers: [
-                BlocProvider(
-                  create: (context) => DashboardBloc(
-                    Get.find<FetchEmployeeInfoDashBoardController>(),
-                    id,
-                  )..add(DashboardBlocEventLoading()),
-                ),
-              ],
-              child: BlocBuilder<DashboardBloc, DashboardBlocState>(
-                builder: (context, empState) {
-                  if (empState is DashboardBlocStateLoading) {
-                    return const CircleAvatar(
-                      backgroundColor: grey,
-                      radius: 18,
-                      child: Icon(color: white, Iconsax.user),
-                    );
-                  } else if (empState is DashboardBlocStateError) {
-                    return Container(
-                      margin: EdgeInsets.only(right: size.width * 0.03),
-                      child: const CircleAvatar(
-                        radius: 20,
-                        backgroundColor: redColor,
-                        child: Icon(
-                          Icons.error_outline,
-                          color: white,
-                          size: 16,
-                        ),
-                      ),
-                    );
-                  } else if (empState is DashboardBlocStateLoaded) {
-                    final emp = empState.enitities;
-                    return FadeInRight(
-                      child: Container(
-                        margin: EdgeInsets.symmetric(
-                          horizontal: size.width * 0.04,
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            Text(emp.name, style: textBodiesStyle),
-                            // sizeBoxWidth(size.width * 0.003),
-                            buildProfileImage(emp.userPic),
-                          ],
-                        ),
-                      ),
-                    );
-                  }
-                  return const CircleAvatar(
-                    backgroundColor: grey,
-                    radius: 18,
-                    child: Icon(color: white, Iconsax.user),
-                  );
-                },
-              ),
-            ),
-          ),
-        ],
+        actions: [appbarDashboardBloc(id)],
         leading: Builder(
           builder: (context) {
             return FadeInLeft(
@@ -166,8 +101,71 @@ class _DashboardWidgetsState extends State<DashboardWidgets> {
     );
   }
 
+  Container appbarDashboardBloc(String id) {
+    return Container(
+      margin: EdgeInsets.symmetric(
+        horizontal: size.width * 0.03,
+        vertical: size.width * 0.0011,
+      ),
+
+      width: size.width / 4,
+      height: size.width * 0.2,
+      child: MultiBlocProvider(
+        providers: [
+          BlocProvider(
+            create: (context) => DashboardBloc(
+              Get.find<FetchEmployeeInfoDashBoardController>(),
+              id,
+            )..add(DashboardBlocEventLoading()),
+          ),
+        ],
+        child: BlocBuilder<DashboardBloc, DashboardBlocState>(
+          builder: (context, empState) {
+            if (empState is DashboardBlocStateLoading) {
+              return const CircleAvatar(
+                backgroundColor: grey,
+                radius: 18,
+                child: Icon(color: white, Iconsax.user),
+              );
+            } else if (empState is DashboardBlocStateError) {
+              return Container(
+                margin: EdgeInsets.only(right: size.width * 0.03),
+                child: const CircleAvatar(
+                  radius: 20,
+                  backgroundColor: redColor,
+                  child: Icon(Icons.error_outline, color: white, size: 16),
+                ),
+              );
+            } else if (empState is DashboardBlocStateLoaded) {
+              final emp = empState.enitities;
+              return FadeInRight(
+                child: Container(
+                  margin: EdgeInsets.symmetric(horizontal: size.width * 0.04),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Text(emp.name, style: textBodiesStyle),
+                      // sizeBoxWidth(size.width * 0.003),
+                      buildProfileImage(emp.userPic),
+                    ],
+                  ),
+                ),
+              );
+            }
+            return const CircleAvatar(
+              backgroundColor: grey,
+              radius: 18,
+              child: Icon(color: white, Iconsax.user),
+            );
+          },
+        ),
+      ),
+    );
+  }
+
   Widget quickActionsSectionBloc(String id) {
     return MultiBlocProvider(
+      key: ValueKey(id),
       providers: [
         BlocProvider(
           create: (context) => DashboardBloc(
@@ -317,10 +315,13 @@ class _DashboardWidgetsState extends State<DashboardWidgets> {
                     if (state is ReportBlocStateLoading) {
                       return reportSectionLoading();
                     } else if (state is ReportBlocStateError) {
-                      return Center(
-                        child: Text(
-                          "Somthing went wrong!",
-                          style: textBodiesStyle2,
+                      return SizedBox(
+                        height: size.height / 2.01,
+                        child: Center(
+                          child: Text(
+                            "Somthing went wrong!",
+                            style: textBodiesStyle2,
+                          ),
                         ),
                       );
                     } else if (state is ReportBlocStateLoaded) {
@@ -482,6 +483,8 @@ class QuickActionsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final permissions = Permissions(state: employee);
+    final hasAccess = permissions.empPagesAccCondition;
     return Column(
       children: [
         Container(
@@ -494,80 +497,69 @@ class QuickActionsSection extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            Permissions(state: employee).empPagesAccCondition()
-                ? QuickActionsButton(
-                    mainPageWidget: () => Get.to(
+            QuickActionsButton(
+              mainPageWidget: () => hasAccess
+                  ? Get.to(
                       () => GradientBackground(child: PosPage()),
+                      preventDuplicates: false,
                       transition: naviStyleToAnotherPage,
-                    ),
-                    size: size,
-                    text: 'POS Page',
-                    iconn: Iconsax.card_pos,
-                  )
-                : QuickActionsButton(
-                    mainPageWidget: () => Get.to(
+                    )
+                  : Get.to(
                       () => GradientBackground(child: StaffListPage()),
                       transition: naviStyleToAnotherPage,
+                      preventDuplicates: false,
                     ),
-                    size: size,
-                    text: 'Staff List Page',
-                    iconn: Iconsax.user,
-                  ),
+              size: size,
+              text: hasAccess ? 'POS Page' : 'Staff List Page',
+              iconn: hasAccess ? Iconsax.card_pos : Iconsax.user,
+            ),
 
             sizeBoxWidth(size.width * 0.01),
-            Permissions(state: employee).empPagesAccCondition()
-                ? QuickActionsButton(
-                    mainPageWidget: () => Get.to(
+
+            QuickActionsButton(
+              mainPageWidget: () => hasAccess
+                  ? Get.to(
                       () => GradientBackground(child: ProductListPage()),
                       transition: naviStyleToAnotherPage,
-                    ),
-                    size: size,
-                    text: 'order List Page',
-                    iconn: Icons.list,
-                  )
-                : QuickActionsButton(
-                    mainPageWidget: () => Get.to(
+                      preventDuplicates: false,
+                    )
+                  : Get.to(
                       () => GradientBackground(child: SignUpPage()),
                       transition: naviStyleToAnotherPage,
+                      preventDuplicates: false,
                     ),
-                    size: size,
-                    text: 'Add/Edit Staff',
-                    iconn: Icons.add,
-                  ),
+              size: size,
+              text: hasAccess ? 'order List Page' : 'Add/Edit Staff',
+              iconn: hasAccess ? Icons.list : Icons.add,
+            ),
             sizeBoxWidth(size.width * 0.01),
-            Permissions(state: employee).empPagesAccCondition()
-                ? QuickActionsButton(
-                    mainPageWidget: () {},
-                    size: size,
-                    text: 'Card Page',
-                    iconn: Iconsax.export,
-                  )
-                : QuickActionsButton(
-                    mainPageWidget: () => Get.to(
+
+            QuickActionsButton(
+              mainPageWidget: () => hasAccess
+                  ? () {}
+                  : Get.to(
                       () => GradientBackground(child: ReportPage()),
                       transition: naviStyleToAnotherPage,
+                      preventDuplicates: false,
                     ),
-                    size: size,
-                    text: 'Sales Report',
-                    iconn: Iconsax.export,
-                  ),
+              size: size,
+              text: hasAccess ? 'Card Page' : 'Sales Report',
+              iconn: Iconsax.export,
+            ),
             sizeBoxWidth(size.width * 0.01),
-            Permissions(state: employee).empPagesAccCondition()
-                ? QuickActionsButton(
-                    mainPageWidget: () {},
-                    size: size,
-                    text: 'Profit/Loss Page',
-                    iconn: Icons.arrow_outward,
-                  )
-                : QuickActionsButton(
-                    mainPageWidget: () => Get.to(
+
+            QuickActionsButton(
+              mainPageWidget: () => hasAccess
+                  ? () {}
+                  : Get.to(
                       () => GradientBackground(child: ReturnsAndRefundsPage()),
                       transition: naviStyleToAnotherPage,
+                      preventDuplicates: false,
                     ),
-                    size: size,
-                    text: 'Returns & Refunds',
-                    iconn: Icons.compare_arrows,
-                  ),
+              size: size,
+              text: hasAccess ? 'Profit/Loss Page' : 'Returns & Refunds',
+              iconn: hasAccess ? Icons.arrow_outward : Icons.compare_arrows,
+            ),
           ],
         ),
         sizeBoxHeight(size.height * 0.05),
@@ -626,6 +618,12 @@ class AppDrawer extends StatelessWidget {
   }
 
   Widget drawerList(DashboardBlocStateLoaded state) {
+    final permissions = Permissions(state: state.enitities);
+    final hasAccessEmpPages = permissions.empPagesAccCondition;
+    final hasAccessPAI = permissions.productsAndInventoryCondition;
+    final hasAccessReports = permissions.reportsCondition;
+    final hasAccessSettings = permissions.settingsPageAccCondition;
+    final hasAccessOrderActions = permissions.settingsPageAccCondition;
     return SizedBox(
       width: size.width / 1.2,
       height: size.height / 1.09,
@@ -644,23 +642,11 @@ class AppDrawer extends StatelessWidget {
                 ),
               ),
               checkoutExpansionTile(),
-              Permissions(
-                    state: state.enitities,
-                  ).productsAndInventoryCondition()
-                  ? Container()
-                  : productsExpansionTile(),
-              Permissions(state: state.enitities).orderActionsAccCondition()
-                  ? Container()
-                  : ordersAndTransactions(),
-              Permissions(state: state.enitities).empPagesAccCondition()
-                  ? Container()
-                  : employees(),
-              Permissions(state: state.enitities).reportsCondition()
-                  ? Container()
-                  : reports(state.enitities),
-              Permissions(state: state.enitities).settingsPageAccCondition()
-                  ? Container()
-                  : settings(),
+              hasAccessPAI ? Container() : productsExpansionTile(),
+              hasAccessOrderActions ? Container() : ordersAndTransactions(),
+              hasAccessEmpPages ? Container() : employees(),
+              hasAccessReports ? Container() : reports(state),
+              hasAccessSettings ? Container() : settings(),
             ],
           ),
         ],
@@ -695,11 +681,19 @@ class AppDrawer extends StatelessWidget {
         Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            ButtonsMenuDrawer(
-              mainPageWidget: Text(''),
-              size: size,
-              text: "Settings Page",
-              iconn: Iconsax.paperclip,
+            InkWell(
+              splashColor: deepViolet.withOpacity(0.4),
+              onTap: () => Get.to(
+                () => GradientBackground(child: SettingsPage()),
+                transition: naviStyleToAnotherPage,
+                preventDuplicates: false,
+              ),
+              child: ButtonsMenuDrawer(
+                mainPageWidget: Text(''),
+                size: size,
+                text: "Settings Page",
+                iconn: Iconsax.paperclip,
+              ),
             ),
             sizeBoxHeight(size.height * 0.012),
             ButtonsMenuDrawer(
@@ -721,7 +715,9 @@ class AppDrawer extends StatelessWidget {
     );
   }
 
-  Widget reports(EmployeeInfoEntities state) {
+  Widget reports(DashboardBlocStateLoaded state) {
+    final permissions = Permissions(state: state.enitities);
+    final hasAccessSalesReport = permissions.salesReportCondition;
     return ExpansionTile(
       splashColor: invisible,
       collapsedIconColor: black,
@@ -736,10 +732,11 @@ class AppDrawer extends StatelessWidget {
               onTap: () => Get.to(
                 () => GradientBackground(child: ReportPage()),
                 transition: naviStyleToAnotherPage,
+                preventDuplicates: false,
               ),
               child: Column(
                 children: [
-                  Permissions(state: state).salesReportCondition()
+                  hasAccessSalesReport
                       ? Container()
                       : ButtonsMenuDrawer(
                           mainPageWidget: Text(''),
@@ -785,6 +782,7 @@ class AppDrawer extends StatelessWidget {
               onTap: () => Get.to(
                 () => GradientBackground(child: StaffListPage()),
                 transition: naviStyleToAnotherPage,
+                preventDuplicates: false,
               ),
               child: ButtonsMenuDrawer(
                 mainPageWidget: Text(''),
@@ -799,6 +797,7 @@ class AppDrawer extends StatelessWidget {
               onTap: () => Get.to(
                 () => GradientBackground(child: SignUpPage()),
                 transition: naviStyleToAnotherPage,
+                preventDuplicates: false,
               ),
               child: ButtonsMenuDrawer(
                 mainPageWidget: Text(''),
@@ -828,6 +827,7 @@ class AppDrawer extends StatelessWidget {
               onTap: () => Get.to(
                 () => GradientBackground(child: OrderPurchasedHistory()),
                 transition: naviStyleToAnotherPage,
+                preventDuplicates: false,
               ),
               child: ButtonsMenuDrawer(
                 mainPageWidget: Text(''),
@@ -842,6 +842,7 @@ class AppDrawer extends StatelessWidget {
               onTap: () => Get.to(
                 () => GradientBackground(child: ReturnsAndRefundsPage()),
                 transition: naviStyleToAnotherPage,
+                preventDuplicates: false,
               ),
               child: ButtonsMenuDrawer(
                 mainPageWidget: Text(''),
@@ -868,6 +869,7 @@ class AppDrawer extends StatelessWidget {
           onTap: () => Get.to(
             () => const GradientBackground(child: ProductListPage()),
             transition: naviStyleToAnotherPage,
+            preventDuplicates: false,
           ),
           child: ButtonsMenuDrawer(
             mainPageWidget: Text(''),
@@ -892,6 +894,7 @@ class AppDrawer extends StatelessWidget {
           onTap: () => Get.to(
             () => const GradientBackground(child: PosPage()),
             transition: naviStyleToAnotherPage,
+            preventDuplicates: false,
           ),
           child: ButtonsMenuDrawer(
             mainPageWidget: Text(''),
@@ -955,7 +958,7 @@ class _QuickActionsButton extends State<QuickActionsButton> {
   bool isHovered = false;
   @override
   Widget build(BuildContext context) {
-    return Flexible(
+    return Expanded(
       child: MouseRegion(
         onExit: (event) => setState(() => isHovered = false),
         onEnter: (event) => setState(() => isHovered = true),

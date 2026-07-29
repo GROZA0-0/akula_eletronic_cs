@@ -339,13 +339,32 @@ void showProductsModal(BuildContext context, String categoryName) {
                           final product = state.entities[idx];
                           return ListTile(
                             title: Text(
-                              product.name,
-                              style: const TextStyle(color: white),
+                              '${product.brand} - ${product.name}',
+                              style: GoogleFonts.aleo(
+                                color: white,
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
-                            subtitle: Text(
-                              "${product.brand} - ${product.price.toDouble()} JOD",
-                              style: const TextStyle(color: grey),
+                            subtitle: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "Price: ${product.price.toDouble()} JOD",
+                                  style: GoogleFonts.aleo(
+                                    color: grey,
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                ),
+                                Text(
+                                  "Quantitiy: ${product.qty}",
+                                  style: GoogleFonts.aleo(
+                                    color: product.qty > 10 ? grey : redColor,
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                ),
+                              ],
                             ),
+
                             leading: Image.memory(
                               repeat: ImageRepeat.repeat,
                               filterQuality: FilterQuality.medium,
@@ -363,7 +382,7 @@ void showProductsModal(BuildContext context, String categoryName) {
                       return Center(
                         child: Text(
                           "Error: ${state.err}",
-                          style: const TextStyle(color: redColor),
+                          style: textBodiesStyle2,
                         ),
                       );
                     }

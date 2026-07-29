@@ -12,43 +12,32 @@ class Permissions {
   bool get itAccess => state.level == 'IT';
   bool get accAccess => state.level == 'Accountant';
   bool get whAccess => state.level == 'Warehouse Keeper';
-  bool empPagesAccCondition() {
-    return cashierAccess ||
-        salesAccess ||
-        supervisorAccess ||
-        qaAccess ||
-        accAccess ||
-        whAccess;
-  }
+  bool get empPagesAccCondition =>
+      cashierAccess ||
+      salesAccess ||
+      supervisorAccess ||
+      qaAccess ||
+      accAccess ||
+      whAccess;
 
-  bool settingsPageAccCondition() {
-    return cashierAccess ||
-        salesAccess ||
-        whAccess ||
-        supervisorAccess ||
-        qaAccess;
-  }
+  bool get settingsPageAccCondition =>
+      cashierAccess || salesAccess || whAccess || supervisorAccess || qaAccess;
 
-  bool orderActionsAccCondition() {
-    return salesAccess || cashierAccess || qaAccess || accAccess;
-  }
+  bool get orderActionsAccCondition =>
+      salesAccess || cashierAccess || qaAccess || accAccess;
 
-  bool productsAndInventoryCondition() {
-    return salesAccess || qaAccess || accAccess || hrAccess;
-  }
+  bool get productsAndInventoryCondition =>
+      salesAccess || qaAccess || accAccess || hrAccess;
 
-  bool reportsCondition() {
-    return salesAccess;
-  }
+  bool get reportsCondition => salesAccess;
 
-  bool salesReportCondition() {
-    return salesAccess ||
-        qaAccess ||
-        accAccess ||
-        hrAccess ||
-        cashierAccess ||
-        whAccess;
-  }
+  bool get salesReportCondition =>
+      salesAccess ||
+      qaAccess ||
+      accAccess ||
+      hrAccess ||
+      cashierAccess ||
+      whAccess;
 
   final reportPer = 'MPtdEpBYCMaUnyv33bZbl2ryTov2';
 }

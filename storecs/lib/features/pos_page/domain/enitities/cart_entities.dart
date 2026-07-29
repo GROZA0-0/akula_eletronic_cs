@@ -31,6 +31,7 @@ class CartEntities extends Equatable {
     return {
       '_id': id,
       'pName': name,
+      'pBrand':brand,
       'pImage': image,
       'pPrice': price,
       'pStock': stock,
