@@ -8,11 +8,21 @@ import 'package:storecs/features/auth/domain/repository/employee_repo.dart';
 import 'package:storecs/features/auth/presentation/state_management/sign_in_controller.dart';
 import 'package:storecs/features/auth/presentation/state_management/sign_out_controller.dart';
 import 'package:storecs/features/auth/presentation/state_management/sign_up_controller.dart';
+import 'package:storecs/features/dash_board/data/data_source/data_source_implementer/category_dashboard_data_source_implementer.dart';
 import 'package:storecs/features/dash_board/data/data_source/data_source_implementer/employee_info_data_source_implementer.dart';
+import 'package:storecs/features/dash_board/data/data_source/data_source_implementer/review_info_data_source_implementer.dart';
+import 'package:storecs/features/dash_board/data/data_source/data_source_repo/category_dashboard_data_source_repo.dart';
 import 'package:storecs/features/dash_board/data/data_source/data_source_repo/employee_info_data_source_repo.dart';
+import 'package:storecs/features/dash_board/data/data_source/data_source_repo/review_info_data_source_repo.dart';
+import 'package:storecs/features/dash_board/data/repository/category_dashboard_implementer.dart';
 import 'package:storecs/features/dash_board/data/repository/employee_info_repository.dart';
+import 'package:storecs/features/dash_board/data/repository/review_implementer.dart';
+import 'package:storecs/features/dash_board/domain/repository/category_dashboard_repo.dart';
 import 'package:storecs/features/dash_board/domain/repository/employee_info_repo.dart';
+import 'package:storecs/features/dash_board/domain/repository/review_repo.dart';
+import 'package:storecs/features/dash_board/presentation/state_management/fetch_category_dashboard_controller.dart';
 import 'package:storecs/features/dash_board/presentation/state_management/fetch_employee_info_dash_board_controller.dart';
+import 'package:storecs/features/dash_board/presentation/state_management/fetch_reviews_info_dash_board_controller.dart';
 import 'package:storecs/features/order_purchased_history/data/data_source/order_purchased_history_data_source_implementer/order_purchased_history_data_source_implementer.dart';
 import 'package:storecs/features/order_purchased_history/data/data_source/order_purchased_history_data_source_repo/order_purchased_history_data_source_repo.dart';
 import 'package:storecs/features/order_purchased_history/data/repository/order_purchased_history_implementer.dart';
@@ -197,6 +207,31 @@ class AppBindingsControllers extends Bindings {
     //////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////
 
+    Get.lazyPut<ReviewInfoDataSourceRepo>(
+      () => ReviewInfoDataSourceImplementer(dio: dio),
+    );
+    Get.lazyPut<ReviewRepo>(
+      () => ReviewImplementer(
+        reviewInfoDataSourceRepo: Get.find<ReviewInfoDataSourceRepo>(),
+      ),
+    );
+    //////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////
+    Get.lazyPut<CategoryDashboardDataSourceRepo>(
+      () => CategoryDashboardDataSourceImplementer(dio: dio),
+    );
+    Get.lazyPut<CategoryDashboardRepo>(
+      () => CategoryDashboardImplementer(
+        sourceRepo: Get.find<CategoryDashboardDataSourceRepo>(),
+      ),
+    );
+    //////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////
+
     Get.lazyPut<SignInController>(
       () => SignInController(Get.find<AuthRepo>()),
       fenix: true,
@@ -242,6 +277,14 @@ class AppBindingsControllers extends Bindings {
     );
     Get.lazyPut<ReportController>(
       () => ReportController(repository: Get.find<ReportRepository>()),
+    );
+    Get.lazyPut(
+      () => FetchReviewsInfoDashBoardController(repo: Get.find<ReviewRepo>()),
+    );
+    Get.lazyPut<FetchCategoryDashboardController>(
+      () => FetchCategoryDashboardController(
+        repo: Get.find<CategoryDashboardRepo>(),
+      ),
     );
   }
 }

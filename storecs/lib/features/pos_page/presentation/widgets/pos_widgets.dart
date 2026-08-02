@@ -34,6 +34,14 @@ class PosWidgets extends StatefulWidget {
 }
 
 class _PosWidgetsState extends State<PosWidgets> {
+  final List<String> categories = [
+    "Phones",
+    "Tablates",
+    "Tv's & Monitors",
+    "Accessories",
+    "PS5",
+    "Pc's Components",
+  ];
   @override
   Widget build(BuildContext context) {
     final bool passMouse = false;
@@ -98,7 +106,7 @@ class _PosWidgetsState extends State<PosWidgets> {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
-                            CategoryTabs(),
+                            CategoryTabs(categories: categories),
                             Expanded(child: ProductsGrid()),
                           ],
                         ),
@@ -106,7 +114,7 @@ class _PosWidgetsState extends State<PosWidgets> {
                     ),
                     sizeBoxWidth(size.width * 0.02),
 
-                    CartSection(passMouse: passMouse),
+                    CartSection(passMouse: passMouse, categories: categories),
                   ],
                 ),
               ),
@@ -119,8 +127,13 @@ class _PosWidgetsState extends State<PosWidgets> {
 }
 
 class CartSection extends StatelessWidget {
+  final List<String> categories;
   final bool passMouse;
-  const CartSection({super.key, required this.passMouse});
+  const CartSection({
+    super.key,
+    required this.passMouse,
+    required this.categories,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -283,7 +296,7 @@ class CartSection extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              item.name,
+                              '${item.name} (${item.quantity})',
                               style: const TextStyle(color: white),
                             ),
                             Text(
@@ -362,10 +375,11 @@ class CartSection extends StatelessWidget {
       String name = item.name.length > 24
           ? "${item.name.substring(0, 21)}..."
           : item.name;
+      int qty = item.quantity.value;
 
       String priceStr = "${item.price.toStringAsFixed(2)} JOD";
 
-      print("${name.padRight(25)} ${priceStr.padLeft(10)}");
+      print("$name ${qty.toString()} ${priceStr.padLeft(25)}");
     }
 
     print("----------------------------------------");
@@ -484,10 +498,12 @@ class _CardButtonState extends State<CardButtons> {
 
 class CartItemWidget extends StatelessWidget {
   final CartEntities item;
+
   const CartItemWidget({super.key, required this.item});
 
   @override
   Widget build(BuildContext context) {
+    print('item with category ${item.category}');
     return Container(
       margin: EdgeInsets.symmetric(
         horizontal: size.width * 0.008,
@@ -526,6 +542,10 @@ class CartItemWidget extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                     style: textBodiesStyle,
                   ),
+                ),
+                Text(
+                  item.category,
+                  style: TextStyle(color: csGrey, fontSize: 10),
                 ),
                 Text(
                   '${item.price} JOD',
@@ -618,22 +638,14 @@ class PriceRow extends StatelessWidget {
 }
 
 class CategoryTabs extends StatefulWidget {
-  const CategoryTabs({super.key});
+  final List<String> categories;
+  const CategoryTabs({super.key, required this.categories});
 
   @override
   State<CategoryTabs> createState() => _CategoryTabsState();
 }
 
 class _CategoryTabsState extends State<CategoryTabs> {
-  final List<String> categories = [
-    "Phones",
-    "Tablates",
-    "Tv's & Monitors",
-    "Accessories",
-    "PS5",
-    "Pc's Components",
-  ];
-
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<PosBloc, PosBlocState>(
@@ -646,7 +658,7 @@ class _CategoryTabsState extends State<CategoryTabs> {
           child: SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: Row(
-              children: categories.map((cat) {
+              children: widget.categories.map((cat) {
                 final isSelected = cat == selected;
                 return GestureDetector(
                   onTap: () => context.read<PosBloc>().add(

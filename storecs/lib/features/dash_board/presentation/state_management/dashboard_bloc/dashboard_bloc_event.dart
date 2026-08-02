@@ -13,3 +13,22 @@ class DashboardBlocEventError extends DashboardBlocEvent {
   @override
   List<Object?> get props => [err];
 }
+////////////////////////////////////
+////////////////////////////////////
+////////////////////////////////////
+
+abstract class CategoryChartDashboardBlocEvent extends Equatable {}
+
+class CategoryChartDashboardBlocEventLoading
+    extends CategoryChartDashboardBlocEvent {
+  @override
+  List<Object?> get props => [];
+}
+
+class CategoryChartDashboardBlocEventError
+    extends CategoryChartDashboardBlocEvent {
+  final String err;
+  CategoryChartDashboardBlocEventError({required this.err});
+  @override
+  List<Object?> get props => [err];
+}

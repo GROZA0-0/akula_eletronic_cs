@@ -59,7 +59,7 @@ class POSModel {
       id: map['_id'].toString(),
       name: map['pName'].toString(),
       brand: map['pBrand'].toString(),
-      category: map['category'].toString(),
+      category: map['pCategory'].toString(),
       image: map['pImage'].toString(),
       barcode: map['pBarcode'].toString(),
       description: map['pDescription'].toString(),
@@ -87,6 +87,7 @@ class POSModel {
     return CartEntities(
       id: id,
       name: name,
+      category: category,
       brand: brand,
       image: image,
       price: price,

@@ -22,15 +22,19 @@ import 'package:storecs/features/dash_board/domain/entities/employee_info_entiti
 import 'package:storecs/features/dash_board/presentation/state_management/dashboard_bloc/dashboard_bloc.dart';
 import 'package:storecs/features/dash_board/presentation/state_management/dashboard_bloc/dashboard_bloc_event.dart';
 import 'package:storecs/features/dash_board/presentation/state_management/dashboard_bloc/dashboard_bloc_state.dart';
+import 'package:storecs/features/dash_board/presentation/state_management/fetch_category_dashboard_controller.dart';
 import 'package:storecs/features/dash_board/presentation/state_management/fetch_employee_info_dash_board_controller.dart';
+import 'package:storecs/features/dash_board/presentation/state_management/fetch_reviews_info_dash_board_controller.dart';
 import 'package:storecs/features/order_purchased_history/presentation/pages/order_purchased_history.dart';
 import 'package:storecs/features/pos_page/presentation/page/pos_page.dart';
 import 'package:storecs/features/product_list/presentation/pages/product_list.dart';
 import 'package:storecs/features/report_page/presentation/page/report_page.dart';
 import 'package:storecs/features/report_page/presentation/state_management/report_bloc/report_bloc.dart';
 import 'package:storecs/features/report_page/presentation/state_management/report_bloc/report_bloc_event.dart';
+
 import 'package:storecs/features/report_page/presentation/state_management/report_bloc/report_bloc_state.dart';
 import 'package:storecs/features/report_page/presentation/state_management/report_controller.dart';
+
 import 'package:storecs/features/returns&refunds/presentation/page/returns_and_refunds_page.dart';
 import 'package:storecs/features/settings_page/presentation/page/settings_page.dart';
 import 'package:storecs/features/staff_list/presentation/page/staff_list.dart';
@@ -45,15 +49,7 @@ class DashboardWidgets extends StatefulWidget {
 class _DashboardWidgetsState extends State<DashboardWidgets> {
   @override
   Widget build(BuildContext context) {
-    int touchedIndex = -1;
     final id = FirebaseAuth.instance.currentUser!.uid;
-    final List<Map<String, dynamic>> salesData = [
-      {'label': 'iPhone', 'value': 40.0, 'color': Color(0xFF6C63FF)},
-      {'label': "Pc's conponents", 'value': 25.0, 'color': Color(0xFF43E97B)},
-      {'label': 'PS5', 'value': 20.0, 'color': Color(0xFFFA709A)},
-      {'label': 'Accessories', 'value': 10.0, 'color': Color(0xFF4FACFE)},
-      {'label': 'Others', 'value': 5.0, 'color': Color(0xFFFFC107)},
-    ];
     return Scaffold(
       appBar: AppBar(
         backgroundColor: invisible,
@@ -88,8 +84,8 @@ class _DashboardWidgetsState extends State<DashboardWidgets> {
                 ),
                 child: Column(
                   children: [
-                    RowOfReviewsSection(),
-                    chartAndMostItemSold(touchedIndex, salesData),
+                    RowOfReviewsSection(id: id),
+                    ChartSectionWidget(),
                     quickActionsSectionBloc(id),
                   ],
                 ),
@@ -101,7 +97,7 @@ class _DashboardWidgetsState extends State<DashboardWidgets> {
     );
   }
 
-  Container appbarDashboardBloc(String id) {
+  Widget appbarDashboardBloc(String id) {
     return Container(
       margin: EdgeInsets.symmetric(
         horizontal: size.width * 0.03,
@@ -115,6 +111,7 @@ class _DashboardWidgetsState extends State<DashboardWidgets> {
           BlocProvider(
             create: (context) => DashboardBloc(
               Get.find<FetchEmployeeInfoDashBoardController>(),
+
               id,
             )..add(DashboardBlocEventLoading()),
           ),
@@ -170,6 +167,7 @@ class _DashboardWidgetsState extends State<DashboardWidgets> {
         BlocProvider(
           create: (context) => DashboardBloc(
             Get.find<FetchEmployeeInfoDashBoardController>(),
+
             id,
           )..add(DashboardBlocEventLoading()),
         ),
@@ -184,181 +182,6 @@ class _DashboardWidgetsState extends State<DashboardWidgets> {
             child: CircularProgressIndicator(color: white),
           );
         },
-      ),
-    );
-  }
-
-  Widget chartAndMostItemSold(
-    int touchedIndex,
-    List<Map<String, dynamic>> salesData,
-  ) {
-    return LayoutBuilder(
-      builder: (context, constraints) => Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Expanded(
-            child: Row(
-              children: [
-                SizedBox(
-                  height: size.height / 2,
-                  width: constraints.maxWidth * 0.30,
-                  child: PieChart(
-                    PieChartData(
-                      pieTouchData: PieTouchData(
-                        touchCallback: (FlTouchEvent event, pieTouchResponse) {
-                          setState(() {
-                            if (!event.isInterestedForInteractions ||
-                                pieTouchResponse == null ||
-                                pieTouchResponse.touchedSection == null) {
-                              touchedIndex = -1;
-                              return;
-                            }
-                            touchedIndex = pieTouchResponse
-                                .touchedSection!
-                                .touchedSectionIndex;
-                          });
-                        },
-                      ),
-                      centerSpaceRadius: 50,
-                      sectionsSpace: 3,
-                      sections: salesData.asMap().entries.map((entry) {
-                        final index = entry.key;
-                        final data = entry.value;
-                        final isTouched = index == touchedIndex;
-
-                        return PieChartSectionData(
-                          radius: isTouched ? 70 : 55,
-
-                          value: data['value'],
-                          color: data['color'],
-
-                          title: '${data['value'].toInt()}%',
-                          titleStyle: TextStyle(
-                            fontSize: isTouched ? 16 : 12,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
-
-                          badgeWidget: isTouched
-                              ? Icon(
-                                  Icons.phone_android,
-                                  color: Colors.white,
-                                  size: 16,
-                                )
-                              : null,
-                          badgePositionPercentageOffset: 1.2,
-                        );
-                      }).toList(),
-                    ),
-                  ),
-                ),
-                // sizeBoxWidth(size.width / 180),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: salesData.asMap().entries.map((entry) {
-                    final index = entry.key;
-                    final data = entry.value;
-                    final isTouched = index == touchedIndex;
-
-                    return Padding(
-                      padding: EdgeInsets.symmetric(vertical: 4),
-                      child: Row(
-                        children: [
-                          // Color dot
-                          AnimatedContainer(
-                            duration: Duration(milliseconds: 200),
-                            width: isTouched ? 14 : 10,
-                            height: isTouched ? 14 : 10,
-                            decoration: BoxDecoration(
-                              color: data['color'],
-                              shape: BoxShape.circle,
-                            ),
-                          ),
-                          SizedBox(width: 8),
-                          Text(
-                            '${data['label']}  ${data['value'].toInt()}%',
-                            style: TextStyle(
-                              color: isTouched ? Colors.white : Colors.white60,
-                              fontSize: 20,
-                              fontWeight: isTouched
-                                  ? FontWeight.bold
-                                  : FontWeight.normal,
-                            ),
-                          ),
-                        ],
-                      ),
-                    );
-                  }).toList(),
-                ),
-              ],
-            ),
-          ),
-          Container(
-            width: size.width * 0.30,
-            height: size.height * 0.50,
-            // margin: EdgeInsets.only(right: size.width * 0.03),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(6),
-              border: Border.all(color: white),
-            ),
-            child: SingleChildScrollView(
-              child: MultiBlocProvider(
-                providers: [
-                  BlocProvider(
-                    create: (context) =>
-                        ReportBloc(controller: Get.find<ReportController>())
-                          ..add(ReportBlocEventLoading()),
-                  ),
-                ],
-                child: BlocBuilder<ReportBloc, ReportBlocState>(
-                  builder: (context, state) {
-                    if (state is ReportBlocStateLoading) {
-                      return reportSectionLoading();
-                    } else if (state is ReportBlocStateError) {
-                      return SizedBox(
-                        height: size.height / 2.01,
-                        child: Center(
-                          child: Text(
-                            "Somthing went wrong!",
-                            style: textBodiesStyle2,
-                          ),
-                        ),
-                      );
-                    } else if (state is ReportBlocStateLoaded) {
-                      return Container(
-                        margin: EdgeInsets.symmetric(
-                          horizontal: size.width * 0.002,
-                          vertical: size.height * 0.002,
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              state.entities.title,
-                              style: GoogleFonts.aleo(
-                                fontSize: 24,
-                                color: white,
-                                fontWeight: FontWeight.w400,
-                              ),
-                            ),
-                            Text(
-                              state.entities.subTitle,
-                              style: GoogleFonts.aleo(
-                                color: white,
-                                fontWeight: FontWeight.w400,
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
-                    }
-                    return Container();
-                  },
-                ),
-              ),
-            ),
-          ),
-        ],
       ),
     );
   }
@@ -412,67 +235,335 @@ class _DashboardWidgetsState extends State<DashboardWidgets> {
   }
 }
 
-class RowOfReviewsSection extends StatelessWidget {
-  const RowOfReviewsSection({super.key});
+class ChartSectionWidget extends StatelessWidget {
+  const ChartSectionWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Container(
-          padding: const EdgeInsets.all(8.0),
-          decoration: BoxDecoration(
-            // color: green,
-            borderRadius: BorderRadius.circular(10),
-            border: Border.all(width: 1, color: white),
-          ),
-          child: Column(
-            mainAxisSize:
-                MainAxisSize.min, // Allows card to wrap its content tightly
-            children: [
-              Text(Revenues, style: textBodiesStyle),
-              Text(NumberOfRevenues, style: textBodiesStyle),
-            ],
-          ),
-        ),
-        sizeBoxWidth(size.width * 0.009),
-        Container(
-          padding: const EdgeInsets.all(8.0),
-          decoration: BoxDecoration(
-            // color: gold,
-            borderRadius: BorderRadius.circular(10),
-            border: Border.all(width: 1, color: white),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(Orders, style: textBodiesStyle),
-              Text(NumberOfOrders, style: textBodiesStyle),
-            ],
-          ),
-        ),
-        sizeBoxWidth(size.width * 0.009),
-        Container(
-          padding: const EdgeInsets.all(8.0),
-          decoration: BoxDecoration(
-            // color: pink,
-            borderRadius: BorderRadius.circular(10),
-            border: Border.all(
-              width: 1,
-              color: white,
-            ), // Fixed: Changed from BoxBorder.all
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(Visitors, style: textBodiesStyle),
-              Text(NumberOfVisitors, style: textBodiesStyle),
-            ],
-          ),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) => CategoryDashboardBloc(
+            Get.find<FetchCategoryDashboardController>(),
+          )..add(CategoryChartDashboardBlocEventLoading()),
         ),
       ],
+      child:
+          BlocBuilder<CategoryDashboardBloc, CategoryChartDashboardBlocState>(
+            builder: (context, state) {
+              if (state is CategoryChartDashboardBlocStateLoading) {
+                return loadingStateBodies();
+              } else if (state is CategoryChartDashboardBlocStateError) {
+                return Text(state.err, style: textBodiesStyle2);
+              } else if (state is CategoryChartDashboardBlocStateLoaded) {
+                final mappedSalesData =
+                    FetchCategoryDashboardController.mapCategoryAvgToSalesData(
+                      state.entities,
+                    );
+                if (mappedSalesData.isEmpty) {
+                  return Center(
+                    child: Text(
+                      "No sales data available per category",
+                      style: textBodiesStyle2,
+                    ),
+                  );
+                }
+                return InteractivePieChartSection(salesData: mappedSalesData);
+              }
+              return const SizedBox.shrink();
+            },
+          ),
+    );
+  }
+}
+
+class InteractivePieChartSection extends StatefulWidget {
+  final List<Map<String, dynamic>> salesData;
+
+  const InteractivePieChartSection({super.key, required this.salesData});
+
+  @override
+  State<InteractivePieChartSection> createState() =>
+      _InteractivePieChartSectionState();
+}
+
+class _InteractivePieChartSectionState
+    extends State<InteractivePieChartSection> {
+  int touchedIndex = -1;
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) => Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Expanded(
+            child: Row(
+              children: [chartPercentage(constraints), listOfChartsReviews()],
+            ),
+          ),
+          reportSection(),
+        ],
+      ),
+    );
+  }
+
+  Container reportSection() {
+    return Container(
+      width: size.width * 0.30,
+      height: size.height * 0.50,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(6),
+        border: Border.all(color: white),
+      ),
+      child: SingleChildScrollView(
+        child: MultiBlocProvider(
+          providers: [
+            BlocProvider(
+              create: (context) =>
+                  ReportBloc(controller: Get.find<ReportController>())
+                    ..add(ReportBlocEventLoading()),
+            ),
+          ],
+          child: BlocBuilder<ReportBloc, ReportBlocState>(
+            builder: (context, state) {
+              if (state is ReportBlocStateLoading) {
+                return reportSectionLoading();
+              } else if (state is ReportBlocStateError) {
+                return SizedBox(
+                  height: size.height / 2.01,
+                  child: Center(
+                    child: Text(
+                      "Somthing went wrong!",
+                      style: textBodiesStyle2,
+                    ),
+                  ),
+                );
+              } else if (state is ReportBlocStateLoaded) {
+                return Container(
+                  margin: EdgeInsets.symmetric(
+                    horizontal: size.width * 0.002,
+                    vertical: size.height * 0.002,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        state.entities.title,
+                        style: GoogleFonts.aleo(
+                          fontSize: 24,
+                          color: white,
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                      Text(
+                        state.entities.subTitle,
+                        style: GoogleFonts.aleo(
+                          color: white,
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }
+              return Container();
+            },
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget chartPercentage(BoxConstraints constraints) {
+    return SizedBox(
+      height: size.height / 2,
+      width: constraints.maxWidth * 0.30,
+      child: PieChart(
+        PieChartData(
+          pieTouchData: PieTouchData(
+            touchCallback: (FlTouchEvent event, pieTouchResponse) {
+              // int newIndex = -1;
+              if (!event.isInterestedForInteractions ||
+                  pieTouchResponse == null ||
+                  pieTouchResponse.touchedSection == null) {
+                if (touchedIndex != -1) {
+                  setState(() {
+                    touchedIndex = -1;
+                  });
+                }
+                return;
+              }
+
+              final newIndex =
+                  pieTouchResponse.touchedSection!.touchedSectionIndex;
+              if (newIndex != touchedIndex) {
+                setState(() {
+                  touchedIndex = newIndex;
+                });
+              }
+            },
+          ),
+          centerSpaceRadius: 50,
+          sectionsSpace: 3,
+          sections: widget.salesData.asMap().entries.map((entry) {
+            final index = entry.key;
+            final data = entry.value;
+            final isTouched = index == touchedIndex;
+
+            return PieChartSectionData(
+              radius: isTouched ? 70 : 55,
+
+              value: data['value'],
+              color: data['color'],
+
+              title: '${data['value'].toInt()}%',
+              titleStyle: TextStyle(
+                fontSize: isTouched ? 16 : 12,
+                fontWeight: FontWeight.bold,
+                color: white,
+              ),
+
+              badgeWidget: isTouched
+                  ? Icon(Icons.phone_android, color: white, size: 16)
+                  : null,
+              badgePositionPercentageOffset: 1.2,
+            );
+          }).toList(),
+        ),
+      ),
+    );
+  }
+
+  Column listOfChartsReviews() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: widget.salesData.asMap().entries.map((entry) {
+        final index = entry.key;
+        final data = entry.value;
+        final isTouched = index == touchedIndex;
+
+        return Padding(
+          padding: EdgeInsets.symmetric(vertical: 4),
+          child: Row(
+            children: [
+              // Color dot
+              AnimatedContainer(
+                duration: Duration(milliseconds: 200),
+                width: isTouched ? 14 : 10,
+                height: isTouched ? 14 : 10,
+                decoration: BoxDecoration(
+                  color: data['color'],
+                  shape: BoxShape.circle,
+                ),
+              ),
+              sizeBoxWidth(size.width * 0.008),
+              Text(
+                '${data['label']}  ${data['value'].toInt()}%',
+                style: TextStyle(
+                  color: isTouched ? white : lightGrey,
+                  fontSize: 20,
+                  fontWeight: isTouched ? FontWeight.bold : FontWeight.normal,
+                ),
+              ),
+            ],
+          ),
+        );
+      }).toList(),
+    );
+  }
+}
+
+class RowOfReviewsSection extends StatelessWidget {
+  final String id;
+  const RowOfReviewsSection({super.key, required this.id});
+
+  @override
+  Widget build(BuildContext context) {
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) => ReviewDashboardBloc(
+            Get.find<FetchReviewsInfoDashBoardController>(),
+          )..add(DashboardBlocEventLoading()),
+        ),
+      ],
+      child: BlocBuilder<ReviewDashboardBloc, ReviewDashboardBlocState>(
+        builder: (context, state) {
+          if (state is ReviewDashboardBlocStateLoading) {
+            return ReviewsSectionInfo(title: '', subTitle: 'Loading');
+          } else if (state is ReviewDashboardBlocStateError) {
+            return ReviewsSectionInfo(title: '', subTitle: 'Error');
+          } else if (state is ReviewDashboardBlocStateLoaded) {
+            final totalRev = state.entities
+                .fold<double>(
+                  0.0,
+                  (previousValue, element) =>
+                      previousValue + element.totalPrice,
+                )
+                .round()
+                .toString();
+            return Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8.0),
+                  decoration: BoxDecoration(
+                    // color: green,
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(width: 1, color: white),
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize
+                        .min, // Allows card to wrap its content tightly
+                    children: [
+                      Text(Revenues, style: textBodiesStyle),
+                      Text(totalRev, style: textBodiesStyle),
+                    ],
+                  ),
+                ),
+                sizeBoxWidth(size.width * 0.009),
+                ReviewsSectionInfo(
+                  title: Orders,
+                  subTitle: state.entities.length.toString(),
+                ),
+              ],
+            );
+          }
+          return Container();
+        },
+      ),
+    );
+  }
+}
+
+class ReviewsSectionInfo extends StatelessWidget {
+  final String title;
+  final String subTitle;
+  const ReviewsSectionInfo({
+    super.key,
+    required this.title,
+    required this.subTitle,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(8.0),
+      decoration: BoxDecoration(
+        // color: green,
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(width: 1, color: white),
+      ),
+      child: Column(
+        mainAxisSize:
+            MainAxisSize.min, // Allows card to wrap its content tightly
+        children: [
+          Text(title, style: textBodiesStyle),
+          Text(subTitle, style: textBodiesStyle),
+        ],
+      ),
     );
   }
 }
@@ -595,6 +686,7 @@ class AppDrawer extends StatelessWidget {
             BlocProvider(
               create: (context) => DashboardBloc(
                 Get.find<FetchEmployeeInfoDashBoardController>(),
+
                 id,
               )..add(DashboardBlocEventLoading()),
             ),

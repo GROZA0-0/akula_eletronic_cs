@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 class CartEntities extends Equatable {
   final String id;
   final String name;
+  final String category;
   final String brand;
   final String image;
   double price;
@@ -16,6 +17,7 @@ class CartEntities extends Equatable {
   CartEntities({
     required this.id,
     required this.name,
+    required this.category,
     required this.brand,
     required this.image,
     required this.price,
@@ -25,13 +27,14 @@ class CartEntities extends Equatable {
   double get totalPrice => price * quantity.value;
 
   @override
-  List<Object?> get props => [id, name, brand, image, price, quantity];
+  List<Object?> get props => [id, name, category,brand, image, price, quantity];
 
   Map<String, dynamic> toJson() {
     return {
       '_id': id,
       'pName': name,
-      'pBrand':brand,
+      'pCategory': category,
+      'pBrand': brand,
       'pImage': image,
       'pPrice': price,
       'pStock': stock,

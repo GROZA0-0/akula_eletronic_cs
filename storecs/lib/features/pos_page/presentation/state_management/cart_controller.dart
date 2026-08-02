@@ -39,6 +39,7 @@ class CartController extends GetxController {
         CartEntities(
           id: entities.id,
           name: entities.name,
+          category: entities.category,
           brand: entities.brand,
           image: entities.image,
           price: entities.price.toDouble(),

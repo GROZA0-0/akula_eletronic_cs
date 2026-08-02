@@ -41,6 +41,7 @@ class CartModel {
           id: item['id']?.toString() ?? item['_id']?.toString() ?? '',
 
           name: item['pName'] ?? item['name'] ?? '',
+          category: item['pCategory'] ?? item['pCategory'] ?? '',
 
           brand: item['pBrand'] ?? item['brand'] ?? '',
 
