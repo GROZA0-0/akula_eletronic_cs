@@ -6,7 +6,12 @@ import 'package:storecs/features/dash_board/domain/repository/category_dashboard
 class FetchCategoryDashboardController {
   final CategoryDashboardRepo repo;
   FetchCategoryDashboardController({required this.repo});
-  static const List<Color> colorPalette = [redColor, green, orange, blueColor];
+  static const List<Color> colorPalette = [
+    redColor,
+    greenColor,
+    orange,
+    blueColor,
+  ];
 
   Future<List<CategoryDashboardEntities>> fetchChartDashboard() async {
     try {

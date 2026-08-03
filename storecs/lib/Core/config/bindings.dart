@@ -82,7 +82,7 @@ class AppBindingsControllers extends Bindings {
         authDataSource: Get.find<AuthDataSource>(),
         employeeInfoDataSource: Get.find<EmployeeInfoDataSourceImplemter>(),
       ),
-      // permanent: true,
+      fenix: true,
     );
     /////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////
@@ -97,7 +97,7 @@ class AppBindingsControllers extends Bindings {
       () => EmployeeInfoImplement(
         dataSource: Get.find<EmployeeInfoDataSourceRepo>(),
       ),
-      /* fenix: true, */
+      fenix: true,
     );
 
     //////////////////////////////////////////////////////////
@@ -250,7 +250,7 @@ class AppBindingsControllers extends Bindings {
       () => FetchEmployeeInfoDashBoardController(
         repository: Get.find<EmployeeInfoRepo>(),
       ),
-      fenix: false,
+      fenix: true,
     );
     Get.put<StaffListController>(
       permanent: true,

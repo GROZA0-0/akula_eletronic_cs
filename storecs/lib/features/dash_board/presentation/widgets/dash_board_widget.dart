@@ -177,10 +177,7 @@ class _DashboardWidgetsState extends State<DashboardWidgets> {
           if (empState is DashboardBlocStateLoaded) {
             return QuickActionsSection(employee: empState.enitities);
           }
-          return const Padding(
-            padding: EdgeInsets.all(16.0),
-            child: CircularProgressIndicator(color: white),
-          );
+          return Container();
         },
       ),
     );
@@ -383,7 +380,6 @@ class _InteractivePieChartSectionState
         PieChartData(
           pieTouchData: PieTouchData(
             touchCallback: (FlTouchEvent event, pieTouchResponse) {
-              // int newIndex = -1;
               if (!event.isInterestedForInteractions ||
                   pieTouchResponse == null ||
                   pieTouchResponse.touchedSection == null) {
@@ -490,9 +486,7 @@ class RowOfReviewsSection extends StatelessWidget {
       ],
       child: BlocBuilder<ReviewDashboardBloc, ReviewDashboardBlocState>(
         builder: (context, state) {
-          if (state is ReviewDashboardBlocStateLoading) {
-            return ReviewsSectionInfo(title: '', subTitle: 'Loading');
-          } else if (state is ReviewDashboardBlocStateError) {
+          if (state is ReviewDashboardBlocStateError) {
             return ReviewsSectionInfo(title: '', subTitle: 'Error');
           } else if (state is ReviewDashboardBlocStateLoaded) {
             final totalRev = state.entities

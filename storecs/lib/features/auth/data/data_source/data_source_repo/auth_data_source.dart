@@ -36,9 +36,9 @@ class AuthDataSource {
         print('New account ID: ${addEmp.user?.uid}');
         return addEmp;
       } finally {
-        // ✅ Delete secondary app
+        /* Delete secondary app */
         await secondaryApp.delete();
-        print('✅ Secondary app deleted');
+        print('Secondary app deleted');
       }
     });
   }

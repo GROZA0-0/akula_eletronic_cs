@@ -40,24 +40,47 @@ class SignInBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
-        sizeBoxHeight(size.height * 0.05),
-        emailTextField(),
-        sizeBoxHeight(size.height * 0.05),
-        passwordTextField(),
-        sizeBoxHeight(size.height * 0.1),
-        signbutton(),
+        Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(100),
+              child: SizedBox(child: Image.asset('assets/images/app_icon.ico')),
+            ),
+            Text(
+              "akula",
+              style: GoogleFonts.pixelifySans(
+                color: white,
+                fontSize: 30,
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+          ],
+        ),
+        Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            sizeBoxHeight(size.height * 0.05),
+            emailTextField(),
+            sizeBoxHeight(size.height * 0.05),
+            passwordTextField(),
+            sizeBoxHeight(size.height * 0.1),
+            signbutton(),
+          ],
+        ),
       ],
     );
   }
 
   Container signbutton() {
     return Container(
-      width: size.width,
+      width: size.width * 0.3,
       margin: EdgeInsets.symmetric(horizontal: size.width * 0.03),
       child: ElevatedButton(
-        onPressed: ()  =>  signInController.signInTrigger(),
+        onPressed: () => signInController.signInTrigger(),
         child: Text(
           "Continue",
           style: GoogleFonts.aleo(color: black, fontWeight: FontWeight.w400),
@@ -69,6 +92,7 @@ class SignInBody extends StatelessWidget {
   Container passwordTextField() {
     return Container(
       margin: EdgeInsets.symmetric(horizontal: size.width * 0.025),
+      width: size.width * 0.3,
       child: TextFormField(
         controller: signInController.password,
         obscureText: true,
@@ -111,11 +135,10 @@ class SignInBody extends StatelessWidget {
   Container emailTextField() {
     return Container(
       margin: EdgeInsets.symmetric(horizontal: size.width * 0.025),
+      width: size.width * 0.3,
       child: TextFormField(
         controller: signInController.email,
         style: textBodiesStyle,
-        // obscureText: passVisible,
-        // validator: validator,
         decoration: InputDecoration(
           labelText: "Email",
           labelStyle: GoogleFonts.aleo(
