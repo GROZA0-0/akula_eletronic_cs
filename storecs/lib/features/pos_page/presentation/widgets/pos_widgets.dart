@@ -322,7 +322,7 @@ class CartSection extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      "${receipt?.totalPrice} JOD",
+                      "${receipt?.totalPrice.toStringAsFixed(2)} JOD",
                       style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
@@ -365,27 +365,31 @@ class CartSection extends StatelessWidget {
 
   void printReceiptToConsole(ListOfItemsPurchasedEntities receipt) {
     print("========================================");
-    print("           RECEIPT: ${receipt.orderId}");
+    print("         RECEIPT: ${receipt.orderId}");
     print("========================================");
-    print("${'ITEM'.padRight(25)} ${'PRICE'.padLeft(10)}");
+    // Column Headers: 22 chars for ITEM, 4 chars for QTY, 14 chars for PRICE (Total: 40)
+    print("${'ITEM'.padRight(22)} ${'QTY'.padRight(4)} ${'PRICE'.padLeft(12)}");
     print("----------------------------------------");
 
-    /* make a loop for items of the order then diplay it */
     for (final item in receipt.items) {
-      String name = item.name.length > 24
-          ? "${item.name.substring(0, 21)}..."
+      // Truncate long names to 20 chars max to fit within padRight(22)
+      String name = item.name.length > 20
+          ? "${item.name.substring(0, 17)}..."
           : item.name;
-      int qty = item.quantity.value;
 
-      String priceStr = "${item.price.toStringAsFixed(2)} JOD";
+      String formattedName = name.padRight(22);
+      String formattedQty = "x${item.quantity.value}".padRight(4);
+      String priceStr = "${item.price.toStringAsFixed(2)} JOD".padLeft(12);
 
-      print("$name ${qty.toString()} ${priceStr.padLeft(25)}");
+      print("$formattedName $formattedQty $priceStr");
     }
 
     print("----------------------------------------");
-    print(
-      "${'TOTAL:'.padRight(25)} ${'${receipt.totalPrice.toStringAsFixed(2)} JOD'.padLeft(10)}",
-    );
+    String formattedTotalLabel = "TOTAL:".padRight(27);
+    String formattedTotalPrice = "${receipt.totalPrice.toStringAsFixed(2)} JOD"
+        .padLeft(12);
+
+    print("$formattedTotalLabel $formattedTotalPrice");
     print("========================================");
   }
 
@@ -571,7 +575,7 @@ class CartItemWidget extends StatelessWidget {
               ),
 
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: 8),
+                padding: EdgeInsets.symmetric(horizontal: size.width * 0.008),
                 child: Text("${item.quantity}", style: textBodiesStyle),
               ),
 

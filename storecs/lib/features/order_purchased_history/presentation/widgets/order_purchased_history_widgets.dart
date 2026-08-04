@@ -142,7 +142,7 @@ class ListSoldOrderData extends StatelessWidget {
                   SizedBox(
                     width: size.width,
                     child: Text(
-                      'Total Price: ${order.totalPrice} JOD',
+                      'Total Price: ${order.totalPrice.toStringAsFixed(2)} JOD',
                       style: GoogleFonts.aleo(fontSize: 20, color: white),
                     ),
                   ),
@@ -187,7 +187,7 @@ class ListSoldOrderData extends StatelessWidget {
                             sizeBoxWidth(size.width * 0.002),
                             Expanded(
                               child: Text(
-                                "${item.brand} ${item.name}",
+                                "${item.brand} ${item.name} x${item.quantity}",
                                 style: GoogleFonts.aleo(
                                   fontSize: 14,
                                   color: white,

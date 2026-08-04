@@ -32,8 +32,8 @@ class CartController extends GetxController {
       (element) => element.id == entities.id,
     );
     if (existItem != -1) {
-      cartItems[existItem].quantity.value++;
-      cartItems.refresh();
+      alerts.ifErrors('Item has already add to the cart.');
+      return;
     } else {
       cartItems.add(
         CartEntities(
@@ -47,7 +47,7 @@ class CartController extends GetxController {
           initialQuantity: 1,
         ),
       );
-      alerts.ifSuccess('Product has been added successfully');
+      alerts.ifSuccess('Product has been added successfully.');
       // print('Added to cart: ${entities.name}');
     }
   }
@@ -58,14 +58,33 @@ class CartController extends GetxController {
 
   void increaseQty(String id) {
     final index = cartItems.indexWhere((element) => element.id == id);
-    if (index != -1) {
-      if (cartItems[index].quantity.value < cartItems[index].stock) {
-        /* use to check if the qty selection reached the limit of stocks or not  */
-        cartItems[index].quantity.value++;
-        cartItems.refresh();
-      } else {
-        alerts.ifErrors('No more stock available!');
-      }
+    final price = cartItems[index].price;
+    /* actual qty */
+    final availableStock = cartItems[index].stock;
+    int maxLimitByPrice =
+        0; /* default limit, will change based on price size */
+    if (price >= 350) {
+      maxLimitByPrice = 1;
+    } else if (price >= 100) {
+      maxLimitByPrice = 2;
+    } else if (price >= 50) {
+      maxLimitByPrice = 3;
+    } else {
+      maxLimitByPrice = 4;
+    }
+    /* increase qty each time the user click on increasing */
+    final nextQuantity = cartItems[index].quantity.value + 1;
+    /* check if the qty that user asked for more then that stored in DB */
+    if (nextQuantity > availableStock) {
+      alerts.ifErrors('No more stock available!');
+      /* check if the qty that user asked for reached to the limit */
+    } else if (nextQuantity > maxLimitByPrice) {
+      alerts.ifErrors(
+        'You have reached the purchase limit of $maxLimitByPrice for this item.',
+      );
+    } else {
+      cartItems[index].quantity.value++;
+      cartItems.refresh();
     }
   }
 
@@ -96,11 +115,11 @@ class CartController extends GetxController {
         total,
       );
       print(
-        "Sending ${cartItems.length} items with order ID: '${controller.text}'",
+        "Sending ${cartItems.length} items with order ID: '${controller.text}'.",
       );
       purchasedReceipt = result;
       cartItems.clear();
-      alerts.ifSuccess('Purchase Successfully');
+      alerts.ifSuccess('Purchase Successfully.');
     } on PlatformException catch (e) {
       print('The Error Is: ${e.message.toString()}');
       alerts.ifErrors(e.message.toString());

@@ -15,7 +15,7 @@ class Permissions {
   bool get empPagesAccCondition =>
       cashierAccess ||
       salesAccess ||
-      supervisorAccess ||
+      /* supervisorAccess || */
       qaAccess ||
       accAccess ||
       whAccess;

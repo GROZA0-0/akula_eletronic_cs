@@ -51,7 +51,7 @@ class SignInBody extends StatelessWidget {
               child: SizedBox(child: Image.asset('assets/images/app_icon.ico')),
             ),
             Text(
-              "akula",
+              "Akula",
               style: GoogleFonts.pixelifySans(
                 color: white,
                 fontSize: 30,

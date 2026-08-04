@@ -349,7 +349,7 @@ void showProductsModal(BuildContext context, String categoryName) {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  "Price: ${product.price.toDouble()} JOD",
+                                  "Price: ${product.price} JOD",
                                   style: GoogleFonts.aleo(
                                     color: grey,
                                     fontWeight: FontWeight.w400,

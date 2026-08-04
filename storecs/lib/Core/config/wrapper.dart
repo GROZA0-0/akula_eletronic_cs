@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
-import 'package:storecs/Core/config/call_controller.dart';
+
 import 'package:storecs/Features/auth/presentation/pages/sign_in_page.dart';
 import 'package:storecs/Core/Styles/Colors.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
@@ -33,7 +33,6 @@ class _WrapperState extends State<Wrapper> {
     time = null;
   }
 
-  /*  */
   Future<void> signOut() async {
     cancelInactivityTimer();
     final user = FirebaseAuth.instance.currentUser;
