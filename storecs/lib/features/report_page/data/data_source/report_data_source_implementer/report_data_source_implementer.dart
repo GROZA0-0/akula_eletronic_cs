@@ -45,9 +45,9 @@ class ReportDataSourceImplementer implements ReportDataSourceRepository {
   }
 
   @override
-  Future<ReportModel> toGetSupervisorReportDataSourceRepo(String id) async {
-    final getReport = '${Env.baseURL}getSupervisorReportRoute/$id';
-    print("HITTING URL: $getReport");
+  Future<ReportModel> toGetSupervisorReportDataSourceRepo(String level) async {
+    final getReport = '${Env.baseURL}getSupervisorReportRoute/$level';
+    /* print("HITTING URL: $getReport"); */
     final res = await dio.get(
       getReport,
       options: Options(validateStatus: (status) => status! < 600),

@@ -9,5 +9,5 @@ abstract class ReportRepository {
     String reportTitle,
     String reportSubTitle,
   );
-  Future<GetReportOfSupervisorEntities> getReportRepository(String id);
+  Future<GetReportOfSupervisorEntities> getReportRepository(String level);
 }

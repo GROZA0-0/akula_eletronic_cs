@@ -38,6 +38,4 @@ class Permissions {
       hrAccess ||
       cashierAccess ||
       whAccess;
-
-  final reportPer = 'MPtdEpBYCMaUnyv33bZbl2ryTov2';
 }

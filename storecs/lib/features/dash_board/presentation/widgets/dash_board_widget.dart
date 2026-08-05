@@ -306,6 +306,7 @@ class _InteractivePieChartSectionState
   }
 
   Container reportSection() {
+    final userLevel = fetchEmployeeInfoDashBoardController.blocEntities.level;
     return Container(
       width: size.width * 0.30,
       height: size.height * 0.50,
@@ -318,8 +319,11 @@ class _InteractivePieChartSectionState
           providers: [
             BlocProvider(
               create: (context) =>
-                  ReportBloc(controller: Get.find<ReportController>())
-                    ..add(ReportBlocEventLoading()),
+                  ReportBloc(controller: Get.find<ReportController>())..add(
+                    ReportBlocEventLoading(
+                      level: userLevel.isNotEmpty ? userLevel : 'Supervisor',
+                    ),
+                  ),
             ),
           ],
           child: BlocBuilder<ReportBloc, ReportBlocState>(

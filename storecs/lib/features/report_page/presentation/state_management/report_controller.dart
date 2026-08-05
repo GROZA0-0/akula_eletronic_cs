@@ -37,6 +37,15 @@ class ReportController extends GetxController {
   );
 
   Future<void> storeReport() async {
+    String employeeLevel =
+        fetchEmployeeInfoDashBoardController.blocEntities.level;
+    if (employeeLevel.trim().isEmpty) {
+      /* check if the level is Supervisor or not*/
+      employeeLevel = perEntities.level.isNotEmpty
+          ? perEntities.level
+          : 'Supervisor';
+    }
+    print('is supervisor? $employeeLevel');
     if (title.text.isEmpty || subTitle.text.isEmpty) {
       final error = 'Please insert the require fields.';
       alerts.ifErrors(error);
@@ -47,11 +56,10 @@ class ReportController extends GetxController {
         await repository.reportRepository(
           id,
           email!,
-          fetchEmployeeInfoDashBoardController.blocEntities.level,
+          employeeLevel,
           title.text.trim(),
           subTitle.text.trim(),
         );
-        // empEntities = data;
         clearUi();
         alerts.ifSuccess(report);
       } on PlatformException catch (e) {
@@ -68,9 +76,9 @@ class ReportController extends GetxController {
     }
   }
 
-  Future<GetReportOfSupervisorEntities> getSuperReport(String id) async {
+  Future<GetReportOfSupervisorEntities> getSuperReport(String level) async {
     try {
-      final theReport = await repository.getReportRepository(id);
+      final theReport = await repository.getReportRepository(level);
       entities.value = theReport;
       return entities.value;
     } on PlatformException catch (e) {

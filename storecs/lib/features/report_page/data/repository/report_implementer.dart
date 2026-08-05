@@ -30,10 +30,10 @@ class ReportImplementer implements ReportRepository {
   }
 
   @override
-  Future<GetReportOfSupervisorEntities> getReportRepository(String id) async {
+  Future<GetReportOfSupervisorEntities> getReportRepository(String level) async {
     try {
       final model = await reportDataSourceRepository
-          .toGetSupervisorReportDataSourceRepo(id);
+          .toGetSupervisorReportDataSourceRepo(level);
       return model.toGetReportOfSupervisorEntities();
     } catch (e) {
       print("any errors in ReportImplementer  $e");

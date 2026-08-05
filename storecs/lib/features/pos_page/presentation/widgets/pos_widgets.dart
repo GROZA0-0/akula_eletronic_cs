@@ -296,7 +296,7 @@ class CartSection extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              '${item.name} (${item.quantity})',
+                              '${item.name} x${item.quantity}',
                               style: const TextStyle(color: white),
                             ),
                             Text(
@@ -309,7 +309,7 @@ class CartSection extends StatelessWidget {
                     },
                   ),
                 ),
-                const Divider(color: csGrey, height: 20),
+                Divider(color: white, height: size.height * 0.02),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -336,6 +336,7 @@ class CartSection extends StatelessWidget {
                   borderRadius: BorderRadius.circular(10),
                   onTap: () => printReceiptToConsole(receipt!),
                   child: Container(
+                    margin: EdgeInsets.only(top: size.height * 0.15),
                     width: size.width / 4,
                     height: size.height * 0.07,
                     decoration: BoxDecoration(
