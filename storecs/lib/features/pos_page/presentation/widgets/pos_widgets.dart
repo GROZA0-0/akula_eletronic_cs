@@ -508,100 +508,102 @@ class CartItemWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print('item with category ${item.category}');
-    return Container(
-      margin: EdgeInsets.symmetric(
-        horizontal: size.width * 0.008,
-        vertical: size.height * 0.006,
-      ),
-      padding: EdgeInsets.all(8),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: white.withOpacity(0.3)),
-      ),
-      child: Row(
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(8),
-            child: item.image.isNotEmpty
-                ? Image.memory(
-                    base64Decode(item.image),
-                    width: 45,
-                    height: 45,
-                    fit: BoxFit.contain,
-                  )
-                : Icon(Icons.phone_android, color: white, size: 45),
-          ),
+    // print('item with category ${item.category}');
+    return FadeInLeft(
+      child: Container(
+        margin: EdgeInsets.symmetric(
+          horizontal: size.width * 0.008,
+          vertical: size.height * 0.006,
+        ),
+        padding: EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: orange),
+        ),
+        child: Row(
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: item.image.isNotEmpty
+                  ? Image.memory(
+                      base64Decode(item.image),
+                      width: 45,
+                      height: 45,
+                      fit: BoxFit.contain,
+                    )
+                  : Icon(Icons.phone_android, color: white, size: 45),
+            ),
 
-          sizeBoxWidth(size.width * 0.005),
+            sizeBoxWidth(size.width * 0.005),
 
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    color: invisible,
+                    child: Text(
+                      "${item.brand}-${item.name}",
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: textBodiesStyle,
+                    ),
+                  ),
+                  Text(
+                    item.category,
+                    style: TextStyle(color: csGrey, fontSize: 10),
+                  ),
+                  Text(
+                    '${item.price} JOD',
+                    style: TextStyle(color: greenColor, fontSize: 12),
+                  ),
+                ],
+              ),
+            ),
+
+            Row(
               children: [
-                Container(
-                  color: invisible,
-                  child: Text(
-                    "${item.brand}-${item.name}",
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: textBodiesStyle,
+                GestureDetector(
+                  onTap: () => cartController.decreaseQty(item.id),
+                  child: Container(
+                    width: 24,
+                    height: 24,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(color: white),
+                    ),
+                    child: Icon(Icons.remove, color: white, size: 14),
                   ),
                 ),
-                Text(
-                  item.category,
-                  style: TextStyle(color: csGrey, fontSize: 10),
+
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: size.width * 0.008),
+                  child: Text("${item.quantity}", style: textBodiesStyle),
                 ),
-                Text(
-                  '${item.price} JOD',
-                  style: TextStyle(color: greenColor, fontSize: 12),
+
+                GestureDetector(
+                  onTap: () => cartController.increaseQty(item.id),
+                  child: Container(
+                    width: 24,
+                    height: 24,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(color: white),
+                    ),
+                    child: Icon(Icons.add, color: white, size: 14),
+                  ),
                 ),
               ],
             ),
-          ),
 
-          Row(
-            children: [
-              GestureDetector(
-                onTap: () => cartController.decreaseQty(item.id),
-                child: Container(
-                  width: 24,
-                  height: 24,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(color: white),
-                  ),
-                  child: Icon(Icons.remove, color: white, size: 14),
-                ),
-              ),
+            sizeBoxWidth(size.width * 0.004),
 
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: size.width * 0.008),
-                child: Text("${item.quantity}", style: textBodiesStyle),
-              ),
-
-              GestureDetector(
-                onTap: () => cartController.increaseQty(item.id),
-                child: Container(
-                  width: 24,
-                  height: 24,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(color: white),
-                  ),
-                  child: Icon(Icons.add, color: white, size: 14),
-                ),
-              ),
-            ],
-          ),
-
-          sizeBoxWidth(size.width * 0.004),
-
-          GestureDetector(
-            onTap: () => cartController.removeItem(item.id),
-            child: Icon(Icons.close, color: redColor, size: 18),
-          ),
-        ],
+            GestureDetector(
+              onTap: () => cartController.removeItem(item.id),
+              child: Icon(Icons.close, color: redColor, size: 18),
+            ),
+          ],
+        ),
       ),
     );
   }
