@@ -23,6 +23,11 @@ import 'package:storecs/features/dash_board/domain/repository/review_repo.dart';
 import 'package:storecs/features/dash_board/presentation/state_management/fetch_category_dashboard_controller.dart';
 import 'package:storecs/features/dash_board/presentation/state_management/fetch_employee_info_dash_board_controller.dart';
 import 'package:storecs/features/dash_board/presentation/state_management/fetch_reviews_info_dash_board_controller.dart';
+import 'package:storecs/features/issues_or_suggestions/data/data_source/feedback_data_source_implementer/feedback_data_source_implementer.dart';
+import 'package:storecs/features/issues_or_suggestions/data/data_source/feedback_data_source_repo/feedback_data_source_repo.dart';
+import 'package:storecs/features/issues_or_suggestions/data/repository/feedback_implementer.dart';
+import 'package:storecs/features/issues_or_suggestions/domain/repository/feedback_repository.dart';
+import 'package:storecs/features/issues_or_suggestions/presentation/state_management/feedback_controller.dart';
 import 'package:storecs/features/order_purchased_history/data/data_source/order_purchased_history_data_source_implementer/order_purchased_history_data_source_implementer.dart';
 import 'package:storecs/features/order_purchased_history/data/data_source/order_purchased_history_data_source_repo/order_purchased_history_data_source_repo.dart';
 import 'package:storecs/features/order_purchased_history/data/repository/order_purchased_history_implementer.dart';
@@ -231,6 +236,16 @@ class AppBindingsControllers extends Bindings {
     //////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////
+    Get.lazyPut<FeedbackDataSourceRepo>(
+      () => FeedbackDataSourceImplementer(dio: dio),
+    );
+    Get.lazyPut<FeedbackRepository>(
+      () => FeedbackImplementer(Get.find<FeedbackDataSourceRepo>()),
+    );
+    //////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////
 
     Get.lazyPut<SignInController>(
       () => SignInController(Get.find<AuthRepo>()),
@@ -285,6 +300,9 @@ class AppBindingsControllers extends Bindings {
       () => FetchCategoryDashboardController(
         repo: Get.find<CategoryDashboardRepo>(),
       ),
+    );
+    Get.lazyPut<FeedbackController>(
+      () => FeedbackController(repository: Get.find<FeedbackRepository>()),
     );
   }
 }

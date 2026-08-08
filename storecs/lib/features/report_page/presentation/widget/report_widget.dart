@@ -66,9 +66,9 @@ class _ReportWidgetState extends State<ReportWidget> {
             borderRadius: BorderRadius.circular(10),
           ),
           width: size.width * 0.4,
-          height: size.height * 0.05,
+          height: size.height * 0.07,
           child: Center(
-            child: Text("Create an Account", style: textStyleForButtons(24)),
+            child: Text("Create an Report", style: textStyleForButtons(24)),
           ),
         ),
       ),

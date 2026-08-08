@@ -25,6 +25,7 @@ import 'package:storecs/features/dash_board/presentation/state_management/dashbo
 import 'package:storecs/features/dash_board/presentation/state_management/fetch_category_dashboard_controller.dart';
 import 'package:storecs/features/dash_board/presentation/state_management/fetch_employee_info_dash_board_controller.dart';
 import 'package:storecs/features/dash_board/presentation/state_management/fetch_reviews_info_dash_board_controller.dart';
+import 'package:storecs/features/issues_or_suggestions/presentation/page/issues_or_suggestions_page.dart';
 import 'package:storecs/features/order_purchased_history/presentation/pages/order_purchased_history.dart';
 import 'package:storecs/features/pos_page/presentation/page/pos_page.dart';
 import 'package:storecs/features/product_list/presentation/pages/product_list.dart';
@@ -658,7 +659,12 @@ class QuickActionsSection extends StatelessWidget {
           children: [
             Text(DoYouHaveAnyIssueOrSuggestionsText, style: textBodiesStyle),
             sizeBoxWidth(size.width * 0.0040),
-            GestureDetector(
+            InkWell(
+              onTap: () => Get.to(
+                () => GradientBackground(child: IssuesOrSuggestionsPage()),
+                transition: feedbacktNaviRoute,
+                preventDuplicates: false,
+              ),
               child: Text(ClickHereText, style: TextStyle(color: grey)),
             ),
           ],

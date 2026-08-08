@@ -4,6 +4,7 @@ import 'package:storecs/features/auth/presentation/state_management/sign_out_con
 import 'package:storecs/features/auth/presentation/state_management/sign_up_controller.dart';
 import 'package:storecs/features/dash_board/presentation/state_management/fetch_category_dashboard_controller.dart';
 import 'package:storecs/features/dash_board/presentation/state_management/fetch_employee_info_dash_board_controller.dart';
+import 'package:storecs/features/issues_or_suggestions/presentation/state_management/feedback_controller.dart';
 import 'package:storecs/features/order_purchased_history/presentation/state_management/order_purchased_history_controller.dart';
 import 'package:storecs/features/pos_page/presentation/state_management/cart_controller.dart';
 import 'package:storecs/features/pos_page/presentation/state_management/pos_controller.dart';
@@ -27,3 +28,4 @@ final returnAndRefundController = Get.find<ReturnAndRefundController>();
 final reportController = Get.find<ReportController>();
 final fetchCategoryDashboardController =
     Get.find<FetchCategoryDashboardController>();
+final feedbackController = Get.find<FeedbackController>();

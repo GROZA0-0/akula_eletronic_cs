@@ -129,3 +129,4 @@ Widget reportSectionLoading() {
 }
 
 final naviStyleToAnotherPage = Transition.rightToLeftWithFade;
+final feedbacktNaviRoute = Transition.downToUp;
