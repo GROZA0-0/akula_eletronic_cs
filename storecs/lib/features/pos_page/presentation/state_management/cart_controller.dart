@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:storecs/Core/styles/alerts.dart';
@@ -22,7 +21,6 @@ class CartController extends GetxController {
       cartItems.fold(0, (sum, item) => sum + item.quantity.value);
   ListOfItemsPurchasedEntities? purchasedReceipt;
   final Alerts alerts = Alerts(messengerKey);
-  final TextEditingController controller = TextEditingController();
   void addToCart(PosEntities entities) {
     /*  print('Adding product ID: ${entities.id}');
     print(
@@ -113,9 +111,6 @@ class CartController extends GetxController {
       final result = await repo.toListOfItemsPurchasedEntities(
         cartItems,
         total,
-      );
-      print(
-        "Sending ${cartItems.length} items with order ID: '${controller.text}'.",
       );
       purchasedReceipt = result;
       cartItems.clear();

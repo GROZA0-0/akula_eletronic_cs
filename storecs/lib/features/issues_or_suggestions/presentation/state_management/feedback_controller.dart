@@ -59,8 +59,8 @@ class FeedbackController {
   }
 
   void clearUi() {
-    selectedIssueCategories.value == null;
-    selectedSeverity.value == null;
+    selectedIssueCategories.value.isEmpty;
+    selectedSeverity.value.isEmpty;
     note.clear();
   }
 }
