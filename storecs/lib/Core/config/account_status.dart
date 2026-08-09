@@ -15,9 +15,6 @@ extension UserAccountStatusExtension on UserAccountStatus {
         return redColor;
       case UserAccountStatus.offline:
         return colorGrey;
-
-      default:
-        return deepViolet;
     }
   }
 
@@ -31,8 +28,6 @@ extension UserAccountStatusExtension on UserAccountStatus {
         return 'Busy';
       case UserAccountStatus.offline:
         return 'Offline';
-      default:
-        return 'Update';
     }
   }
 }
