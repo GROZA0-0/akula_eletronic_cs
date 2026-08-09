@@ -1,3 +1,4 @@
+import 'package:storecs/Core/config/account_status.dart';
 import 'package:storecs/features/staff_list/domain/entities/staff_list_entities.dart';
 
 class StaffListModel {
@@ -7,6 +8,7 @@ class StaffListModel {
   final String phone;
   final String pic;
   final String level;
+  final UserAccountStatus empStatus;
 
   StaffListModel({
     required this.id,
@@ -15,6 +17,7 @@ class StaffListModel {
     required this.phone,
     required this.pic,
     required this.level,
+    this.empStatus = UserAccountStatus.offline,
   });
 
   Map<String, dynamic> toJson() {
@@ -25,6 +28,7 @@ class StaffListModel {
       "empPhone": phone,
       "empPic": pic,
       "empLvl": level,
+      "empStatus": empStatus,
     };
   }
 
@@ -36,10 +40,12 @@ class StaffListModel {
       phone: '',
       pic: '',
       level: '',
+      empStatus: UserAccountStatus.offline,
     );
   }
 
   factory StaffListModel.fromBackEnd(Map<String, dynamic> map) {
+    final statusString = map['empStatus']?.toString().toLowerCase();
     return StaffListModel(
       id: map['_id'],
       email: map['empEmail'],
@@ -47,6 +53,10 @@ class StaffListModel {
       phone: map['empPhone'],
       pic: map['empPic'],
       level: map['empLvl'],
+      empStatus: UserAccountStatus.values.firstWhere(
+        (element) => element.name.toLowerCase() == statusString,
+        orElse: () => UserAccountStatus.offline,
+      ),
     );
   }
   StaffListEntities toStaffListEntities() {
@@ -56,6 +66,7 @@ class StaffListModel {
       phone: phone,
       pic: pic,
       level: level,
+      empStatus: empStatus,
     );
   }
 }

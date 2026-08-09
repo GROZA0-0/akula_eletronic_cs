@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:storecs/Core/Styles/alerts.dart';
+import 'package:storecs/Core/config/account_status.dart';
 import 'package:storecs/Core/config/call_controller.dart';
 
 import 'package:storecs/Core/styles/Strings.dart';
@@ -90,6 +91,7 @@ class _StaffListWidgetsState extends State<StaffListWidgets> {
       physics: const BouncingScrollPhysics(),
       itemCount: list.length,
       itemBuilder: (context, index) {
+        final currentStatus = state.entities;
         return Column(
           children: [
             Container(
@@ -128,6 +130,20 @@ class _StaffListWidgetsState extends State<StaffListWidgets> {
                       style: textBodiesStyle,
                     ),
                   ),
+
+                  Container(
+                    height: size.height * 0.03,
+                    clipBehavior: Clip.none,
+                    child: Container(
+                      width: size.width * 0.02,
+                      height: size.height * 0.02,
+                      decoration: BoxDecoration(
+                        color: currentStatus[index].empStatus.color,
+                        shape: BoxShape.circle,
+                        border: Border.all(color: white, width: 2),
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -151,7 +167,8 @@ class _StaffListWidgetsState extends State<StaffListWidgets> {
           // sizeBoxWidth(size.width * 0.165),
           Text('Employee Phone', style: textBodiesStyle),
           // sizeBoxWidth(size.width * 0.165),
-          Text('Employee department', style: textBodiesStyle),
+          Text('Employee Department', style: textBodiesStyle),
+          Text('Employee Status', style: textBodiesStyle),
         ],
       ),
     );

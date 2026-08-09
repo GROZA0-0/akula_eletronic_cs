@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:animate_do/animate_do.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -9,9 +8,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:storecs/Core/Styles/Colors.dart';
 import 'package:storecs/Core/Styles/Strings.dart';
-
 import 'package:fl_chart/fl_chart.dart';
 import 'package:storecs/Core/Styles/themes.dart';
+import 'package:storecs/Core/config/account_status.dart';
 import 'package:storecs/Core/config/call_controller.dart';
 import 'package:storecs/Core/config/permissions.dart';
 import 'package:storecs/Core/styles/animations.dart';
@@ -32,10 +31,8 @@ import 'package:storecs/features/product_list/presentation/pages/product_list.da
 import 'package:storecs/features/report_page/presentation/page/report_page.dart';
 import 'package:storecs/features/report_page/presentation/state_management/report_bloc/report_bloc.dart';
 import 'package:storecs/features/report_page/presentation/state_management/report_bloc/report_bloc_event.dart';
-
 import 'package:storecs/features/report_page/presentation/state_management/report_bloc/report_bloc_state.dart';
 import 'package:storecs/features/report_page/presentation/state_management/report_controller.dart';
-
 import 'package:storecs/features/returns&refunds/presentation/page/returns_and_refunds_page.dart';
 import 'package:storecs/features/settings_page/presentation/page/settings_page.dart';
 import 'package:storecs/features/staff_list/presentation/page/staff_list.dart';
@@ -138,12 +135,12 @@ class _DashboardWidgetsState extends State<DashboardWidgets> {
               final emp = empState.enitities;
               return FadeInRight(
                 child: Container(
-                  margin: EdgeInsets.symmetric(horizontal: size.width * 0.04),
+                  margin: EdgeInsets.symmetric(horizontal: size.width * 0.03),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      Text(emp.name, style: textBodiesStyle),
-                      // sizeBoxWidth(size.width * 0.003),
+                      userStatusCircularAvatar(emp.id),
+                      userAccountName(emp),
                       buildProfileImage(emp.userPic),
                     ],
                   ),
@@ -159,6 +156,96 @@ class _DashboardWidgetsState extends State<DashboardWidgets> {
         ),
       ),
     );
+  }
+
+  Text userAccountName(EmployeeInfoEntities emp) =>
+      Text(emp.name, style: textBodiesStyle);
+
+  BlocBuilder<DashboardBloc, DashboardBlocState> userStatusCircularAvatar(
+    String id,
+  ) {
+    return BlocBuilder<DashboardBloc, DashboardBlocState>(
+      builder: (context, state) {
+        if (state is DashboardBlocStateLoading) {
+          return Container(
+            width: size.width * 0.02,
+            height: size.height * 0.02,
+            decoration: BoxDecoration(
+              color: colorGrey,
+              shape: BoxShape.circle,
+              border: Border.all(color: white, width: 2),
+            ),
+          );
+        } else if (state is DashboardBlocStateLoading) {
+          return Container(
+            width: size.width * 0.02,
+            height: size.height * 0.02,
+            decoration: BoxDecoration(
+              color: deepViolet,
+              shape: BoxShape.circle,
+              border: Border.all(color: white, width: 2),
+            ),
+          );
+        } else if (state is DashboardBlocStateLoaded) {
+          final currentStatus = state.enitities.status;
+          return PopupMenuButton<UserAccountStatus>(
+            onSelected: (UserAccountStatus status) {
+              /* update the status color instantly */
+              context.read<DashboardBloc>().add(
+                DashboardBlocEventChangeStatus(id: id, status: status),
+              );
+            },
+            itemBuilder: (context) => circleUserStatus().toList(),
+            child: Container(
+              width: size.width * 0.023,
+              height: size.height * 0.023,
+              decoration: BoxDecoration(
+                color: currentStatus.color,
+                shape: BoxShape.circle,
+                border: Border.all(color: white, width: 2),
+              ),
+            ),
+          );
+        }
+        return Container(
+          width: size.width * 0.02,
+          height: size.height * 0.02,
+          decoration: BoxDecoration(
+            color: deepViolet,
+            shape: BoxShape.circle,
+            border: Border.all(color: white, width: 2),
+          ),
+        );
+      },
+    );
+  }
+
+  Iterable<PopupMenuItem<UserAccountStatus>> circleUserStatus() {
+    return UserAccountStatus.values.map((usrStatus) {
+      return PopupMenuItem(
+        value: usrStatus,
+        child: Row(
+          children: [
+            Container(
+              width: size.width * 0.02,
+              height: size.height * 0.02,
+              decoration: BoxDecoration(
+                color: usrStatus.color,
+                shape: BoxShape.circle,
+                border: Border.all(color: deepViolet, width: 2),
+              ),
+            ),
+            Text(
+              usrStatus.label,
+              style: GoogleFonts.aleo(
+                color: deepViolet,
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+          ],
+        ),
+      );
+    });
   }
 
   Widget quickActionsSectionBloc(String id) {
@@ -213,7 +300,6 @@ class _DashboardWidgetsState extends State<DashboardWidgets> {
             ),
             child: CircleAvatar(
               radius: 20,
-              // backgroundColor: invisible,
               backgroundImage: MemoryImage(bytes),
             ),
           ),
@@ -514,8 +600,7 @@ class RowOfReviewsSection extends StatelessWidget {
                     border: Border.all(width: 1, color: white),
                   ),
                   child: Column(
-                    mainAxisSize: MainAxisSize
-                        .min, // Allows card to wrap its content tightly
+                    mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(Revenues, style: textBodiesStyle),
                       Text(totalRev, style: textBodiesStyle),
@@ -719,7 +804,7 @@ class AppDrawer extends StatelessWidget {
     final hasAccessPAI = permissions.productsAndInventoryCondition;
     final hasAccessReports = permissions.reportsCondition;
     final hasAccessSettings = permissions.settingsPageAccCondition;
-    final hasAccessOrderActions = permissions.settingsPageAccCondition;
+    final hasAccessOrderActions = permissions.orderActionsAccCondition;
     return SizedBox(
       width: size.width / 1.2,
       height: size.height / 1.09,

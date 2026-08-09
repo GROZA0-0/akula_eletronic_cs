@@ -1,5 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
+import 'package:storecs/Core/config/account_status.dart';
+
 import 'package:storecs/features/dash_board/domain/entities/employee_info_entities.dart';
 import 'package:storecs/features/dash_board/domain/repository/employee_info_repo.dart';
 
@@ -13,6 +15,7 @@ class FetchEmployeeInfoDashBoardController extends GetxController {
     phone: '',
     userPic: '',
     level: '',
+    status: UserAccountStatus.offline,
   ).obs;
   EmployeeInfoEntities blocEntities = const EmployeeInfoEntities(
     id: '',
@@ -22,6 +25,8 @@ class FetchEmployeeInfoDashBoardController extends GetxController {
     userPic: '',
     level: '',
   );
+
+  var selectStatus = UserAccountStatus.offline;
   String get currentUid => FirebaseAuth.instance.currentUser!.uid;
   final isLoading = false.obs;
 
@@ -62,11 +67,29 @@ class FetchEmployeeInfoDashBoardController extends GetxController {
       final infoOfDash = await repository.toEmployeeInfoRepo(id);
       // print("info of user ${infoOfDash.name}${infoOfDash.level}");
       /* blocEntities =  */
+      blocEntities = infoOfDash;
       return infoOfDash;
-      // entities.value = infoOfDash;
       /*  return blocEntities; */
     } catch (e) {
       print("error in dashboard controller $e");
+      throw e.toString();
+    }
+  }
+
+  Future<EmployeeInfoEntities> changeUserStatus(
+    String id,
+    UserAccountStatus status,
+  ) async {
+    try {
+      final getStatus = await repository.toEmployeeStatusRepository(
+        currentUid,
+        status,
+      );
+      selectStatus = status;
+      blocEntities = getStatus;
+      return getStatus;
+    } catch (e) {
+      print("error in dashboard in user status controller $e");
       throw e.toString();
     }
   }

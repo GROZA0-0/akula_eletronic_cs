@@ -44,6 +44,7 @@ class FeedbackController {
           note.text.trim(),
         );
         alerts.ifSuccess('Report has been sent');
+        clearUi();
       } on PlatformException catch (e) {
         print('The Error Is: ${e.message.toString()}');
         alerts.ifErrors(e.message.toString());

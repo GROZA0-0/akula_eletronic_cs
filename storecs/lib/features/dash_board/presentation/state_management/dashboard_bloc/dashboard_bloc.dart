@@ -21,6 +21,19 @@ class DashboardBloc extends Bloc<DashboardBlocEvent, DashboardBlocState> {
         emit((DashboardBlocStateError(err: e.toString())));
       }
     });
+    on<DashboardBlocEventChangeStatus>((event, emit) async {
+      if (state is DashboardBlocStateLoaded) {
+        try {
+          final updateStatus = await boardController.changeUserStatus(
+            event.id,
+            event.status,
+          );
+          emit(DashboardBlocStateLoaded(enitities: updateStatus));
+        } catch (e) {
+          print("Error updating status in Bloc: $e");
+        }
+      }
+    });
   }
 }
 

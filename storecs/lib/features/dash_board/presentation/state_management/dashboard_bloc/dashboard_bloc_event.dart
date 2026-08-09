@@ -1,10 +1,20 @@
 import 'package:equatable/equatable.dart';
+import 'package:storecs/Core/config/account_status.dart';
 
 abstract class DashboardBlocEvent extends Equatable {}
 
 class DashboardBlocEventLoading extends DashboardBlocEvent {
   @override
   List<Object?> get props => [];
+}
+
+class DashboardBlocEventChangeStatus extends DashboardBlocEvent {
+  final String id;
+  final UserAccountStatus status;
+  DashboardBlocEventChangeStatus({required this.id, required this.status});
+
+  @override
+  List<Object?> get props => [id, status];
 }
 
 class DashboardBlocEventError extends DashboardBlocEvent {

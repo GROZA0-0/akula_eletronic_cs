@@ -1,3 +1,4 @@
+import 'package:storecs/Core/config/account_status.dart';
 import 'package:storecs/features/dash_board/domain/entities/employee_info_entities.dart';
 
 class EmployeeInfoModel {
@@ -7,6 +8,7 @@ class EmployeeInfoModel {
   final String empPhone;
   final String empPic;
   final String empLvl;
+  final UserAccountStatus empStatus;
 
   EmployeeInfoModel({
     required this.empId,
@@ -15,6 +17,7 @@ class EmployeeInfoModel {
     required this.empPhone,
     required this.empPic,
     required this.empLvl,
+    this.empStatus = UserAccountStatus.offline,
   });
 
   Map<String, dynamic> tojson() {
@@ -25,6 +28,7 @@ class EmployeeInfoModel {
       "empPic": empPic,
       "empPhone": empPhone,
       "empLvl": empLvl,
+      "empStatus": empStatus,
     };
   }
 
@@ -36,6 +40,7 @@ class EmployeeInfoModel {
       empPhone: '',
       empPic: '',
       empLvl: '',
+      empStatus: UserAccountStatus.offline,
     );
   }
 
@@ -47,6 +52,10 @@ class EmployeeInfoModel {
       empPhone: json['empPhone'] ?? '',
       empPic: json['empPic'] ?? '',
       empLvl: json['empLvl'] ?? '',
+      empStatus: UserAccountStatus.values.firstWhere(
+        (element) => element.name == json['empStatus'],
+        orElse: () => UserAccountStatus.offline,
+      ),
     );
   }
 
@@ -58,6 +67,7 @@ class EmployeeInfoModel {
       phone: empPhone,
       userPic: empPic,
       level: empLvl,
+      status: empStatus,
     );
   }
 }
