@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get/get.dart';
+
 import 'package:iconsax/iconsax.dart';
 import 'package:storecs/Core/Styles/alerts.dart';
 import 'package:storecs/Core/config/account_status.dart';
