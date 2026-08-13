@@ -55,7 +55,7 @@ class _StaffListWidgetsState extends State<StaffListWidgets> {
                   providers: [
                     BlocProvider(
                       create: (context) =>
-                          StaffListBloc(Get.find<StaffListController>())
+                          StaffListBloc(sl<StaffListController>())
                             ..add(StaffListBlocEventLoading()),
                     ),
                   ],

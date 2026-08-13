@@ -8,7 +8,7 @@ import 'package:storecs/features/pos_page/domain/enitities/pos_entities.dart';
 import 'package:storecs/features/pos_page/domain/repository/list_of_items_purchased_repo.dart';
 import 'package:storecs/main.dart';
 
-class CartController extends GetxController {
+class CartController  {
   final ListOfItemsPurchasedRepo repo;
   CartController({required this.repo});
   final RxList<CartEntities> cartItems = <CartEntities>[].obs;

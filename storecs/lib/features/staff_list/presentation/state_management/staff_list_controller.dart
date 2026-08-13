@@ -2,7 +2,7 @@ import 'package:get/get.dart';
 import 'package:storecs/features/staff_list/domain/entities/staff_list_entities.dart';
 import 'package:storecs/features/staff_list/domain/repository/staff_list_repo.dart';
 
-class StaffListController extends GetxController {
+class StaffListController {
   final StaffListRepo repository;
   StaffListController({required this.repository});
 

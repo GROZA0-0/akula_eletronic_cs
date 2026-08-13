@@ -188,7 +188,7 @@ class CategoriesSection extends StatelessWidget {
     return FadeInUp(
       child: BlocProvider(
         create: (context) =>
-            ProductListBloc(repo: Get.find<ProductListController>())
+            ProductListBloc(repo: sl<ProductListController>())
               ..add(ProductListEventBlocLoading()),
         child: Builder(
           builder: (context) {

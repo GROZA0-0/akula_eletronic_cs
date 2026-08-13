@@ -2,13 +2,19 @@ import 'dart:convert';
 
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
 import 'package:google_fonts/google_fonts.dart';
 import 'package:storecs/Core/config/call_controller.dart';
+import 'package:storecs/Core/styles/animations.dart';
 import 'package:storecs/Core/styles/colors.dart';
 import 'package:storecs/Core/styles/sizes.dart';
 import 'package:storecs/Core/styles/text_styles.dart';
 import 'package:storecs/features/order_purchased_history/domain/entities/order_purchased_history_entities.dart';
+import 'package:storecs/features/order_purchased_history/presentation/state_management/order_purchased_history_bloc/order_purchased_history_bloc.dart';
+import 'package:storecs/features/order_purchased_history/presentation/state_management/order_purchased_history_bloc/order_purchased_history_bloc_event.dart';
+import 'package:storecs/features/order_purchased_history/presentation/state_management/order_purchased_history_bloc/order_purchased_history_bloc_state.dart';
+import 'package:storecs/features/order_purchased_history/presentation/state_management/order_purchased_history_controller.dart';
 
 class OrderPurchasedHistoryWidgets extends StatefulWidget {
   const OrderPurchasedHistoryWidgets({super.key});
@@ -33,19 +39,38 @@ class _OrderPurchasedHistoryWidgetsState
       ),
       body: SafeArea(
         child: FadeInUp(
-          child: Obx(() {
-            final groupedMap = orderPurchasedHistoryController.groupedOrders;
-            final dateHeadersList = groupedMap.keys.toList();
-
-            if (orderPurchasedHistoryController.entities.isEmpty) {
-              return noOrderReviewedtext();
-            }
-
-            return ListSoldOrderData(
-              dateHeadersList: dateHeadersList,
-              groupedMap: groupedMap,
-            );
-          }),
+          child: MultiBlocProvider(
+            providers: [
+              BlocProvider(
+                create: (context) => OrderPurchasedHistoryBloc(
+                  sl<OrderPurchasedHistoryController>(),
+                )..add(OrderPurchasedHistoryBlocEventLoading()),
+              ),
+            ],
+            child:
+                BlocBuilder<
+                  OrderPurchasedHistoryBloc,
+                  OrderPurchasedHistoryBlocState
+                >(
+                  builder: (context, state) {
+                    if (state is OrderPurchasedHistoryBlocStateLoading) {
+                      return loadingStateBlocMethod(size);
+                    } else if (state is OrderPurchasedHistoryBlocStateEmpty) {
+                      return noOrderReviewedtext();
+                    } else if (state is OrderPurchasedHistoryBlocStateError) {
+                      return Text(state.err, style: textBodiesStyle2);
+                    } else if (state is OrderPurchasedHistoryBlocStateLoaded) {
+                      final groupedMap = state.entities;
+                      final dateHeadersList = groupedMap.keys.toList();
+                      return ListSoldOrderData(
+                        dateHeadersList: dateHeadersList,
+                        groupedMap: groupedMap,
+                      );
+                    }
+                    return Container();
+                  },
+                ),
+          ),
         ),
       ),
     );

@@ -1,28 +1,20 @@
-import 'package:get/get.dart';
 import 'package:storecs/Core/config/date_time_helper.dart';
 import 'package:storecs/features/order_purchased_history/domain/entities/order_purchased_history_entities.dart';
 import 'package:storecs/features/order_purchased_history/domain/repository/order_purchased_history_repo.dart';
 
-class OrderPurchasedHistoryController extends GetxController {
+class OrderPurchasedHistoryController {
   final OrderPurchasedHistoryRepo repo;
   OrderPurchasedHistoryController({required this.repo});
 
-  RxList<OrderPurchasedHistoryEntities> entities =
-      <OrderPurchasedHistoryEntities>[].obs;
-
-  @override
-  void onInit() {
-    super.onInit();
-    getOrdersSoldHistorical();
-  }
+  List<OrderPurchasedHistoryEntities> entities = [];
 
   Future<List<OrderPurchasedHistoryEntities>> getOrdersSoldHistorical() async {
     try {
       final orders = await repo.soldHisRepository();
       print("info of orders [${orders.length}]");
       orders.sort((a, b) => b.time.compareTo(a.time));
-      entities.value = orders.toList();
-      return orders;
+      entities = orders.toList();
+      return entities;
     } catch (e) {
       print("error in order purchased Historical controller $e");
       throw e.toString();

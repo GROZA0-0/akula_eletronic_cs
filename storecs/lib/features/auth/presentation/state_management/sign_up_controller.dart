@@ -5,19 +5,19 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+
 import 'package:image_picker/image_picker.dart';
 import 'package:storecs/Core/Styles/Loader.dart';
 import 'package:storecs/Core/Styles/Strings.dart';
 import 'package:storecs/Core/Styles/alerts.dart';
+import 'package:storecs/Core/config/call_controller.dart';
 import 'package:storecs/features/auth/data/data_source/data_source_repo/auth_data_source.dart';
 import 'package:storecs/features/auth/domain/repository/employee_repo.dart';
 import 'package:storecs/main.dart';
 
 class SignUpController {
-  /* final AuthRepo repository;
-  final AuthDataSource source; */
-  final AuthRepo repository = Get.find<AuthRepo>();
-  final AuthDataSource source = Get.find<AuthDataSource>();
+  final AuthRepo repository = sl<AuthRepo>();
+  final AuthDataSource source = sl<AuthDataSource>();
 
   SignUpController(/* this.repository, this.source */);
 

@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
-import 'package:get/get.dart';
+
 import 'package:storecs/Core/config/call_controller.dart';
 import 'package:storecs/Core/styles/alerts.dart';
 import 'package:storecs/Core/styles/loader.dart';
@@ -11,7 +11,7 @@ import 'package:storecs/features/report_page/domain/entities/get_report_of_super
 import 'package:storecs/features/report_page/domain/repository/report_repository.dart';
 import 'package:storecs/main.dart';
 
-class ReportController extends GetxController {
+class ReportController {
   final ReportRepository repository;
   ReportController({required this.repository});
 
@@ -20,13 +20,12 @@ class ReportController extends GetxController {
   final email = FirebaseAuth.instance.currentUser!.email;
   final id = FirebaseAuth.instance.currentUser!.uid;
   final Alerts alerts = Alerts(messengerKey);
-  Rx<GetReportOfSupervisorEntities> entities =
-      const GetReportOfSupervisorEntities(
-        empId: '',
-        level: '',
-        title: '',
-        subTitle: '',
-      ).obs;
+  GetReportOfSupervisorEntities entities = const GetReportOfSupervisorEntities(
+    empId: '',
+    level: '',
+    title: '',
+    subTitle: '',
+  );
   EmployeeInfoEntities perEntities = const EmployeeInfoEntities(
     id: '',
     email: '',
@@ -79,8 +78,8 @@ class ReportController extends GetxController {
   Future<GetReportOfSupervisorEntities> getSuperReport(String level) async {
     try {
       final theReport = await repository.getReportRepository(level);
-      entities.value = theReport;
-      return entities.value;
+      entities = theReport;
+      return entities;
     } on PlatformException catch (e) {
       print('The Error Is: ${e.message.toString()}');
       throw e.toString();

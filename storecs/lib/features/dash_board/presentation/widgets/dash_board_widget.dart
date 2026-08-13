@@ -4,7 +4,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:storecs/Core/Styles/Colors.dart';
@@ -314,9 +313,9 @@ class ChartSectionWidget extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-          create: (context) => CategoryDashboardBloc(
-            Get.find<FetchCategoryDashboardController>(),
-          )..add(CategoryChartDashboardBlocEventLoading()),
+          create: (context) =>
+              CategoryDashboardBloc(sl<FetchCategoryDashboardController>())
+                ..add(CategoryChartDashboardBlocEventLoading()),
         ),
       ],
       child:
@@ -393,7 +392,7 @@ class _InteractivePieChartSectionState
           providers: [
             BlocProvider(
               create: (context) =>
-                  ReportBloc(controller: Get.find<ReportController>())..add(
+                  ReportBloc(controller: sl<ReportController>())..add(
                     ReportBlocEventLoading(
                       level: userLevel.isNotEmpty ? userLevel : 'Supervisor',
                     ),
@@ -557,9 +556,9 @@ class RowOfReviewsSection extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-          create: (context) => ReviewDashboardBloc(
-            Get.find<FetchReviewsInfoDashBoardController>(),
-          )..add(DashboardBlocEventLoading()),
+          create: (context) =>
+              ReviewDashboardBloc(sl<FetchReviewsInfoDashBoardController>())
+                ..add(DashboardBlocEventLoading()),
         ),
       ],
       child: BlocBuilder<ReviewDashboardBloc, ReviewDashboardBlocState>(
@@ -741,11 +740,9 @@ class AppDrawer extends StatelessWidget {
         child: MultiBlocProvider(
           providers: [
             BlocProvider(
-              create: (context) => DashboardBloc(
-                Get.find<FetchEmployeeInfoDashBoardController>(),
-
-                id,
-              )..add(DashboardBlocEventLoading()),
+              create: (context) =>
+                  DashboardBloc(sl<FetchEmployeeInfoDashBoardController>(), id)
+                    ..add(DashboardBlocEventLoading()),
             ),
           ],
           child: BlocBuilder<DashboardBloc, DashboardBlocState>(

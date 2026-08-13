@@ -10,7 +10,7 @@ import 'package:storecs/main.dart';
 
 enum ReturnStatus { initial, loading, success, error }
 
-class ReturnAndRefundController extends GetxController {
+class ReturnAndRefundController  {
   final StoreReturnAndRefundInfoRepository refundRepo;
   final OrderDetailsRepo repo;
   ReturnAndRefundController({required this.repo, required this.refundRepo});

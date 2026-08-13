@@ -1,9 +1,9 @@
-import 'package:get/get.dart';
+
 import 'package:storecs/features/pos_page/domain/enitities/cart_entities.dart';
 import 'package:storecs/features/pos_page/domain/enitities/pos_entities.dart';
 import 'package:storecs/features/pos_page/domain/repository/pos_repo.dart';
 
-class PosController extends GetxController {
+class PosController {
   final PosRepo repo;
   PosController({required this.repo});
 

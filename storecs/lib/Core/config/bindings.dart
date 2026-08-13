@@ -1,6 +1,5 @@
 import 'package:get/get.dart';
 import 'package:get_it/get_it.dart';
-import 'package:http/http.dart' as https;
 import 'package:dio/dio.dart';
 import 'package:storecs/features/auth/data/data_source/data_implementer/employee_data_source_implementer.dart';
 import 'package:storecs/features/auth/data/data_source/data_source_repo/auth_data_source.dart';
@@ -78,10 +77,10 @@ class AppBindingsControllers extends Bindings {
   @override
   void dependencies() {
     final sl = GetIt.instance;
-    final httpClient = https.Client(); //----> network client
+
     final dio = Dio(); //----> network client
-    Get.lazyPut<https.Client>(() => httpClient);
-    Get.lazyPut<Dio>(() => dio);
+
+    sl.registerFactory<Dio>(() => dio);
 
     //////////////////////////////////////////////////////////
     sl.registerFactory<AuthDataSource>(() => AuthDataSource());
@@ -113,12 +112,11 @@ class AppBindingsControllers extends Bindings {
     //////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////
 
-    Get.lazyPut<StaffListDataSourceRepo>(
+    sl.registerFactory<StaffListDataSourceRepo>(
       () => StaffListDataSourceImplementer(dio: dio),
-      fenix: true,
     );
-    Get.lazyPut<StaffListRepo>(
-      () => StaffListRepository(repo: Get.find<StaffListDataSourceRepo>()),
+    sl.registerFactory<StaffListRepo>(
+      () => StaffListRepository(repo: sl<StaffListDataSourceRepo>()),
     );
 
     //////////////////////////////////////////////////////////
@@ -126,22 +124,23 @@ class AppBindingsControllers extends Bindings {
     //////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////
 
-    Get.lazyPut<ProductListDataSourceRepo>(
+    sl.registerFactory<ProductListDataSourceRepo>(
       () => ProductListDataSourceImplementer(client: dio),
     );
-    Get.lazyPut<ProductListRepo>(
-      () => ProductListImplementer(
-        implementer: Get.find<ProductListDataSourceRepo>(),
-      ),
+    sl.registerFactory<ProductListRepo>(
+      () =>
+          ProductListImplementer(implementer: sl<ProductListDataSourceRepo>()),
     );
     //////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////
 
-    Get.lazyPut<PosDataSourceRepo>(() => PosDataSourceImplementer(dio: dio));
-    Get.lazyPut<PosRepo>(
-      () => PosRepository(repo: Get.find<PosDataSourceRepo>()),
+    sl.registerFactory<PosDataSourceRepo>(
+      () => PosDataSourceImplementer(dio: dio),
+    );
+    sl.registerFactory<PosRepo>(
+      () => PosRepository(repo: sl<PosDataSourceRepo>()),
     );
 
     //////////////////////////////////////////////////////////
@@ -149,12 +148,12 @@ class AppBindingsControllers extends Bindings {
     //////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////
 
-    Get.lazyPut<ListOfItemsPurchasedDataSourceRepo>(
+    sl.registerFactory<ListOfItemsPurchasedDataSourceRepo>(
       () => ListOfItemsPurchasedDataSourceImplementer(dio: dio),
     );
-    Get.lazyPut<ListOfItemsPurchasedRepo>(
+    sl.registerFactory<ListOfItemsPurchasedRepo>(
       () => ListOfItemsPurchasedRepository(
-        implementer: Get.find<ListOfItemsPurchasedDataSourceRepo>(),
+        implementer: sl<ListOfItemsPurchasedDataSourceRepo>(),
       ),
     );
 
@@ -163,12 +162,12 @@ class AppBindingsControllers extends Bindings {
     //////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////
 
-    Get.lazyPut<GetOrderDetailsDataSourceRepository>(
+    sl.registerFactory<GetOrderDetailsDataSourceRepository>(
       () => GetOrderDetailsDataSourceImplementer(dio: dio),
     );
-    Get.lazyPut<OrderDetailsRepo>(
+    sl.registerFactory<OrderDetailsRepo>(
       () => OrderDetailsRepoImplementer(
-        repository: Get.find<GetOrderDetailsDataSourceRepository>(),
+        repository: sl<GetOrderDetailsDataSourceRepository>(),
       ),
     );
     //////////////////////////////////////////////////////////
@@ -176,12 +175,12 @@ class AppBindingsControllers extends Bindings {
     //////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////
 
-    Get.lazyPut<OrderPurchasedHistoryDataSourceRepo>(
+    sl.registerFactory<OrderPurchasedHistoryDataSourceRepo>(
       () => OrderPurchasedHistoryDataSourceImplementer(dio: dio),
     );
-    Get.lazyPut<OrderPurchasedHistoryRepo>(
+    sl.registerFactory<OrderPurchasedHistoryRepo>(
       () => OrderPurchasedHistoryImplementer(
-        sourceRepo: Get.find<OrderPurchasedHistoryDataSourceRepo>(),
+        sourceRepo: sl<OrderPurchasedHistoryDataSourceRepo>(),
       ),
     );
     //////////////////////////////////////////////////////////
@@ -189,12 +188,12 @@ class AppBindingsControllers extends Bindings {
     //////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////
 
-    Get.lazyPut<StoreReturnAndRefundInfoDataSourceRepository>(
+    sl.registerFactory<StoreReturnAndRefundInfoDataSourceRepository>(
       () => StoreReturnAndRefundInfoDataSourceImplementer(dio: dio),
     );
-    Get.lazyPut<StoreReturnAndRefundInfoRepository>(
+    sl.registerFactory<StoreReturnAndRefundInfoRepository>(
       () => StoreReturnAndRefundInfoImplementer(
-        repository: Get.find<StoreReturnAndRefundInfoDataSourceRepository>(),
+        repository: sl<StoreReturnAndRefundInfoDataSourceRepository>(),
       ),
     );
     //////////////////////////////////////////////////////////
@@ -202,12 +201,12 @@ class AppBindingsControllers extends Bindings {
     //////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////
 
-    Get.lazyPut<ReportDataSourceRepository>(
+    sl.registerFactory<ReportDataSourceRepository>(
       () => ReportDataSourceImplementer(dio: dio),
     );
-    Get.lazyPut<ReportRepository>(
+    sl.registerFactory<ReportRepository>(
       () => ReportImplementer(
-        reportDataSourceRepository: Get.find<ReportDataSourceRepository>(),
+        reportDataSourceRepository: sl<ReportDataSourceRepository>(),
       ),
     );
     //////////////////////////////////////////////////////////
@@ -215,35 +214,35 @@ class AppBindingsControllers extends Bindings {
     //////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////
 
-    Get.lazyPut<ReviewInfoDataSourceRepo>(
+    sl.registerFactory<ReviewInfoDataSourceRepo>(
       () => ReviewInfoDataSourceImplementer(dio: dio),
     );
-    Get.lazyPut<ReviewRepo>(
+    sl.registerFactory<ReviewRepo>(
       () => ReviewImplementer(
-        reviewInfoDataSourceRepo: Get.find<ReviewInfoDataSourceRepo>(),
+        reviewInfoDataSourceRepo: sl<ReviewInfoDataSourceRepo>(),
       ),
     );
     //////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////
-    Get.lazyPut<CategoryDashboardDataSourceRepo>(
+    sl.registerFactory<CategoryDashboardDataSourceRepo>(
       () => CategoryDashboardDataSourceImplementer(dio: dio),
     );
-    Get.lazyPut<CategoryDashboardRepo>(
+    sl.registerFactory<CategoryDashboardRepo>(
       () => CategoryDashboardImplementer(
-        sourceRepo: Get.find<CategoryDashboardDataSourceRepo>(),
+        sourceRepo: sl<CategoryDashboardDataSourceRepo>(),
       ),
     );
     //////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////
-    Get.lazyPut<FeedbackDataSourceRepo>(
+    sl.registerFactory<FeedbackDataSourceRepo>(
       () => FeedbackDataSourceImplementer(dio: dio),
     );
-    Get.lazyPut<FeedbackRepository>(
-      () => FeedbackImplementer(Get.find<FeedbackDataSourceRepo>()),
+    sl.registerFactory<FeedbackRepository>(
+      () => FeedbackImplementer(sl<FeedbackDataSourceRepo>()),
     );
     //////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////
@@ -263,51 +262,46 @@ class AppBindingsControllers extends Bindings {
       () => SignInController(sl<AuthRepo>()),
     );
     sl.registerFactory<SignUpController>(() => SignUpController());
-    Get.lazyPut<SignOutController>(
-      () => SignOutController(sl<AuthRepo>()),
-      fenix: true,
+    sl.registerFactory<SignOutController>(
+      () => SignOutController(sl<AuthRepo>(), sl<EmployeeInfoRepo>()),
     );
     sl.registerFactory<FetchEmployeeInfoDashBoardController>(
       () => FetchEmployeeInfoDashBoardController(
         repository: sl<EmployeeInfoRepo>(),
       ),
     );
-    Get.put<StaffListController>(
-      permanent: true,
-      /* () => */ StaffListController(repository: Get.find<StaffListRepo>()),
+    sl.registerFactory<StaffListController>(
+      () => StaffListController(repository: sl<StaffListRepo>()),
     );
-    Get.put<ProductListController>(
-      permanent: true,
-      ProductListController(Get.find<ProductListRepo>()),
+    sl.registerFactory<ProductListController>(
+      () => ProductListController(sl<ProductListRepo>()),
     );
-    Get.lazyPut<PosController>(() => PosController(repo: Get.find<PosRepo>()));
-    Get.lazyPut<CartController>(
-      () => CartController(repo: Get.find<ListOfItemsPurchasedRepo>()),
+    sl.registerFactory<PosController>(() => PosController(repo: sl<PosRepo>()));
+    sl.registerFactory<CartController>(
+      () => CartController(repo: sl<ListOfItemsPurchasedRepo>()),
     );
-    Get.lazyPut<OrderPurchasedHistoryController>(
+    sl.registerFactory<OrderPurchasedHistoryController>(
       () => OrderPurchasedHistoryController(
-        repo: Get.find<OrderPurchasedHistoryRepo>(),
+        repo: sl<OrderPurchasedHistoryRepo>(),
       ),
     );
-    Get.lazyPut<ReturnAndRefundController>(
+    sl.registerFactory<ReturnAndRefundController>(
       () => ReturnAndRefundController(
-        repo: Get.find<OrderDetailsRepo>(),
-        refundRepo: Get.find<StoreReturnAndRefundInfoRepository>(),
+        repo: sl<OrderDetailsRepo>(),
+        refundRepo: sl<StoreReturnAndRefundInfoRepository>(),
       ),
     );
-    Get.lazyPut<ReportController>(
-      () => ReportController(repository: Get.find<ReportRepository>()),
+    sl.registerFactory<ReportController>(
+      () => ReportController(repository: sl<ReportRepository>()),
     );
-    Get.lazyPut(
-      () => FetchReviewsInfoDashBoardController(repo: Get.find<ReviewRepo>()),
+    sl.registerFactory(
+      () => FetchReviewsInfoDashBoardController(repo: sl<ReviewRepo>()),
     );
-    Get.lazyPut<FetchCategoryDashboardController>(
-      () => FetchCategoryDashboardController(
-        repo: Get.find<CategoryDashboardRepo>(),
-      ),
+    sl.registerFactory<FetchCategoryDashboardController>(
+      () => FetchCategoryDashboardController(repo: sl<CategoryDashboardRepo>()),
     );
-    Get.lazyPut<FeedbackController>(
-      () => FeedbackController(repository: Get.find<FeedbackRepository>()),
+    sl.registerFactory<FeedbackController>(
+      () => FeedbackController(repository: sl<FeedbackRepository>()),
     );
     sl.registerFactory<GetFeedbackController>(
       () => GetFeedbackController(repo: sl<GetFeedbackRepo>()),

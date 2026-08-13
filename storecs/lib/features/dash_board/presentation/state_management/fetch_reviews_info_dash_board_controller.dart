@@ -1,8 +1,8 @@
-import 'package:get/get.dart';
+
 import 'package:storecs/features/dash_board/domain/entities/review_entities.dart';
 import 'package:storecs/features/dash_board/domain/repository/review_repo.dart';
 
-class FetchReviewsInfoDashBoardController extends GetxController {
+class FetchReviewsInfoDashBoardController  {
   final ReviewRepo repo;
   FetchReviewsInfoDashBoardController({required this.repo});
 

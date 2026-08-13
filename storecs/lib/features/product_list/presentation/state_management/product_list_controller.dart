@@ -12,7 +12,7 @@ import 'package:storecs/features/product_list/domain/entities/product_list_entit
 import 'package:storecs/features/product_list/domain/repository/product_list_repo.dart';
 import 'package:storecs/main.dart';
 
-class ProductListController extends GetxController {
+class ProductListController  {
   final ProductListRepo repo;
   ProductListController(this.repo);
   final Alerts alerts = Alerts(messengerKey);
