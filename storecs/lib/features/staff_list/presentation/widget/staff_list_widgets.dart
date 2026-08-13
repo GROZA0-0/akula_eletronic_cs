@@ -192,19 +192,15 @@ class _StaffListWidgetsState extends State<StaffListWidgets> {
 
         sanitizedBase64 = sanitizedBase64.replaceAll(RegExp(r'\s+'), '');
         final bytes = base64Decode(sanitizedBase64);
-        return GestureDetector(
-          onTap: () =>
-              print(fetchEmployeeInfoDashBoardController.entities.value.name),
-          child: Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(100),
-              border: Border.all(color: white),
-            ),
-            child: CircleAvatar(
-              radius: 20,
-              // backgroundColor: invisible,
-              backgroundImage: MemoryImage(bytes),
-            ),
+        return Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(100),
+            border: Border.all(color: white),
+          ),
+          child: CircleAvatar(
+            radius: 20,
+            // backgroundColor: invisible,
+            backgroundImage: MemoryImage(bytes),
           ),
         );
       } catch (e) {

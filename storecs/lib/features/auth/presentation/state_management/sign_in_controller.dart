@@ -1,17 +1,15 @@
 import 'package:get/get.dart';
-import 'package:storecs/Core/config/bindings.dart';
 import 'package:storecs/Core/styles/animations.dart';
 import 'package:storecs/Core/Styles/alerts.dart';
 import 'package:storecs/Core/Styles/Loader.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:storecs/Core/Styles/themes.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:storecs/features/auth/domain/repository/employee_repo.dart';
 import 'package:storecs/features/dash_board/presentation/widgets/dash_board_widget.dart';
 import 'package:storecs/main.dart';
 
-class SignInController extends GetxController {
+class SignInController {
   final AuthRepo repo;
   SignInController(this.repo);
   final email = TextEditingController();
@@ -34,10 +32,10 @@ class SignInController extends GetxController {
         await repo.signInUsingEmail(email.text.trim(), password.text.trim());
 
         Loader.stopLoading();
-        Get.offAll(
-          () => GradientBackground(child: DashboardWidgets()),
-          transition: naviStyleToAnotherPage,
-          binding: AppBindingsControllers(),
+        Navigator.pushAndRemoveUntil(
+          navigator!.context,
+          naviToAnotherPage(DashboardWidgets()),
+          (route) => false,
         );
         email.clear();
         password.clear();

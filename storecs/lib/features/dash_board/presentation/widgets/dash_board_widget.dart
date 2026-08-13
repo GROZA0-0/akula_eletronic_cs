@@ -3,13 +3,14 @@ import 'package:animate_do/animate_do.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:storecs/Core/Styles/Colors.dart';
 import 'package:storecs/Core/Styles/Strings.dart';
 import 'package:fl_chart/fl_chart.dart';
-import 'package:storecs/Core/Styles/themes.dart';
+
 import 'package:storecs/Core/config/account_status.dart';
 import 'package:storecs/Core/config/call_controller.dart';
 import 'package:storecs/Core/config/permissions.dart';
@@ -24,6 +25,7 @@ import 'package:storecs/features/dash_board/presentation/state_management/dashbo
 import 'package:storecs/features/dash_board/presentation/state_management/fetch_category_dashboard_controller.dart';
 import 'package:storecs/features/dash_board/presentation/state_management/fetch_employee_info_dash_board_controller.dart';
 import 'package:storecs/features/dash_board/presentation/state_management/fetch_reviews_info_dash_board_controller.dart';
+import 'package:storecs/features/feedback_page/presentation/pages/get_feedback_page.dart';
 import 'package:storecs/features/issues_or_suggestions/presentation/page/issues_or_suggestions_page.dart';
 import 'package:storecs/features/order_purchased_history/presentation/pages/order_purchased_history.dart';
 import 'package:storecs/features/pos_page/presentation/page/pos_page.dart';
@@ -107,11 +109,9 @@ class _DashboardWidgetsState extends State<DashboardWidgets> {
       child: MultiBlocProvider(
         providers: [
           BlocProvider(
-            create: (context) => DashboardBloc(
-              Get.find<FetchEmployeeInfoDashBoardController>(),
-
-              id,
-            )..add(DashboardBlocEventLoading()),
+            create: (context) =>
+                DashboardBloc(sl<FetchEmployeeInfoDashBoardController>(), id)
+                  ..add(DashboardBlocEventLoading()),
           ),
         ],
         child: BlocBuilder<DashboardBloc, DashboardBlocState>(
@@ -253,11 +253,9 @@ class _DashboardWidgetsState extends State<DashboardWidgets> {
       key: ValueKey(id),
       providers: [
         BlocProvider(
-          create: (context) => DashboardBloc(
-            Get.find<FetchEmployeeInfoDashBoardController>(),
-
-            id,
-          )..add(DashboardBlocEventLoading()),
+          create: (context) =>
+              DashboardBloc(sl<FetchEmployeeInfoDashBoardController>(), id)
+                ..add(DashboardBlocEventLoading()),
         ),
       ],
       child: BlocBuilder<DashboardBloc, DashboardBlocState>(
@@ -273,14 +271,10 @@ class _DashboardWidgetsState extends State<DashboardWidgets> {
 
   Widget buildProfileImage(String base64Image) {
     if (base64Image.isEmpty) {
-      return GestureDetector(
-        onTap: () =>
-            print(fetchEmployeeInfoDashBoardController.blocEntities.name),
-        child: const CircleAvatar(
-          backgroundColor: grey,
-          radius: 20,
-          child: Icon(color: white, Iconsax.user),
-        ),
+      return const CircleAvatar(
+        backgroundColor: grey,
+        radius: 20,
+        child: Icon(color: white, Iconsax.user),
       );
     } else {
       try {
@@ -290,19 +284,12 @@ class _DashboardWidgetsState extends State<DashboardWidgets> {
 
         sanitizedBase64 = sanitizedBase64.replaceAll(RegExp(r'\s+'), '');
         final bytes = base64Decode(sanitizedBase64);
-        return GestureDetector(
-          onTap: () =>
-              print(fetchEmployeeInfoDashBoardController.entities.value.name),
-          child: Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(100),
-              border: Border.all(color: white),
-            ),
-            child: CircleAvatar(
-              radius: 20,
-              backgroundImage: MemoryImage(bytes),
-            ),
+        return Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(100),
+            border: Border.all(color: white),
           ),
+          child: CircleAvatar(radius: 20, backgroundImage: MemoryImage(bytes)),
         );
       } catch (e) {
         print("error rending base64 : $e");
@@ -603,7 +590,7 @@ class RowOfReviewsSection extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(Revenues, style: textBodiesStyle),
-                      Text(totalRev, style: textBodiesStyle),
+                      Text('$totalRev JOD', style: textBodiesStyle),
                     ],
                   ),
                 ),
@@ -674,16 +661,8 @@ class QuickActionsSection extends StatelessWidget {
           children: [
             QuickActionsButton(
               mainPageWidget: () => hasAccess
-                  ? Get.to(
-                      () => GradientBackground(child: PosPage()),
-                      preventDuplicates: false,
-                      transition: naviStyleToAnotherPage,
-                    )
-                  : Get.to(
-                      () => GradientBackground(child: StaffListPage()),
-                      transition: naviStyleToAnotherPage,
-                      preventDuplicates: false,
-                    ),
+                  ? Navigator.push(context, naviToAnotherPage(PosPage()))
+                  : Navigator.push(context, naviToAnotherPage(StaffListPage())),
               size: size,
               text: hasAccess ? 'POS Page' : 'Staff List Page',
               iconn: hasAccess ? Iconsax.card_pos : Iconsax.user,
@@ -693,16 +672,11 @@ class QuickActionsSection extends StatelessWidget {
 
             QuickActionsButton(
               mainPageWidget: () => hasAccess
-                  ? Get.to(
-                      () => GradientBackground(child: ProductListPage()),
-                      transition: naviStyleToAnotherPage,
-                      preventDuplicates: false,
+                  ? Navigator.push(
+                      context,
+                      naviToAnotherPage(ProductListPage()),
                     )
-                  : Get.to(
-                      () => GradientBackground(child: SignUpPage()),
-                      transition: naviStyleToAnotherPage,
-                      preventDuplicates: false,
-                    ),
+                  : Navigator.push(context, naviToAnotherPage(SignUpPage())),
               size: size,
               text: hasAccess ? 'order List Page' : 'Add/Edit Staff',
               iconn: hasAccess ? Icons.list : Icons.add,
@@ -712,11 +686,7 @@ class QuickActionsSection extends StatelessWidget {
             QuickActionsButton(
               mainPageWidget: () => hasAccess
                   ? () {}
-                  : Get.to(
-                      () => GradientBackground(child: ReportPage()),
-                      transition: naviStyleToAnotherPage,
-                      preventDuplicates: false,
-                    ),
+                  : Navigator.push(context, naviToAnotherPage(ReportPage())),
               size: size,
               text: hasAccess ? 'Card Page' : 'Sales Report',
               iconn: Iconsax.export,
@@ -726,10 +696,9 @@ class QuickActionsSection extends StatelessWidget {
             QuickActionsButton(
               mainPageWidget: () => hasAccess
                   ? () {}
-                  : Get.to(
-                      () => GradientBackground(child: ReturnsAndRefundsPage()),
-                      transition: naviStyleToAnotherPage,
-                      preventDuplicates: false,
+                  : Navigator.push(
+                      context,
+                      naviToAnotherPage(ReturnsAndRefundsPage()),
                     ),
               size: size,
               text: hasAccess ? 'Profit/Loss Page' : 'Returns & Refunds',
@@ -745,10 +714,9 @@ class QuickActionsSection extends StatelessWidget {
             Text(DoYouHaveAnyIssueOrSuggestionsText, style: textBodiesStyle),
             sizeBoxWidth(size.width * 0.0040),
             InkWell(
-              onTap: () => Get.to(
-                () => GradientBackground(child: IssuesOrSuggestionsPage()),
-                transition: feedbacktNaviRoute,
-                preventDuplicates: false,
+              onTap: () => Navigator.push(
+                context,
+                feedbacktNaviRoute(IssuesOrSuggestionsPage()),
               ),
               child: Text(ClickHereText, style: TextStyle(color: grey)),
             ),
@@ -787,7 +755,11 @@ class AppDrawer extends StatelessWidget {
               } else if (state is DashboardBlocStateLoaded) {
                 return Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [drawerList(state), Divider(), signOutButton()],
+                  children: [
+                    drawerList(state, context),
+                    Divider(),
+                    signOutButton(),
+                  ],
                 );
               }
               return Container();
@@ -798,7 +770,7 @@ class AppDrawer extends StatelessWidget {
     );
   }
 
-  Widget drawerList(DashboardBlocStateLoaded state) {
+  Widget drawerList(DashboardBlocStateLoaded state, BuildContext context) {
     final permissions = Permissions(state: state.enitities);
     final hasAccessEmpPages = permissions.empPagesAccCondition;
     final hasAccessPAI = permissions.productsAndInventoryCondition;
@@ -822,12 +794,14 @@ class AppDrawer extends StatelessWidget {
                   fontWeight: FontWeight.w400,
                 ),
               ),
-              checkoutExpansionTile(),
-              hasAccessPAI ? Container() : productsExpansionTile(),
-              hasAccessOrderActions ? Container() : ordersAndTransactions(),
-              hasAccessEmpPages ? Container() : employees(),
-              hasAccessReports ? Container() : reports(state),
-              hasAccessSettings ? Container() : settings(),
+              checkoutExpansionTile(context),
+              hasAccessPAI ? Container() : productsExpansionTile(context),
+              hasAccessOrderActions
+                  ? Container()
+                  : ordersAndTransactions(context),
+              hasAccessEmpPages ? Container() : employees(context),
+              hasAccessReports ? Container() : reports(state, context),
+              hasAccessSettings ? Container() : settings(context),
             ],
           ),
         ],
@@ -852,7 +826,7 @@ class AppDrawer extends StatelessWidget {
     );
   }
 
-  Widget settings() {
+  Widget settings(BuildContext context) {
     return ExpansionTile(
       splashColor: invisible,
       collapsedIconColor: black,
@@ -864,16 +838,19 @@ class AppDrawer extends StatelessWidget {
           children: [
             InkWell(
               splashColor: deepViolet.withOpacity(0.4),
-              onTap: () => Get.to(
+              onTap: () =>
+                  Navigator.push(context, naviToAnotherPage(SettingsPage())),
+              /* Get.to(
                 () => GradientBackground(child: SettingsPage()),
                 transition: naviStyleToAnotherPage,
                 preventDuplicates: false,
-              ),
+              ), */
               child: ButtonsMenuDrawer(
                 mainPageWidget: Text(''),
                 size: size,
                 text: "Settings Page",
                 iconn: Iconsax.paperclip,
+                color: deepViolet,
               ),
             ),
             sizeBoxHeight(size.height * 0.012),
@@ -882,6 +859,7 @@ class AppDrawer extends StatelessWidget {
               size: size,
               text: "User Profile Page",
               iconn: Icons.arrow_outward,
+              color: deepViolet,
             ),
             sizeBoxHeight(size.height * 0.012),
             ButtonsMenuDrawer(
@@ -889,6 +867,7 @@ class AppDrawer extends StatelessWidget {
               size: size,
               text: "Backup/Restore ",
               iconn: Iconsax.export,
+              color: deepViolet,
             ),
           ],
         ),
@@ -896,9 +875,10 @@ class AppDrawer extends StatelessWidget {
     );
   }
 
-  Widget reports(DashboardBlocStateLoaded state) {
+  Widget reports(DashboardBlocStateLoaded state, BuildContext context) {
     final permissions = Permissions(state: state.enitities);
     final hasAccessSalesReport = permissions.salesReportCondition;
+    final hasAccessFeedback = permissions.getFeedbackCondition;
     return ExpansionTile(
       splashColor: invisible,
       collapsedIconColor: black,
@@ -910,11 +890,8 @@ class AppDrawer extends StatelessWidget {
           children: [
             InkWell(
               splashColor: deepViolet.withOpacity(0.4),
-              onTap: () => Get.to(
-                () => GradientBackground(child: ReportPage()),
-                transition: naviStyleToAnotherPage,
-                preventDuplicates: false,
-              ),
+              onTap: () =>
+                  Navigator.push(context, naviToAnotherPage(ReportPage())),
               child: Column(
                 children: [
                   hasAccessSalesReport
@@ -924,6 +901,26 @@ class AppDrawer extends StatelessWidget {
                           size: size,
                           text: "Sales Report",
                           iconn: Iconsax.ticket,
+                          color: deepViolet,
+                        ),
+                ],
+              ),
+            ),
+            sizeBoxHeight(size.height * 0.012),
+            InkWell(
+              splashColor: deepViolet.withOpacity(0.4),
+              onTap: () =>
+                  Navigator.push(context, naviToAnotherPage(GetFeedbackPage())),
+              child: Column(
+                children: [
+                  hasAccessFeedback
+                      ? Container()
+                      : ButtonsMenuDrawer(
+                          mainPageWidget: Text(''),
+                          size: size,
+                          text: "Feedback Page",
+                          iconn: FontAwesomeIcons.readme,
+                          color: deepViolet,
                         ),
                 ],
               ),
@@ -934,6 +931,7 @@ class AppDrawer extends StatelessWidget {
               size: size,
               text: "Profit/Loss Page",
               iconn: Icons.arrow_outward,
+              color: deepViolet,
             ),
             sizeBoxHeight(size.height * 0.012),
             ButtonsMenuDrawer(
@@ -941,6 +939,7 @@ class AppDrawer extends StatelessWidget {
               size: size,
               text: "Export Page",
               iconn: Iconsax.export,
+              color: deepViolet,
             ),
           ],
         ),
@@ -948,7 +947,7 @@ class AppDrawer extends StatelessWidget {
     );
   }
 
-  Widget employees() {
+  Widget employees(BuildContext context) {
     return ExpansionTile(
       splashColor: invisible,
       collapsedIconColor: black,
@@ -960,31 +959,27 @@ class AppDrawer extends StatelessWidget {
           children: [
             InkWell(
               splashColor: deepViolet.withOpacity(0.4),
-              onTap: () => Get.to(
-                () => GradientBackground(child: StaffListPage()),
-                transition: naviStyleToAnotherPage,
-                preventDuplicates: false,
-              ),
+              onTap: () =>
+                  Navigator.push(context, naviToAnotherPage(StaffListPage())),
               child: ButtonsMenuDrawer(
                 mainPageWidget: Text(''),
                 size: size,
                 text: "Staff List Page",
                 iconn: Iconsax.user,
+                color: deepViolet,
               ),
             ),
             sizeBoxHeight(size.height * 0.012),
             InkWell(
               splashColor: deepViolet.withOpacity(0.4),
-              onTap: () => Get.to(
-                () => GradientBackground(child: SignUpPage()),
-                transition: naviStyleToAnotherPage,
-                preventDuplicates: false,
-              ),
+              onTap: () =>
+                  Navigator.push(context, naviToAnotherPage(SignUpPage())),
               child: ButtonsMenuDrawer(
                 mainPageWidget: Text(''),
                 size: size,
                 text: "Add/Edit Staff",
                 iconn: Icons.add,
+                color: deepViolet,
               ),
             ),
           ],
@@ -993,7 +988,7 @@ class AppDrawer extends StatelessWidget {
     );
   }
 
-  Widget ordersAndTransactions() {
+  Widget ordersAndTransactions(BuildContext context) {
     return ExpansionTile(
       splashColor: invisible,
       collapsedIconColor: black,
@@ -1005,31 +1000,31 @@ class AppDrawer extends StatelessWidget {
           children: [
             InkWell(
               splashColor: deepViolet.withOpacity(0.4),
-              onTap: () => Get.to(
-                () => GradientBackground(child: OrderPurchasedHistory()),
-                transition: naviStyleToAnotherPage,
-                preventDuplicates: false,
+              onTap: () => Navigator.push(
+                context,
+                naviToAnotherPage(OrderPurchasedHistory()),
               ),
               child: ButtonsMenuDrawer(
                 mainPageWidget: Text(''),
                 size: size,
                 text: "Orders Puschased Page",
                 iconn: Icons.line_style_rounded,
+                color: deepViolet,
               ),
             ),
             sizeBoxHeight(size.height * 0.012),
             InkWell(
               splashColor: deepViolet.withOpacity(0.4),
-              onTap: () => Get.to(
-                () => GradientBackground(child: ReturnsAndRefundsPage()),
-                transition: naviStyleToAnotherPage,
-                preventDuplicates: false,
+              onTap: () => Navigator.push(
+                context,
+                naviToAnotherPage(ReturnsAndRefundsPage()),
               ),
               child: ButtonsMenuDrawer(
                 mainPageWidget: Text(''),
                 size: size,
                 text: "Returns / Refunds",
                 iconn: Icons.compare_arrows,
+                color: deepViolet,
               ),
             ),
           ],
@@ -1038,7 +1033,7 @@ class AppDrawer extends StatelessWidget {
     );
   }
 
-  Widget productsExpansionTile() {
+  Widget productsExpansionTile(BuildContext context) {
     return ExpansionTile(
       splashColor: invisible,
       collapsedIconColor: black,
@@ -1047,23 +1042,21 @@ class AppDrawer extends StatelessWidget {
       children: [
         InkWell(
           splashColor: deepViolet.withOpacity(0.4),
-          onTap: () => Get.to(
-            () => const GradientBackground(child: ProductListPage()),
-            transition: naviStyleToAnotherPage,
-            preventDuplicates: false,
-          ),
+          onTap: () =>
+              Navigator.push(context, naviToAnotherPage(ProductListPage())),
           child: ButtonsMenuDrawer(
             mainPageWidget: Text(''),
             size: size,
             text: "Products List Page",
             iconn: Icons.line_style_rounded,
+            color: deepViolet,
           ),
         ),
       ],
     );
   }
 
-  Widget checkoutExpansionTile() {
+  Widget checkoutExpansionTile(BuildContext context) {
     return ExpansionTile(
       splashColor: invisible,
       collapsedIconColor: black,
@@ -1072,16 +1065,13 @@ class AppDrawer extends StatelessWidget {
       children: [
         InkWell(
           splashColor: deepViolet.withOpacity(0.4),
-          onTap: () => Get.to(
-            () => const GradientBackground(child: PosPage()),
-            transition: naviStyleToAnotherPage,
-            preventDuplicates: false,
-          ),
+          onTap: () => Navigator.push(context, naviToAnotherPage(PosPage())),
           child: ButtonsMenuDrawer(
             mainPageWidget: Text(''),
             size: size,
             text: "POS Page",
             iconn: Iconsax.card_pos,
+            color: deepViolet,
           ),
         ),
       ],
@@ -1094,12 +1084,14 @@ class ButtonsMenuDrawer extends StatelessWidget {
   final Size size;
   final String text;
   final IconData iconn;
+  final Color color;
   const ButtonsMenuDrawer({
     super.key,
     required this.mainPageWidget,
     required this.size,
     required this.text,
     required this.iconn,
+    required this.color,
   });
 
   @override
@@ -1109,7 +1101,7 @@ class ButtonsMenuDrawer extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Icon(iconn, color: black),
+          Icon(iconn, color: color),
           sizeBoxWidth(size.width * 0.009),
           textDrawerStyle(text),
         ],

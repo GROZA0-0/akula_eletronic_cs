@@ -1,9 +1,11 @@
 import 'package:card_loading/card_loading.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:storecs/Core/Styles/themes.dart';
 import 'package:storecs/Core/styles/colors.dart';
 import 'package:storecs/Core/styles/sizes.dart';
+
 
 class DrawerIconAnimation extends StatefulWidget {
   final IconData iconData;
@@ -128,5 +130,50 @@ Widget reportSectionLoading() {
   );
 }
 
-final naviStyleToAnotherPage = Transition.rightToLeftWithFade;
-final feedbacktNaviRoute = Transition.downToUp;
+// final naviStyleToAnotherPage = Transition.rightToLeftWithFade;
+PageRouteBuilder<dynamic> naviToAnotherPage(Widget targetPage) {
+  return PageRouteBuilder(
+    pageBuilder: (context, animation, secondaryAnimation) {
+      /* final dashboardBloc = context.read<DashboardBloc>(); */
+      return GradientBackground(child: targetPage);
+
+      /* GradientBackground(child: targetPage); */
+    },
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      const begin = Offset(1.0, 0.0);
+      const end = Offset.zero;
+      const curve = Curves.easeInOut;
+
+      var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+      return SlideTransition(position: animation.drive(tween), child: child);
+    },
+    transitionDuration: const Duration(milliseconds: 300),
+  );
+}
+
+PageRouteBuilder<dynamic> feedbacktNaviRoute(Widget targetPage) {
+  return PageRouteBuilder(
+    pageBuilder: (context, animation, secondaryAnimation) {
+      /* final dashboardBloc = context.read<DashboardBloc>(); */
+      return GradientBackground(child: targetPage); /* BlocProvider.value(
+        value: dashboardBloc,
+        child: GradientBackground(child: targetPage),
+      ); */
+
+      /* GradientBackground(child: targetPage); */
+    },
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      const begin = Offset(1.0, 0.0);
+      const end = Offset.zero;
+      const curve = Curves.easeOutCubic;
+
+      var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+      return SlideTransition(position: animation.drive(tween), child: child);
+    },
+    transitionDuration: const Duration(milliseconds: 300),
+  );
+}
+
+// final feedbacktNaviRoute = Transition.downToUp;

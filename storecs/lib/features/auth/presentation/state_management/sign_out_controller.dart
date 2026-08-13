@@ -1,9 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:storecs/Core/Styles/Loader.dart';
 import 'package:storecs/Core/Styles/alerts.dart';
-import 'package:storecs/Core/Styles/themes.dart';
+
 import 'package:storecs/Core/styles/animations.dart';
 import 'package:storecs/Features/auth/presentation/pages/sign_in_page.dart';
 import 'package:storecs/features/auth/domain/repository/employee_repo.dart';
@@ -11,7 +12,7 @@ import 'package:storecs/features/auth/presentation/state_management/sign_in_cont
 import 'package:storecs/features/dash_board/presentation/state_management/fetch_employee_info_dash_board_controller.dart';
 import 'package:storecs/main.dart';
 
-class SignOutController extends GetxController {
+class SignOutController {
   final AuthRepo repository;
   SignOutController(this.repository);
 
@@ -23,9 +24,10 @@ class SignOutController extends GetxController {
       clearAllControllers();
       // await Get.delete<FetchEmployeeInfoDashBoardController>(force: true);
       Loader.stopLoading();
-      Get.offAll(
-        () => const GradientBackground(child: SignInPage()),
-        transition: naviStyleToAnotherPage,
+      Navigator.pushAndRemoveUntil(
+        navigator!.context,
+        naviToAnotherPage(SignInPage()),
+        (route) => false,
       );
     } on FirebaseAuthException catch (e) {
       alerts.ifErrors(e.message.toString());

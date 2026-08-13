@@ -13,12 +13,7 @@ class Permissions {
   bool get accAccess => state.level == 'Accountant';
   bool get whAccess => state.level == 'Warehouse Keeper';
   bool get empPagesAccCondition =>
-      cashierAccess ||
-      salesAccess ||
-      /* supervisorAccess || */
-      qaAccess ||
-      accAccess ||
-      whAccess;
+      cashierAccess || salesAccess || qaAccess || accAccess || whAccess;
 
   bool get settingsPageAccCondition =>
       cashierAccess || salesAccess || whAccess || supervisorAccess || qaAccess;
@@ -30,6 +25,7 @@ class Permissions {
       salesAccess || qaAccess || accAccess || hrAccess;
 
   bool get reportsCondition => salesAccess;
+  bool get getFeedbackCondition => whAccess || salesAccess || cashierAccess;
 
   bool get salesReportCondition =>
       salesAccess ||

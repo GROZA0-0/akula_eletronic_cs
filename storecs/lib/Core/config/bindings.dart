@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:get_it/get_it.dart';
 import 'package:http/http.dart' as https;
 import 'package:dio/dio.dart';
 import 'package:storecs/features/auth/data/data_source/data_implementer/employee_data_source_implementer.dart';
@@ -23,6 +24,11 @@ import 'package:storecs/features/dash_board/domain/repository/review_repo.dart';
 import 'package:storecs/features/dash_board/presentation/state_management/fetch_category_dashboard_controller.dart';
 import 'package:storecs/features/dash_board/presentation/state_management/fetch_employee_info_dash_board_controller.dart';
 import 'package:storecs/features/dash_board/presentation/state_management/fetch_reviews_info_dash_board_controller.dart';
+import 'package:storecs/features/feedback_page/data/data_source/feedback_data_source_implementer/feedback_data_source_implementer.dart';
+import 'package:storecs/features/feedback_page/data/data_source/feedback_data_source_repo/feedback_data_source_repo.dart';
+import 'package:storecs/features/feedback_page/data/repository/get_Feedback_implementer.dart';
+import 'package:storecs/features/feedback_page/domain/repository/get_feedback_repo.dart';
+import 'package:storecs/features/feedback_page/presentation/state_management/get_feedback_controller.dart';
 import 'package:storecs/features/issues_or_suggestions/data/data_source/feedback_data_source_implementer/feedback_data_source_implementer.dart';
 import 'package:storecs/features/issues_or_suggestions/data/data_source/feedback_data_source_repo/feedback_data_source_repo.dart';
 import 'package:storecs/features/issues_or_suggestions/data/repository/feedback_implementer.dart';
@@ -71,38 +77,35 @@ import 'package:storecs/features/staff_list/presentation/state_management/staff_
 class AppBindingsControllers extends Bindings {
   @override
   void dependencies() {
+    final sl = GetIt.instance;
     final httpClient = https.Client(); //----> network client
     final dio = Dio(); //----> network client
     Get.lazyPut<https.Client>(() => httpClient);
     Get.lazyPut<Dio>(() => dio);
 
     //////////////////////////////////////////////////////////
-    Get.lazyPut<AuthDataSource>(() => AuthDataSource());
+    sl.registerFactory<AuthDataSource>(() => AuthDataSource());
 
-    Get.lazyPut<EmployeeInfoDataSourceImplemter>(
+    sl.registerFactory<EmployeeInfoDataSourceImplemter>(
       () => EmployeeInfoDataSourceImplemter(client: dio),
     );
-    Get.lazyPut<AuthRepo>(
+    sl.registerFactory<AuthRepo>(
       () => AuthImplement(
-        authDataSource: Get.find<AuthDataSource>(),
-        employeeInfoDataSource: Get.find<EmployeeInfoDataSourceImplemter>(),
+        authDataSource: sl<AuthDataSource>(),
+        employeeInfoDataSource: sl<EmployeeInfoDataSourceImplemter>(),
       ),
-      fenix: true,
     );
     /////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////
 
-    Get.lazyPut<EmployeeInfoDataSourceRepo>(
+    sl.registerFactory<EmployeeInfoDataSourceRepo>(
       () => EmployeeInfoDataSourceImplementer(dio: dio),
       /*  fenix: true, */
     );
-    Get.lazyPut<EmployeeInfoRepo>(
-      () => EmployeeInfoImplement(
-        dataSource: Get.find<EmployeeInfoDataSourceRepo>(),
-      ),
-      fenix: true,
+    sl.registerFactory<EmployeeInfoRepo>(
+      () => EmployeeInfoImplement(dataSource: sl<EmployeeInfoDataSourceRepo>()),
     );
 
     //////////////////////////////////////////////////////////
@@ -246,26 +249,28 @@ class AppBindingsControllers extends Bindings {
     //////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////
-
-    Get.lazyPut<SignInController>(
-      () => SignInController(Get.find<AuthRepo>()),
-      fenix: true,
+    sl.registerFactory<GetFeedbackDataSourceRepo>(
+      () => GetFeedbackDataSourceImplementer(dio: dio),
     );
-    Get.lazyPut<SignUpController>(
-      () => SignUpController(
-        /* Get.find<AuthRepo>(), Get.find<AuthDataSource>() */
-      ),
-      fenix: true,
+    sl.registerFactory<GetFeedbackRepo>(
+      () => GetFeedbackImplementer(sourceRepo: sl<GetFeedbackDataSourceRepo>()),
     );
+    //////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////
+    sl.registerFactory<SignInController>(
+      () => SignInController(sl<AuthRepo>()),
+    );
+    sl.registerFactory<SignUpController>(() => SignUpController());
     Get.lazyPut<SignOutController>(
-      () => SignOutController(Get.find<AuthRepo>()),
+      () => SignOutController(sl<AuthRepo>()),
       fenix: true,
     );
-    Get.lazyPut<FetchEmployeeInfoDashBoardController>(
+    sl.registerFactory<FetchEmployeeInfoDashBoardController>(
       () => FetchEmployeeInfoDashBoardController(
-        repository: Get.find<EmployeeInfoRepo>(),
+        repository: sl<EmployeeInfoRepo>(),
       ),
-      fenix: true,
     );
     Get.put<StaffListController>(
       permanent: true,
@@ -303,6 +308,9 @@ class AppBindingsControllers extends Bindings {
     );
     Get.lazyPut<FeedbackController>(
       () => FeedbackController(repository: Get.find<FeedbackRepository>()),
+    );
+    sl.registerFactory<GetFeedbackController>(
+      () => GetFeedbackController(repo: sl<GetFeedbackRepo>()),
     );
   }
 }

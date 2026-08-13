@@ -13,7 +13,7 @@ import 'package:storecs/features/auth/data/data_source/data_source_repo/auth_dat
 import 'package:storecs/features/auth/domain/repository/employee_repo.dart';
 import 'package:storecs/main.dart';
 
-class SignUpController extends GetxController {
+class SignUpController {
   /* final AuthRepo repository;
   final AuthDataSource source; */
   final AuthRepo repository = Get.find<AuthRepo>();

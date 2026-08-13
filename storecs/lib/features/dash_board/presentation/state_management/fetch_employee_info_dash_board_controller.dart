@@ -5,18 +5,9 @@ import 'package:storecs/Core/config/account_status.dart';
 import 'package:storecs/features/dash_board/domain/entities/employee_info_entities.dart';
 import 'package:storecs/features/dash_board/domain/repository/employee_info_repo.dart';
 
-class FetchEmployeeInfoDashBoardController extends GetxController {
+class FetchEmployeeInfoDashBoardController {
   final EmployeeInfoRepo repository;
   FetchEmployeeInfoDashBoardController({required this.repository});
-  Rx<EmployeeInfoEntities> entities = const EmployeeInfoEntities(
-    id: '',
-    email: '',
-    name: '',
-    phone: '',
-    userPic: '',
-    level: '',
-    status: UserAccountStatus.offline,
-  ).obs;
   EmployeeInfoEntities blocEntities = const EmployeeInfoEntities(
     id: '',
     email: '',
@@ -30,7 +21,7 @@ class FetchEmployeeInfoDashBoardController extends GetxController {
   String get currentUid => FirebaseAuth.instance.currentUser!.uid;
   final isLoading = false.obs;
 
-  @override
+  /* @override
   void onInit() {
     super.onInit();
     // print('profile Controller onInit');
@@ -60,7 +51,7 @@ class FetchEmployeeInfoDashBoardController extends GetxController {
       level: '',
     );
     super.onClose();
-  }
+  } */
 
   Future<EmployeeInfoEntities> getEmployeeInfo(String id) async {
     try {

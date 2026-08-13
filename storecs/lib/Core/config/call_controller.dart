@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:get_it/get_it.dart';
 import 'package:storecs/features/auth/presentation/state_management/sign_in_controller.dart';
 import 'package:storecs/features/auth/presentation/state_management/sign_out_controller.dart';
 import 'package:storecs/features/auth/presentation/state_management/sign_up_controller.dart';
@@ -13,11 +14,12 @@ import 'package:storecs/features/report_page/presentation/state_management/repor
 import 'package:storecs/features/returns&refunds/presentation/state_management/return_and_refund_controller.dart';
 import 'package:storecs/features/staff_list/presentation/state_management/staff_list_controller.dart';
 
-final signInController = Get.find<SignInController>();
-final signUpController = Get.find<SignUpController>();
-final signOutController = Get.find<SignOutController>();
+final sl = GetIt.instance;
+final signInController = sl<SignInController>();
+final signUpController = sl<SignUpController>();
+final signOutController = sl<SignOutController>();
 final fetchEmployeeInfoDashBoardController =
-    Get.find<FetchEmployeeInfoDashBoardController>();
+    sl<FetchEmployeeInfoDashBoardController>();
 final staffListController = Get.find<StaffListController>();
 final productListController = Get.find<ProductListController>();
 final posController = Get.find<PosController>();
