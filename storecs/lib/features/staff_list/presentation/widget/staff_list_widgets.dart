@@ -42,115 +42,119 @@ class _StaffListWidgetsState extends State<StaffListWidgets> {
         child: Container(
           margin: screenSize,
           width: double.infinity,
-          height: size.height / 1.1,
-          child: SingleChildScrollView(
-            physics: const BouncingScrollPhysics(),
-            child: FadeInUp(
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: white),
-                ),
-                child: MultiBlocProvider(
-                  providers: [
-                    BlocProvider(
-                      create: (context) =>
-                          StaffListBloc(sl<StaffListController>())
-                            ..add(StaffListBlocEventLoading()),
-                    ),
-                  ],
-                  child: BlocBuilder<StaffListBloc, StaffListBlocState>(
-                    builder: (context, state) {
-                      if (state is StaffListBlocStateLoading) {
-                        return loadingStateBlocMethod(size);
-                      } else if (state is StaffListBlocStateError) {
-                        return alerts.ifErrors(state.err.toString());
-                      } else if (state is StaffListBlocStateLoaded) {
-                        List<StaffListEntities> list = List.from(
-                          state.entities,
-                        );
-                        return Column(
-                          children: [empColumns(), empData(list, state)],
-                        );
-                      }
-                      return Container();
-                    },
-                  ),
-                ),
-              ),
-            ),
-          ),
+          // height: size.height / 1.1,
+          child: Column(children: [empColumns(), empData(alerts)]),
         ),
       ),
     );
   }
 
-  Widget empData(List<StaffListEntities> list, StaffListBlocStateLoaded state) {
-    return ListView.builder(
-      shrinkWrap: true,
-      physics: const BouncingScrollPhysics(),
-      itemCount: list.length,
-      itemBuilder: (context, index) {
-        final currentStatus = state.entities;
-        return Column(
-          children: [
-            Container(
-              margin: EdgeInsets.symmetric(horizontal: size.width * 0.05),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Container(
-                    child: buildProfileImage(state.entities[index].pic, index),
-                  ),
-
-                  SizedBox(
-                    width: size.width * 0.1,
-
-                    child: Text(
-                      state.entities[index].name,
-                      style: textBodiesStyle,
-                    ),
-                  ),
-
-                  SizedBox(
-                    width: size.width * 0.1,
-
-                    child: Text(
-                      state.entities[index].phone,
-                      style: textBodiesStyle,
-                    ),
-                  ),
-
-                  SizedBox(
-                    width: size.width * 0.1,
-
-                    child: Text(
-                      state.entities[index].level,
-                      style: textBodiesStyle,
-                    ),
-                  ),
-
-                  Container(
-                    height: size.height * 0.03,
-                    clipBehavior: Clip.none,
-                    child: Container(
-                      width: size.width * 0.02,
-                      height: size.height * 0.02,
-                      decoration: BoxDecoration(
-                        color: currentStatus[index].empStatus.color,
-                        shape: BoxShape.circle,
-                        border: Border.all(color: white, width: 2),
-                      ),
-                    ),
-                  ),
-                ],
+  Widget empData(Alerts alerts) {
+    return Expanded(
+      child: FadeInUp(
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(color: white),
+          ),
+          child: MultiBlocProvider(
+            providers: [
+              BlocProvider(
+                create: (context) =>
+                    StaffListBloc(sl<StaffListController>())
+                      ..add(StaffListBlocEventLoading()),
               ),
+            ],
+            child: BlocBuilder<StaffListBloc, StaffListBlocState>(
+              builder: (context, state) {
+                if (state is StaffListBlocStateLoading) {
+                  return loadingStateBlocMethod(size);
+                } else if (state is StaffListBlocStateError) {
+                  return alerts.ifErrors(state.err.toString());
+                } else if (state is StaffListBlocStateLoaded) {
+                  List<StaffListEntities> list = List.from(state.entities);
+                  return ListView.builder(
+                    physics: const BouncingScrollPhysics(),
+                    itemCount: list.length,
+                    itemBuilder: (context, index) {
+                      final currentStatus = state.entities;
+                      return Column(
+                        children: [
+                          Container(
+                            margin: EdgeInsets.symmetric(
+                              horizontal: size.width * 0.05,
+                            ),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                /* Emp Pic */
+                                Container(
+                                  child: buildProfileImage(
+                                    state.entities[index].pic,
+                                    index,
+                                  ),
+                                ),
+                                /* Emp Name */
+                                SizedBox(
+                                  width: size.width * 0.1,
+
+                                  child: Text(
+                                    state.entities[index].name,
+                                    style: textBodiesStyle,
+                                  ),
+                                ),
+                                /* Emp Phone */
+                                SizedBox(
+                                  width: size.width * 0.1,
+
+                                  child: Text(
+                                    state.entities[index].phone,
+                                    style: textBodiesStyle,
+                                  ),
+                                ),
+                                /* Emp Level */
+                                SizedBox(
+                                  width: size.width * 0.1,
+
+                                  child: Text(
+                                    state.entities[index].level,
+                                    style: textBodiesStyle,
+                                  ),
+                                ),
+                                /* Emp Status */
+                                Container(
+                                  height: size.height * 0.03,
+                                  clipBehavior: Clip.none,
+                                  child: Container(
+                                    width: size.width * 0.02,
+                                    height: size.height * 0.02,
+                                    decoration: BoxDecoration(
+                                      color:
+                                          currentStatus[index].empStatus.color,
+                                      shape: BoxShape.circle,
+                                      border: Border.all(
+                                        color: white,
+                                        width: 2,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Divider(color: white),
+                        ],
+                      );
+                    },
+                  );
+                }
+                return Container();
+              },
             ),
-            Divider(color: white),
-          ],
-        );
-      },
+          ),
+        ),
+      ),
     );
   }
 

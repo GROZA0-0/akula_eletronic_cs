@@ -84,7 +84,7 @@ class _IssuesOrSuggestionsWidgetsState
         controller: feedbackController.note,
         style: textBodiesStyle,
         decoration: InputDecoration(
-          labelText: 'Add a note (Optional)',
+          labelText: 'Add a note.',
           labelStyle: GoogleFonts.aleo(
             color: white,
             fontSize: 24,
