@@ -36,7 +36,7 @@ class ReportDataSourceImplementer implements ReportDataSourceRepository {
         return ReportModel.emptyReport();
       } else {
         final info = res.data;
-        print("report stored $data");
+        /* print("report stored $data"); */
         return ReportModel.fromJson(info['data']);
       }
     } else {

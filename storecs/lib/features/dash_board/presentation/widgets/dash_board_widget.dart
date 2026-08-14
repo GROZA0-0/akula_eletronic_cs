@@ -378,7 +378,7 @@ class _InteractivePieChartSectionState
     );
   }
 
-  Container reportSection() {
+  Widget reportSection() {
     final userLevel = fetchEmployeeInfoDashBoardController.blocEntities.level;
     return Container(
       width: size.width * 0.30,
@@ -837,11 +837,6 @@ class AppDrawer extends StatelessWidget {
               splashColor: deepViolet.withOpacity(0.4),
               onTap: () =>
                   Navigator.push(context, naviToAnotherPage(SettingsPage())),
-              /* Get.to(
-                () => GradientBackground(child: SettingsPage()),
-                transition: naviStyleToAnotherPage,
-                preventDuplicates: false,
-              ), */
               child: ButtonsMenuDrawer(
                 mainPageWidget: Text(''),
                 size: size,

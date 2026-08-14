@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
@@ -13,6 +15,7 @@ import 'package:storecs/main.dart';
 
 class ReportController {
   final ReportRepository repository;
+  StreamSubscription? subscription;
   ReportController({required this.repository});
 
   TextEditingController title = TextEditingController();
@@ -75,11 +78,16 @@ class ReportController {
     }
   }
 
-  Future<GetReportOfSupervisorEntities> getSuperReport(String level) async {
+  Stream<GetReportOfSupervisorEntities> getSuperReport(String level) async* {
     try {
-      final theReport = await repository.getReportRepository(level);
-      entities = theReport;
-      return entities;
+      /* initiate the report on sub */
+      final initReport = await repository.getReportRepository(level);
+      yield initReport;
+      /* listen to the future updates from reportStream*/
+      await for (final _ in repository.reportStream) {
+        final updateReport = await repository.getReportRepository(level);
+        yield updateReport;
+      }
     } on PlatformException catch (e) {
       print('The Error Is: ${e.message.toString()}');
       throw e.toString();
