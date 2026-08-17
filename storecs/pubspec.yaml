@@ -70,6 +70,7 @@ dependencies:
   window_manager: ^0.3.8
   get_it: ^9.2.1
   rxdart: ^0.28.0
+  open_file: ^4.0.0
   
 
 dev_dependencies:

@@ -67,6 +67,10 @@ import 'package:storecs/features/returns&refunds/data/repository/store_return_an
 import 'package:storecs/features/returns&refunds/domain/repository/order_details_repo.dart';
 import 'package:storecs/features/returns&refunds/domain/repository/store_return_and_refund_info_repository.dart';
 import 'package:storecs/features/returns&refunds/presentation/state_management/return_and_refund_controller.dart';
+import 'package:storecs/features/sales_export/data/data_source/export_reports_data_source_implmeneter/export_reports_data_source_implementer.dart';
+import 'package:storecs/features/sales_export/data/data_source/export_reports_data_source_repo/export_reports_data_source_repo.dart';
+import 'package:storecs/features/sales_export/data/repository/export_reports_implementer.dart';
+import 'package:storecs/features/sales_export/domain/repository/export_reports_repo.dart';
 import 'package:storecs/features/staff_list/data/data_source/data_source_implementer/staff_list_data_source_implementer.dart';
 import 'package:storecs/features/staff_list/data/data_source/data_source_repo/staff_list_data_source_repo.dart';
 import 'package:storecs/features/staff_list/data/repository/staff_list_repository.dart';
@@ -258,6 +262,14 @@ class AppBindingsControllers extends Bindings {
     //////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////
+    sl.registerFactory<ExportReportsDataSourceRepo>(
+      () => ExportReportsDataSourceImplementer(dio: dio),
+    );
+    sl.registerFactory<ExportReportsRepo>(
+      () => ExportReportsImplementer(
+        reportsDataSourceRepo: sl<ExportReportsDataSourceRepo>(),
+      ),
+    );
     sl.registerFactory<SignInController>(
       () => SignInController(sl<AuthRepo>()),
     );

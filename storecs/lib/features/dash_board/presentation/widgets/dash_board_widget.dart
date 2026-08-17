@@ -35,6 +35,7 @@ import 'package:storecs/features/report_page/presentation/state_management/repor
 import 'package:storecs/features/report_page/presentation/state_management/report_bloc/report_bloc_state.dart';
 import 'package:storecs/features/report_page/presentation/state_management/report_controller.dart';
 import 'package:storecs/features/returns&refunds/presentation/page/returns_and_refunds_page.dart';
+import 'package:storecs/features/sales_export/presentation/page/sales_export_page.dart';
 import 'package:storecs/features/settings_page/presentation/page/settings_page.dart';
 import 'package:storecs/features/staff_list/presentation/page/staff_list.dart';
 
@@ -926,12 +927,17 @@ class AppDrawer extends StatelessWidget {
               color: deepViolet,
             ),
             sizeBoxHeight(size.height * 0.012),
-            ButtonsMenuDrawer(
-              mainPageWidget: Text(''),
-              size: size,
-              text: "Export Page",
-              iconn: Iconsax.export,
-              color: deepViolet,
+            InkWell(
+              splashColor: deepViolet.withOpacity(0.4),
+              onTap: () =>
+                  Navigator.push(context, naviToAnotherPage(SalesExportPage())),
+              child: ButtonsMenuDrawer(
+                mainPageWidget: Text(''),
+                size: size,
+                text: "Export Page",
+                iconn: Iconsax.export,
+                color: deepViolet,
+              ),
             ),
           ],
         ),
