@@ -21,38 +21,6 @@ class FetchEmployeeInfoDashBoardController {
   String get currentUid => FirebaseAuth.instance.currentUser!.uid;
   final isLoading = false.obs;
 
-  /* @override
-  void onInit() {
-    super.onInit();
-    // print('profile Controller onInit');
-    if (currentUid.isNotEmpty) {
-      getEmployeeInfo(currentUid);
-    } else {
-      print('No user logged in!');
-    }
-  }
-
-  @override
-  void onClose() {
-    print('Dashboard Controller Destroyed');
-    /* entities.value = const EmployeeInfoEntities(
-      id: '',
-      name: '',
-      phone: '',
-      userPic: '',
-      level: '',
-    ); */
-    blocEntities = const EmployeeInfoEntities(
-      id: '',
-      email: '',
-      name: '',
-      phone: '',
-      userPic: '',
-      level: '',
-    );
-    super.onClose();
-  } */
-
   Future<EmployeeInfoEntities> getEmployeeInfo(String id) async {
     try {
       final infoOfDash = await repository.toEmployeeInfoRepo(id);

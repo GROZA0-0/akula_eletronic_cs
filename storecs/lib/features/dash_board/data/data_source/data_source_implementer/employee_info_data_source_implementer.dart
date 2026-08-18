@@ -21,7 +21,7 @@ class EmployeeInfoDataSourceImplementer implements EmployeeInfoDataSourceRepo {
       }
     } else {
       throw Exception(
-        "Any issue with fetching profile info  Server Error: ${res.statusCode}",
+        "Any issue with fetching user infoin dashboard  Server Error: ${res.statusCode}",
       );
     }
   }

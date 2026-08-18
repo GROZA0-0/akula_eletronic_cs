@@ -53,6 +53,11 @@ import 'package:storecs/features/product_list/data/data_source/product_list_data
 import 'package:storecs/features/product_list/data/repository/product_list_implementer.dart';
 import 'package:storecs/features/product_list/domain/repository/product_list_repo.dart';
 import 'package:storecs/features/product_list/presentation/state_management/product_list_controller.dart';
+import 'package:storecs/features/profile_page/data/data_source/profile_data_source_implementer/profile_data_source_implementer.dart';
+import 'package:storecs/features/profile_page/data/data_source/profile_data_source_repository/profile_data_source_repository.dart';
+import 'package:storecs/features/profile_page/data/repository/profile_implementer.dart';
+import 'package:storecs/features/profile_page/domain/repository/profile_repository.dart';
+import 'package:storecs/features/profile_page/presentation/state_management/profile_controller.dart';
 import 'package:storecs/features/report_page/data/data_source/report_data_source_implementer/report_data_source_implementer.dart';
 import 'package:storecs/features/report_page/data/data_source/report_data_source_repository/report_data_source_repository.dart';
 import 'package:storecs/features/report_page/data/repository/report_implementer.dart';
@@ -270,6 +275,21 @@ class AppBindingsControllers extends Bindings {
         reportsDataSourceRepo: sl<ExportReportsDataSourceRepo>(),
       ),
     );
+    //////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////
+    sl.registerFactory<ProfileDataSourceRepository>(
+      () => ProfileDataSourceImplementer(dio: dio),
+    );
+    sl.registerFactory<ProfileRepository>(
+      () => ProfileImplementer(sl<ProfileDataSourceRepository>()),
+    );
+    //////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////
+
     sl.registerFactory<SignInController>(
       () => SignInController(sl<AuthRepo>()),
     );
@@ -317,6 +337,9 @@ class AppBindingsControllers extends Bindings {
     );
     sl.registerFactory<GetFeedbackController>(
       () => GetFeedbackController(repo: sl<GetFeedbackRepo>()),
+    );
+    sl.registerFactory<ProfileController>(
+      () => ProfileController(repository: sl<ProfileRepository>()),
     );
   }
 }

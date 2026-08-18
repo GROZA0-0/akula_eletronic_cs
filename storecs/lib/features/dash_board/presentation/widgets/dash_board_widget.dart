@@ -29,6 +29,7 @@ import 'package:storecs/features/issues_or_suggestions/presentation/page/issues_
 import 'package:storecs/features/order_purchased_history/presentation/pages/order_purchased_history.dart';
 import 'package:storecs/features/pos_page/presentation/page/pos_page.dart';
 import 'package:storecs/features/product_list/presentation/pages/product_list.dart';
+import 'package:storecs/features/profile_page/presentation/page/profile_page.dart';
 import 'package:storecs/features/report_page/presentation/page/report_page.dart';
 import 'package:storecs/features/report_page/presentation/state_management/report_bloc/report_bloc.dart';
 import 'package:storecs/features/report_page/presentation/state_management/report_bloc/report_bloc_event.dart';
@@ -799,7 +800,7 @@ class AppDrawer extends StatelessWidget {
                   : ordersAndTransactions(context),
               hasAccessEmpPages ? Container() : employees(context),
               hasAccessReports ? Container() : reports(state, context),
-              hasAccessSettings ? Container() : settings(context),
+              settings(context, hasAccessSettings),
             ],
           ),
         ],
@@ -824,7 +825,7 @@ class AppDrawer extends StatelessWidget {
     );
   }
 
-  Widget settings(BuildContext context) {
+  Widget settings(BuildContext context, bool hasAccessSettings) {
     return ExpansionTile(
       splashColor: invisible,
       collapsedIconColor: black,
@@ -834,25 +835,34 @@ class AppDrawer extends StatelessWidget {
         Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
+            hasAccessSettings
+                ? Container()
+                : InkWell(
+                    splashColor: deepViolet.withOpacity(0.4),
+                    onTap: () => Navigator.push(
+                      context,
+                      naviToAnotherPage(SettingsPage()),
+                    ),
+                    child: ButtonsMenuDrawer(
+                      mainPageWidget: Text(''),
+                      size: size,
+                      text: "Settings Page",
+                      iconn: Iconsax.paperclip,
+                      color: deepViolet,
+                    ),
+                  ),
+            sizeBoxHeight(size.height * 0.012),
             InkWell(
               splashColor: deepViolet.withOpacity(0.4),
               onTap: () =>
-                  Navigator.push(context, naviToAnotherPage(SettingsPage())),
+                  Navigator.push(context, naviToAnotherPage(ProfilePage())),
               child: ButtonsMenuDrawer(
                 mainPageWidget: Text(''),
                 size: size,
-                text: "Settings Page",
-                iconn: Iconsax.paperclip,
+                text: "User Profile Page",
+                iconn: Icons.arrow_outward,
                 color: deepViolet,
               ),
-            ),
-            sizeBoxHeight(size.height * 0.012),
-            ButtonsMenuDrawer(
-              mainPageWidget: Text(''),
-              size: size,
-              text: "User Profile Page",
-              iconn: Icons.arrow_outward,
-              color: deepViolet,
             ),
             sizeBoxHeight(size.height * 0.012),
             ButtonsMenuDrawer(
