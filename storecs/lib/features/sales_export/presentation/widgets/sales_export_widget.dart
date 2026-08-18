@@ -90,11 +90,12 @@ class _SalesExportWidgetState extends State<SalesExportWidget> {
                 children: [
                   Expanded(
                     child: OutlinedButton.icon(
-                      icon: const Icon(Icons.date_range),
+                      icon: const Icon(Icons.date_range, color: white),
                       label: Text(
                         _selectedDateRange == null
                             ? 'Date Range'
                             : '${_selectedDateRange!.start.toString().split(' ')[0]} - ${_selectedDateRange!.end.toString().split(' ')[0]}',
+                        style: textBodiesStyle,
                       ),
                       onPressed: () async {
                         final picked = await showDateRangePicker(

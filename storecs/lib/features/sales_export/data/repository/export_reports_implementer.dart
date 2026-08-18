@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:path_provider/path_provider.dart';
@@ -38,9 +37,7 @@ class ExportReportsImplementer implements ExportReportsRepo {
   }
 
   @override
-  Future<dynamic> fetchPreviewDataSource(
-    ExportReportsModel params,
-  ) async {
+  Future<dynamic> fetchPreviewDataSource(ExportReportsModel params) async {
     try {
       final model = await reportsDataSourceRepo.fetchPreviewDataSource(params);
 

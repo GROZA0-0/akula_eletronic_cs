@@ -14,6 +14,7 @@ const Color colorGrey = Color.fromRGBO(152, 151, 151, 1);
 const Color grey = Color.fromRGBO(201, 201, 201, 1);
 const Color lightGrey = Color.fromRGBO(230, 230, 230, 1);
 const Color csGrey = Color.fromARGB(255, 126, 126, 126);
+const Color steelColor = Color.fromARGB(255, 46, 46, 46);
 const Color white = Color.fromARGB(255, 255, 255, 255);
 const Color green = Color.fromARGB(255, 0, 212, 0);
 const Color blueGreen = Color(0xFF10B981);

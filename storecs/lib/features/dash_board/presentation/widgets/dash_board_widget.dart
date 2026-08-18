@@ -918,14 +918,7 @@ class AppDrawer extends StatelessWidget {
                 ],
               ),
             ),
-            sizeBoxHeight(size.height * 0.012),
-            ButtonsMenuDrawer(
-              mainPageWidget: Text(''),
-              size: size,
-              text: "Profit/Loss Page",
-              iconn: Icons.arrow_outward,
-              color: deepViolet,
-            ),
+
             sizeBoxHeight(size.height * 0.012),
             InkWell(
               splashColor: deepViolet.withOpacity(0.4),
