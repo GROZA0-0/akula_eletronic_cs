@@ -8,10 +8,16 @@ class DashboardBlocEventLoading extends DashboardBlocEvent {
   List<Object?> get props => [];
 }
 
+// ignore: must_be_immutable
 class DashboardBlocEventChangeStatus extends DashboardBlocEvent {
   final String id;
+  String empEmail;
   final UserAccountStatus status;
-  DashboardBlocEventChangeStatus({required this.id, required this.status});
+  DashboardBlocEventChangeStatus({
+    required this.id,
+    required this.status,
+    required this.empEmail,
+  });
 
   @override
   List<Object?> get props => [id, status];

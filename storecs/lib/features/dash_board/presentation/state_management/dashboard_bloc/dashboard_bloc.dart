@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:storecs/features/dash_board/presentation/state_management/change_status_controller.dart';
 import 'package:storecs/features/dash_board/presentation/state_management/dashboard_bloc/dashboard_bloc_event.dart';
 import 'package:storecs/features/dash_board/presentation/state_management/dashboard_bloc/dashboard_bloc_state.dart';
 import 'package:storecs/features/dash_board/presentation/state_management/fetch_category_dashboard_controller.dart';
@@ -7,8 +8,9 @@ import 'package:storecs/features/dash_board/presentation/state_management/fetch_
 
 class DashboardBloc extends Bloc<DashboardBlocEvent, DashboardBlocState> {
   final FetchEmployeeInfoDashBoardController boardController;
+  ChangeStatusController statusController;
   final String id;
-  DashboardBloc(this.boardController, this.id)
+  DashboardBloc(this.boardController, this.id, this.statusController)
     : super(DashboardBlocStateLoading()) {
     on<DashboardBlocEventLoading>((event, emit) async {
       emit(DashboardBlocStateLoading());
@@ -24,6 +26,8 @@ class DashboardBloc extends Bloc<DashboardBlocEvent, DashboardBlocState> {
     on<DashboardBlocEventChangeStatus>((event, emit) async {
       if (state is DashboardBlocStateLoaded) {
         try {
+          /* final updateAtten = */
+          await statusController.changeStats(event.empEmail, event.status);
           final updateStatus = await boardController.changeUserStatus(
             event.id,
             event.status,

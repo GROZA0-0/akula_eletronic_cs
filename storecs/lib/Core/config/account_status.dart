@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:storecs/Core/styles/colors.dart';
 
-enum UserAccountStatus { active, longBreak, busy, offline }
+enum UserAccountStatus {
+  active,
+  longBreak,
+  busy,
+  offline,
+} /* restrict user with values */
 
 extension UserAccountStatusExtension on UserAccountStatus {
+  /* make extensions for the user intractions */
   Color get color {
     switch (this) {
       case UserAccountStatus.active:

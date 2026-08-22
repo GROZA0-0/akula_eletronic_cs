@@ -18,6 +18,7 @@ import 'package:storecs/Core/styles/sizes.dart';
 import 'package:storecs/Core/styles/text_styles.dart';
 import 'package:storecs/Features/auth/presentation/pages/sign_up_page.dart';
 import 'package:storecs/features/dash_board/domain/entities/employee_info_entities.dart';
+import 'package:storecs/features/dash_board/presentation/state_management/change_status_controller.dart';
 import 'package:storecs/features/dash_board/presentation/state_management/dashboard_bloc/dashboard_bloc.dart';
 import 'package:storecs/features/dash_board/presentation/state_management/dashboard_bloc/dashboard_bloc_event.dart';
 import 'package:storecs/features/dash_board/presentation/state_management/dashboard_bloc/dashboard_bloc_state.dart';
@@ -51,11 +52,12 @@ class _DashboardWidgetsState extends State<DashboardWidgets> {
   @override
   Widget build(BuildContext context) {
     final id = FirebaseAuth.instance.currentUser!.uid;
+    final email = FirebaseAuth.instance.currentUser!.email;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: invisible,
         title: FadeInLeft(child: Text(Dashboard, style: textAppBar)),
-        actions: [appbarDashboardBloc(id)],
+        actions: [appbarDashboardBloc(id, email!)],
         leading: Builder(
           builder: (context) {
             return FadeInLeft(
@@ -98,7 +100,7 @@ class _DashboardWidgetsState extends State<DashboardWidgets> {
     );
   }
 
-  Widget appbarDashboardBloc(String id) {
+  Widget appbarDashboardBloc(String id, String email) {
     return Container(
       margin: EdgeInsets.symmetric(
         horizontal: size.width * 0.03,
@@ -110,9 +112,11 @@ class _DashboardWidgetsState extends State<DashboardWidgets> {
       child: MultiBlocProvider(
         providers: [
           BlocProvider(
-            create: (context) =>
-                DashboardBloc(sl<FetchEmployeeInfoDashBoardController>(), id)
-                  ..add(DashboardBlocEventLoading()),
+            create: (context) => DashboardBloc(
+              sl<FetchEmployeeInfoDashBoardController>(),
+              id,
+              sl<ChangeStatusController>(),
+            )..add(DashboardBlocEventLoading()),
           ),
         ],
         child: BlocBuilder<DashboardBloc, DashboardBlocState>(
@@ -140,7 +144,7 @@ class _DashboardWidgetsState extends State<DashboardWidgets> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      userStatusCircularAvatar(emp.id),
+                      userStatusCircularAvatar(emp.id, emp.email),
                       userAccountName(emp),
                       buildProfileImage(emp.userPic),
                     ],
@@ -164,6 +168,7 @@ class _DashboardWidgetsState extends State<DashboardWidgets> {
 
   BlocBuilder<DashboardBloc, DashboardBlocState> userStatusCircularAvatar(
     String id,
+    String email,
   ) {
     return BlocBuilder<DashboardBloc, DashboardBlocState>(
       builder: (context, state) {
@@ -192,8 +197,13 @@ class _DashboardWidgetsState extends State<DashboardWidgets> {
           return PopupMenuButton<UserAccountStatus>(
             onSelected: (UserAccountStatus status) {
               /* update the status color instantly */
+              sl<ChangeStatusController>().changeStats(email, status);
               context.read<DashboardBloc>().add(
-                DashboardBlocEventChangeStatus(id: id, status: status),
+                DashboardBlocEventChangeStatus(
+                  id: id,
+                  status: status,
+                  empEmail: email,
+                ),
               );
             },
             itemBuilder: (context) => circleUserStatus().toList(),
@@ -254,9 +264,11 @@ class _DashboardWidgetsState extends State<DashboardWidgets> {
       key: ValueKey(id),
       providers: [
         BlocProvider(
-          create: (context) =>
-              DashboardBloc(sl<FetchEmployeeInfoDashBoardController>(), id)
-                ..add(DashboardBlocEventLoading()),
+          create: (context) => DashboardBloc(
+            sl<FetchEmployeeInfoDashBoardController>(),
+            id,
+            sl<ChangeStatusController>(),
+          )..add(DashboardBlocEventLoading()),
         ),
       ],
       child: BlocBuilder<DashboardBloc, DashboardBlocState>(
@@ -742,9 +754,11 @@ class AppDrawer extends StatelessWidget {
         child: MultiBlocProvider(
           providers: [
             BlocProvider(
-              create: (context) =>
-                  DashboardBloc(sl<FetchEmployeeInfoDashBoardController>(), id)
-                    ..add(DashboardBlocEventLoading()),
+              create: (context) => DashboardBloc(
+                sl<FetchEmployeeInfoDashBoardController>(),
+                id,
+                sl<ChangeStatusController>(),
+              )..add(DashboardBlocEventLoading()),
             ),
           ],
           child: BlocBuilder<DashboardBloc, DashboardBlocState>(

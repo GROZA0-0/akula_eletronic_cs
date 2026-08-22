@@ -8,18 +8,23 @@ import 'package:storecs/features/auth/domain/repository/employee_repo.dart';
 import 'package:storecs/features/auth/presentation/state_management/sign_in_controller.dart';
 import 'package:storecs/features/auth/presentation/state_management/sign_out_controller.dart';
 import 'package:storecs/features/auth/presentation/state_management/sign_up_controller.dart';
+import 'package:storecs/features/dash_board/data/data_source/data_source_implementer/attendance_data_source_implementer.dart';
 import 'package:storecs/features/dash_board/data/data_source/data_source_implementer/category_dashboard_data_source_implementer.dart';
 import 'package:storecs/features/dash_board/data/data_source/data_source_implementer/employee_info_data_source_implementer.dart';
 import 'package:storecs/features/dash_board/data/data_source/data_source_implementer/review_info_data_source_implementer.dart';
+import 'package:storecs/features/dash_board/data/data_source/data_source_repo/attendance_data_source_repository.dart';
 import 'package:storecs/features/dash_board/data/data_source/data_source_repo/category_dashboard_data_source_repo.dart';
 import 'package:storecs/features/dash_board/data/data_source/data_source_repo/employee_info_data_source_repo.dart';
 import 'package:storecs/features/dash_board/data/data_source/data_source_repo/review_info_data_source_repo.dart';
+import 'package:storecs/features/dash_board/data/repository/attendance_implementer.dart';
 import 'package:storecs/features/dash_board/data/repository/category_dashboard_implementer.dart';
 import 'package:storecs/features/dash_board/data/repository/employee_info_repository.dart';
 import 'package:storecs/features/dash_board/data/repository/review_implementer.dart';
+import 'package:storecs/features/dash_board/domain/repository/attendance_repo.dart';
 import 'package:storecs/features/dash_board/domain/repository/category_dashboard_repo.dart';
 import 'package:storecs/features/dash_board/domain/repository/employee_info_repo.dart';
 import 'package:storecs/features/dash_board/domain/repository/review_repo.dart';
+import 'package:storecs/features/dash_board/presentation/state_management/change_status_controller.dart';
 import 'package:storecs/features/dash_board/presentation/state_management/fetch_category_dashboard_controller.dart';
 import 'package:storecs/features/dash_board/presentation/state_management/fetch_employee_info_dash_board_controller.dart';
 import 'package:storecs/features/dash_board/presentation/state_management/fetch_reviews_info_dash_board_controller.dart';
@@ -289,6 +294,16 @@ class AppBindingsControllers extends Bindings {
     //////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////
+    sl.registerFactory<AttendanceDataSourceRepository>(
+      () => AttendanceDataSourceImplementer(dio: dio),
+    );
+    sl.registerFactory<AttendanceRepo>(
+      () => AttendanceImplementer(sl<AttendanceDataSourceRepository>()),
+    );
+    //////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////
 
     sl.registerFactory<SignInController>(
       () => SignInController(sl<AuthRepo>()),
@@ -340,6 +355,9 @@ class AppBindingsControllers extends Bindings {
     );
     sl.registerFactory<ProfileController>(
       () => ProfileController(repository: sl<ProfileRepository>()),
+    );
+    sl.registerFactory<ChangeStatusController>(
+      () => ChangeStatusController(sl<AttendanceRepo>()),
     );
   }
 }
