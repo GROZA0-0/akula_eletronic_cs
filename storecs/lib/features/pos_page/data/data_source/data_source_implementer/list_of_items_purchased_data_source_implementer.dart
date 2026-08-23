@@ -13,10 +13,12 @@ class ListOfItemsPurchasedDataSourceImplementer
   Future<CartModel> toListOfItemsPurchasedDataSourceRepo(
     List<CartEntities> items,
     double totalPrice,
+    String fullName,
   ) async {
     final storeOrder = '${Env.baseURL}insertOrderToDatabaseController';
     final Map<String, dynamic> body = {
       'items': items.map((e) => e.toJson()).toList(),
+      'sold_by': fullName,
       'totalPrice': totalPrice,
     };
     final res = await dio.post(

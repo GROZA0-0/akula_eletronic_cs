@@ -142,7 +142,7 @@ class ListSoldOrderData extends StatelessWidget {
             vertical: size.height * 0.02,
             horizontal: size.width * 0.1,
           ),
-          height: size.height / 1.3,
+          height: size.height / 1.2,
           width: size.width / 1.3,
           child: Column(
             children: [
@@ -157,19 +157,20 @@ class ListSoldOrderData extends StatelessWidget {
               const Divider(),
               Column(
                 children: [
-                  SizedBox(
-                    width: size.width,
-                    child: Text(
-                      'Items: ${order.items.length}',
-                      style: GoogleFonts.aleo(fontSize: 21, color: white),
-                    ),
+                  TextDataTemplate(
+                    text: 'Items',
+                    title: order.items.length.toString(),
+                    textSize: 20,
                   ),
-                  SizedBox(
-                    width: size.width,
-                    child: Text(
-                      'Total Price: ${order.totalPrice.toStringAsFixed(2)} JOD',
-                      style: GoogleFonts.aleo(fontSize: 20, color: white),
-                    ),
+                  TextDataTemplate(
+                    text: 'Total Price',
+                    title: '${order.totalPrice.toStringAsFixed(2)} JOD',
+                    textSize: 18,
+                  ),
+                  TextDataTemplate(
+                    text: 'Seller',
+                    title: order.seller,
+                    textSize: 16,
                   ),
                 ],
               ),
@@ -261,6 +262,29 @@ class ListSoldOrderData extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+class TextDataTemplate extends StatelessWidget {
+  final String text;
+  final String title;
+  final double textSize;
+  const TextDataTemplate({
+    super.key,
+    required this.text,
+    required this.title,
+    required this.textSize,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: size.width,
+      child: Text(
+        "$text: $title",
+        style: GoogleFonts.aleo(fontSize: textSize, color: white),
+      ),
     );
   }
 }

@@ -5,6 +5,7 @@ abstract class ListOfItemsPurchasedRepo {
   Future<ListOfItemsPurchasedEntities> toListOfItemsPurchasedEntities(
     List<CartEntities> items,
     double totalPrice,
+    String fullName,
   );
   Future<ListOfItemsPurchasedEntities> toGetReceiptRepo(String orderId);
 }

@@ -1,9 +1,12 @@
-import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
+import 'package:animate_do/animate_do.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:iconsax/iconsax.dart';
+import 'package:storecs/Core/styles/animations.dart';
 import 'package:storecs/Core/styles/colors.dart';
 import 'package:storecs/Core/styles/sizes.dart';
 import 'package:storecs/Core/styles/text_styles.dart';
+import 'package:storecs/features/settings_page/presentation/page/tax_rules.dart';
 
 class SettingsWidgets extends StatefulWidget {
   const SettingsWidgets({super.key});
@@ -18,30 +21,23 @@ class _SettingsWidgetsState extends State<SettingsWidgets> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: invisible,
-        iconTheme: IconThemeData(color: white),
+        elevation: 0,
+        iconTheme: const IconThemeData(color: white),
         title: FadeInLeft(child: Text('Settings Page', style: textAppBar)),
       ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Container(
-            margin: EdgeInsets.symmetric(horizontal: size.width * 0.01),
-            decoration: BoxDecoration(
-              /* color: redColor, */
-              border: Border.all(color: white, width: 4),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Center(
-              child: Column(
-                children: [
-                  sizeBoxHeight(size.height * 0.003),
-                  InventoryAdSerialNumberSettingsSection(),
-                  sizeBoxHeight(size.height * 0.01),
-                  HardwareAndPeripheralsConfigurationSection(),
-                  sizeBoxHeight(size.height * 0.01),
-                  PaymentsPricingAndSecuritySection(),
-                  sizeBoxHeight(size.height * 0.003),
-                ],
-              ),
+      body: FadeInUp(
+        child: SafeArea(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              children: [
+                InventoryAndSerialNumberSettingsSection(),
+                SizedBox(height: size.height * 0.020),
+                HardwareAndPeripheralsConfigurationSection(),
+                SizedBox(height: size.height * 0.020),
+                PaymentsPricingAndSecuritySection(),
+                SizedBox(height: size.height * 0.020),
+              ],
             ),
           ),
         ),
@@ -50,30 +46,35 @@ class _SettingsWidgetsState extends State<SettingsWidgets> {
   }
 }
 
-class PaymentsPricingAndSecuritySection extends StatelessWidget {
-  const PaymentsPricingAndSecuritySection({super.key});
+class InventoryAndSerialNumberSettingsSection extends StatelessWidget {
+  const InventoryAndSerialNumberSettingsSection({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return ListSettingsButtonsComponents(
-      title: 'Payments, Pricing, and Security',
-      manyWidget: [
-        SettingsButtonsComponents(
-          title: 'Payment Integrations',
+    return SettingsSectionGroup(
+      title: 'Inventory and Serial Number',
+      icon: Iconsax.box_search,
+      items: [
+        SettingsTileItem(
+          title: 'Serial Number Capture',
           subtitle:
-              'Connects credit/debit card terminals, gift cards, and multi-tender or split-payment options.',
+              'Forces or allows scanning of unique serial numbers/IMEIs during sales and returns to track warranties.',
+          icon: Iconsax.barcode,
+          onTap: () {},
         ),
-        sizeBoxHeight(size.height * 0.02),
-        SettingsButtonsComponents(
-          title: 'Tax Rules',
+        SettingsTileItem(
+          title: 'Stock Alerts',
           subtitle:
-              'Sets regional sales tax or VAT, including rules for eco-fees or electronic recycling levies.',
+              'Sets low-stock thresholds for high-demand gadgets or accessories to trigger reorders automatically.',
+          icon: Iconsax.notification,
+          onTap: () {},
         ),
-        sizeBoxHeight(size.height * 0.02),
-        SettingsButtonsComponents(
-          title: 'Staff Permissions',
+        SettingsTileItem(
+          title: 'Product Matrix / Attributes',
           subtitle:
-              'Restricts high-level actions like manual price overrides, open-box discounts, or processing returns to manager PIN codes.',
+              'Configures variants like storage capacity, RAM, color, or carrier locking.',
+          icon: Iconsax.category,
+          onTap: () {},
         ),
       ],
     );
@@ -85,154 +86,185 @@ class HardwareAndPeripheralsConfigurationSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListSettingsButtonsComponents(
-      title: 'Hardware and Peripherals Configuration',
-      manyWidget: [
-        SettingsButtonsComponents(
+    return SettingsSectionGroup(
+      title: 'Hardware & Peripherals',
+      icon: Iconsax.cpu_setting,
+      items: [
+        SettingsTileItem(
           title: 'Barcode & Label Scanners',
           subtitle:
               'Adjusts scanner triggers, key capture delays, and pairing for specialized barcode or QR scanners.',
+          icon: Iconsax.scan,
+          onTap: () {},
         ),
-        sizeBoxHeight(size.height * 0.02),
-        SettingsButtonsComponents(
-          title: 'Barcode & Label Scanners',
-          subtitle:
-              'Adjusts scanner triggers, key capture delays, and pairing for specialized barcode or QR scanners.',
-        ),
-        sizeBoxHeight(size.height * 0.02),
-        SettingsButtonsComponents(
+        SettingsTileItem(
           title: 'Customer-Facing Display',
           subtitle:
               'Toggles second-screen totals, promotional images, or digital signature prompts.',
+          icon: Iconsax.monitor,
+          onTap: () {},
         ),
       ],
     );
   }
 }
 
-class InventoryAdSerialNumberSettingsSection extends StatelessWidget {
-  const InventoryAdSerialNumberSettingsSection({super.key});
+class PaymentsPricingAndSecuritySection extends StatelessWidget {
+  const PaymentsPricingAndSecuritySection({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return ListSettingsButtonsComponents(
-      title: 'Inventory and Serial Number Settings',
-      manyWidget: [
-        SettingsButtonsComponents(
-          title: 'Serial Number Capture',
+    return SettingsSectionGroup(
+      title: 'Payments, Pricing & Security',
+      icon: Iconsax.security_card,
+      items: [
+        SettingsTileItem(
+          title: 'Payment Integrations',
           subtitle:
-              'Forces or allows scanning of unique serial numbers/IMEIs during sales and returns to track warranties.',
+              'Connects credit/debit card terminals, gift cards, and multi-tender or split-payment options.',
+          icon: Iconsax.card_pos,
+          onTap: () {},
         ),
-        sizeBoxHeight(size.height * 0.02),
-        SettingsButtonsComponents(
-          title: 'Stock Alerts',
+        SettingsTileItem(
+          title: 'Tax Rules',
           subtitle:
-              'Sets low-stock thresholds for high-demand gadgets or accessories to trigger reorders automatically.',
+              'Sets regional sales tax or VAT, including rules for eco-fees or electronic recycling levies.',
+          icon: Iconsax.receipt_item,
+          onTap: () =>
+              Navigator.push(context, naviToAnotherPage(TaxRuleTemplatePage())),
         ),
-        sizeBoxHeight(size.height * 0.02),
-        SettingsButtonsComponents(
-          title: 'Product Matrix/Attributes',
+        SettingsTileItem(
+          title: 'Staff Permissions',
           subtitle:
-              'Configures variants like storage capacity, RAM, color, or carrier locking',
+              'Restricts high-level actions like manual price overrides, open-box discounts, or processing returns to manager PIN codes.',
+          icon: Iconsax.user_tick,
+          onTap: () {},
         ),
-        sizeBoxHeight(size.height * 0.02),
       ],
     );
   }
 }
 
-class ListSettingsButtonsComponents extends StatelessWidget {
+class SettingsSectionGroup extends StatelessWidget {
   final String title;
-  final List<Widget> manyWidget;
-  const ListSettingsButtonsComponents({
+  final IconData icon;
+  final List<Widget> items;
+
+  const SettingsSectionGroup({
     super.key,
-    required this.manyWidget,
     required this.title,
+    required this.icon,
+    required this.items,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        border: Border.all(color: white, width: 3),
-        borderRadius: BorderRadius.circular(12),
-        /* color: yellow, */
+        color: surfaceCardColor,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: white, width: 1),
       ),
-      height: size.height / 2,
-      width: size.width / 1.1,
+      padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          Container(
-            margin: EdgeInsets.only(left: size.width * 0.01),
-            child: Text(
-              title,
-              style: GoogleFonts.aleo(
-                fontSize: 26,
-                color: white,
-                fontWeight: FontWeight.w400,
+          Row(
+            children: [
+              Icon(icon, color: accentColor, size: 22),
+              SizedBox(width: size.width * 0.01),
+              Expanded(
+                child: Text(
+                  title,
+                  style: GoogleFonts.aleo(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: white,
+                  ),
+                ),
               ),
-            ),
+            ],
           ),
-          sizeBoxHeight(size.height * 0.02),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: manyWidget,
-          ),
+          SizedBox(height: size.height * 0.012),
+          Divider(color: primaryBorderColor, height: size.height * 0.001),
+          SizedBox(height: size.height * 0.008),
+          ...items,
         ],
       ),
     );
   }
 }
 
-class SettingsButtonsComponents extends StatelessWidget {
+class SettingsTileItem extends StatelessWidget {
   final String title;
   final String subtitle;
-  const SettingsButtonsComponents({
+  final IconData icon;
+  final VoidCallback onTap;
+
+  const SettingsTileItem({
     super.key,
     required this.title,
     required this.subtitle,
+    required this.icon,
+    required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        /* color: greenColor, */
-        border: Border.all(color: white, width: 3),
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 6.0),
+      child: Material(
+        color: invisible,
         borderRadius: BorderRadius.circular(12),
-      ),
-      margin: EdgeInsets.only(
-        left: size.width * 0.012,
-        bottom: size.height * 0.002,
-      ),
-      width: size.width / 2,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            margin: EdgeInsets.only(left: size.width * 0.01),
-            child: Text(
-              title,
-              style: GoogleFonts.aleo(
-                fontSize: 23,
-                color: white,
-                fontWeight: FontWeight.w500,
-              ),
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(12),
+          hoverColor: white.withOpacity(0.05),
+          splashColor: accentColor.withOpacity(0.15),
+          child: Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: accentColor.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Icon(icon, color: accentColor, size: 20),
+                ),
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        style: GoogleFonts.aleo(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: white,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        subtitle,
+                        style: GoogleFonts.aleo(
+                          fontSize: 13,
+                          color: lightGrey,
+                          height: 1.3,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 8),
+                const Icon(Iconsax.arrow_right_3, color: colorGrey, size: 16),
+              ],
             ),
           ),
-          Container(
-            margin: EdgeInsets.only(left: size.width * 0.01),
-            child: Text(
-              subtitle,
-              style: GoogleFonts.aleo(
-                color: white,
-                fontWeight: FontWeight.w400,
-              ),
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }

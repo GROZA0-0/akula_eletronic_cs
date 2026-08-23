@@ -27,7 +27,8 @@ import 'package:storecs/features/pos_page/presentation/state_management/pos_bloc
 import 'package:storecs/main.dart';
 
 class PosWidgets extends StatefulWidget {
-  const PosWidgets({super.key});
+  final String fullName;
+  const PosWidgets({super.key, required this.fullName});
 
   @override
   State<PosWidgets> createState() => _PosWidgetsState();
@@ -114,7 +115,11 @@ class _PosWidgetsState extends State<PosWidgets> {
                     ),
                     sizeBoxWidth(size.width * 0.02),
 
-                    CartSection(passMouse: passMouse, categories: categories),
+                    CartSection(
+                      passMouse: passMouse,
+                      categories: categories,
+                      fullName: widget.fullName,
+                    ),
                   ],
                 ),
               ),
@@ -129,10 +134,12 @@ class _PosWidgetsState extends State<PosWidgets> {
 class CartSection extends StatelessWidget {
   final List<String> categories;
   final bool passMouse;
+  final String fullName;
   const CartSection({
     super.key,
     required this.passMouse,
     required this.categories,
+    required this.fullName,
   });
 
   @override
@@ -152,14 +159,14 @@ class CartSection extends StatelessWidget {
             customerOrder(),
 
             emptyCardSection(),
-            orderPriceDetails(context),
+            orderPriceDetails(context, fullName),
           ],
         ),
       ),
     );
   }
 
-  Widget orderPriceDetails(BuildContext context) {
+  Widget orderPriceDetails(BuildContext context, String fullName) {
     return Container(
       width: size.width / 3.1,
       height: size.height / 3,
@@ -184,7 +191,7 @@ class CartSection extends StatelessWidget {
 
                   sizeBoxHeight(size.height * 0.02),
                   PriceRow(
-                    label: 'Tax (16%) :-',
+                    label: 'Tax (5%) :-',
                     value: '${cartController.taxAmount.toStringAsFixed(2)} JOD',
                   ),
 
@@ -202,7 +209,7 @@ class CartSection extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               CardButtons(
-                callback: () async => await cartController.purchase(),
+                callback: () async => await cartController.purchase(fullName),
                 height: size.height / 14,
                 width: size.width / 5.5,
                 text: "Confirm Processed",

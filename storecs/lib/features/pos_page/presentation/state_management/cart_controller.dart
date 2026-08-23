@@ -8,11 +8,11 @@ import 'package:storecs/features/pos_page/domain/enitities/pos_entities.dart';
 import 'package:storecs/features/pos_page/domain/repository/list_of_items_purchased_repo.dart';
 import 'package:storecs/main.dart';
 
-class CartController  {
+class CartController {
   final ListOfItemsPurchasedRepo repo;
   CartController({required this.repo});
   final RxList<CartEntities> cartItems = <CartEntities>[].obs;
-  final double taxRate = 0.16;
+  final double taxRate = 0.05;
   double get subTotal =>
       cartItems.fold(0, (sum, item) => sum + item.totalPrice);
   double get taxAmount => subTotal * taxRate;
@@ -101,7 +101,7 @@ class CartController  {
     print('✅ Cart cleared');
   }
 
-  Future<void> purchase() async {
+  Future<void> purchase(String fullName) async {
     if (cartItems.isEmpty) {
       alerts.ifErrors("Cart Is Empty.");
       return;
@@ -111,6 +111,7 @@ class CartController  {
       final result = await repo.toListOfItemsPurchasedEntities(
         cartItems,
         total,
+        fullName,
       );
       purchasedReceipt = result;
       cartItems.clear();

@@ -674,7 +674,10 @@ class QuickActionsSection extends StatelessWidget {
           children: [
             QuickActionsButton(
               mainPageWidget: () => hasAccess
-                  ? Navigator.push(context, naviToAnotherPage(PosPage()))
+                  ? Navigator.push(
+                      context,
+                      naviToAnotherPage(PosPage(fullName: employee.name)),
+                    )
                   : Navigator.push(context, naviToAnotherPage(StaffListPage())),
               size: size,
               text: hasAccess ? 'POS Page' : 'Staff List Page',
@@ -769,7 +772,7 @@ class AppDrawer extends StatelessWidget {
                 return Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    drawerList(state, context),
+                    drawerList(state, context, state.enitities.name),
                     Divider(),
                     signOutButton(),
                   ],
@@ -783,7 +786,11 @@ class AppDrawer extends StatelessWidget {
     );
   }
 
-  Widget drawerList(DashboardBlocStateLoaded state, BuildContext context) {
+  Widget drawerList(
+    DashboardBlocStateLoaded state,
+    BuildContext context,
+    String fullName,
+  ) {
     final permissions = Permissions(state: state.enitities);
     final hasAccessEmpPages = permissions.empPagesAccCondition;
     final hasAccessPAI = permissions.productsAndInventoryCondition;
@@ -807,7 +814,7 @@ class AppDrawer extends StatelessWidget {
                   fontWeight: FontWeight.w400,
                 ),
               ),
-              checkoutExpansionTile(context),
+              checkoutExpansionTile(context, fullName),
               hasAccessPAI ? Container() : productsExpansionTile(context),
               hasAccessOrderActions
                   ? Container()
@@ -878,14 +885,6 @@ class AppDrawer extends StatelessWidget {
                 color: deepViolet,
               ),
             ),
-            sizeBoxHeight(size.height * 0.012),
-            ButtonsMenuDrawer(
-              mainPageWidget: Text(''),
-              size: size,
-              text: "Backup/Restore ",
-              iconn: Iconsax.export,
-              color: deepViolet,
-            ),
           ],
         ),
       ],
@@ -896,6 +895,7 @@ class AppDrawer extends StatelessWidget {
     final permissions = Permissions(state: state.enitities);
     final hasAccessSalesReport = permissions.salesReportCondition;
     final hasAccessFeedback = permissions.getFeedbackCondition;
+    final hasAccessExport = permissions.getFeedbackCondition;
     return ExpansionTile(
       splashColor: invisible,
       collapsedIconColor: black,
@@ -944,17 +944,25 @@ class AppDrawer extends StatelessWidget {
             ),
 
             sizeBoxHeight(size.height * 0.012),
-            InkWell(
-              splashColor: deepViolet.withOpacity(0.4),
-              onTap: () =>
-                  Navigator.push(context, naviToAnotherPage(SalesExportPage())),
-              child: ButtonsMenuDrawer(
-                mainPageWidget: Text(''),
-                size: size,
-                text: "Export Page",
-                iconn: Iconsax.export,
-                color: deepViolet,
-              ),
+            Column(
+              children: [
+                hasAccessExport
+                    ? Container()
+                    : InkWell(
+                        splashColor: deepViolet.withOpacity(0.4),
+                        onTap: () => Navigator.push(
+                          context,
+                          naviToAnotherPage(SalesExportPage()),
+                        ),
+                        child: ButtonsMenuDrawer(
+                          mainPageWidget: Text(''),
+                          size: size,
+                          text: "Export Page",
+                          iconn: Iconsax.export,
+                          color: deepViolet,
+                        ),
+                      ),
+              ],
             ),
           ],
         ),
@@ -1071,7 +1079,7 @@ class AppDrawer extends StatelessWidget {
     );
   }
 
-  Widget checkoutExpansionTile(BuildContext context) {
+  Widget checkoutExpansionTile(BuildContext context, String fullName) {
     return ExpansionTile(
       splashColor: invisible,
       collapsedIconColor: black,
@@ -1080,7 +1088,10 @@ class AppDrawer extends StatelessWidget {
       children: [
         InkWell(
           splashColor: deepViolet.withOpacity(0.4),
-          onTap: () => Navigator.push(context, naviToAnotherPage(PosPage())),
+          onTap: () => Navigator.push(
+            context,
+            naviToAnotherPage(PosPage(fullName: fullName)),
+          ),
           child: ButtonsMenuDrawer(
             mainPageWidget: Text(''),
             size: size,

@@ -27,3 +27,6 @@ const Color deepViolet = Color.fromARGB(255, 59, 36, 121);
 const Color amethyst = Color.fromARGB(255, 70, 50, 121);
 const Color lavenderGray = Color.fromARGB(255, 89, 77, 121);
 const Color invisible = Colors.transparent;
+const Color primaryBorderColor = Color(0xFF2C2C36);
+const Color surfaceCardColor = Color(0xFF1E1E26);
+const Color accentColor = Color(0xFF6C5CE7);

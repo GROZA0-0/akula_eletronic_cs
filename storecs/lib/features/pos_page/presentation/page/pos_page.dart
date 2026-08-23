@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:storecs/features/pos_page/presentation/widgets/pos_widgets.dart';
 
 class PosPage extends StatelessWidget {
-  const PosPage({super.key});
+  final String fullName;
+  const PosPage({super.key, required this.fullName});
 
   @override
   Widget build(BuildContext context) {
-    return PosWidgets();
+    return PosWidgets(fullName: fullName);
   }
 }

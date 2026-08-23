@@ -11,11 +11,13 @@ class ListOfItemsPurchasedRepository implements ListOfItemsPurchasedRepo {
   Future<ListOfItemsPurchasedEntities> toListOfItemsPurchasedEntities(
     List<CartEntities> items,
     double totalPrice,
+    String fullName,
   ) async {
     try {
       final data = await implementer.toListOfItemsPurchasedDataSourceRepo(
         items,
         totalPrice,
+        fullName,
       );
       return data.toListOfItemsPurchasedEntities();
     } catch (e) {

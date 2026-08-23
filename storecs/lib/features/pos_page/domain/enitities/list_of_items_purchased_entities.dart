@@ -5,6 +5,7 @@ import 'package:storecs/features/pos_page/domain/enitities/cart_entities.dart';
 class ListOfItemsPurchasedEntities extends Equatable {
   final String orderId;
   final List<CartEntities> items;
+  String fullName;
 
   final double totalPrice;
 
@@ -12,10 +13,11 @@ class ListOfItemsPurchasedEntities extends Equatable {
   ListOfItemsPurchasedEntities({
     required this.orderId,
     required this.items,
+    required this.fullName,
     required this.totalPrice,
     this.createdAt,
   });
 
   @override
-  List<Object?> get props => [orderId, items, totalPrice, createdAt];
+  List<Object?> get props => [orderId, items, fullName, totalPrice, createdAt];
 }

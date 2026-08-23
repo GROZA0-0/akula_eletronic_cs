@@ -5,12 +5,14 @@ class OrderPurchasedHistoryModel {
   final String orderId;
   final List<OrderPurchasedHistoryItemsDetails> items;
   final double totalPrice;
+  final String seller;
   final DateTime time;
 
   OrderPurchasedHistoryModel({
     required this.orderId,
     required this.items,
     required this.totalPrice,
+    required this.seller,
     required this.time,
   });
 
@@ -24,7 +26,8 @@ class OrderPurchasedHistoryModel {
               ),
             )
           : [],
-      totalPrice: json['totalPrice'],
+      totalPrice: json['totalPrice'] ?? 0.0,
+      seller: json['sold_by'].toString(),
       time: json['createdAt'] != null
           ? DateTime.parse(json['createdAt'])
           : DateTime.now(),
@@ -35,6 +38,7 @@ class OrderPurchasedHistoryModel {
       orderId: orderId,
       items: items,
       totalPrice: totalPrice,
+      seller: seller,
       time: time,
     );
   }

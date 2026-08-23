@@ -4,6 +4,7 @@ import 'package:storecs/features/pos_page/domain/enitities/list_of_items_purchas
 class CartModel {
   final String orderId;
   final List<CartEntities> items;
+  final String fullName;
 
   final double totalPrice;
 
@@ -13,6 +14,7 @@ class CartModel {
     required this.orderId,
     required this.items,
     required this.totalPrice,
+    required this.fullName,
     this.createdAt,
   });
 
@@ -20,13 +22,14 @@ class CartModel {
     return {
       'orderId': orderId,
       'items': items.map((e) => e.toJson()).toList(),
+      'sold_by':fullName,
       'totalPrice': totalPrice,
       'createdAt': createdAt,
     };
   }
 
   static CartModel storeEmpty() {
-    return CartModel(orderId: '', items: [], totalPrice: 0.0);
+    return CartModel(orderId: '', items: [], totalPrice: 0.0,fullName: '');
   }
 
   factory CartModel.fromJson(Map<String, dynamic> json) {
@@ -60,6 +63,7 @@ class CartModel {
           initialQuantity: (item['quantity'] as num?)?.toInt() ?? 1,
         );
       }).toList(),
+      fullName: json['sold_by']??''
     );
   }
 
@@ -67,7 +71,7 @@ class CartModel {
     return ListOfItemsPurchasedEntities(
       orderId: orderId,
       items: items,
-      totalPrice: totalPrice,
+      totalPrice: totalPrice,fullName: fullName
     );
   }
 }

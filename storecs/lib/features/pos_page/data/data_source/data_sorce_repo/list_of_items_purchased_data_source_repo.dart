@@ -5,6 +5,7 @@ abstract class ListOfItemsPurchasedDataSourceRepo {
   Future<CartModel> toListOfItemsPurchasedDataSourceRepo(
     List<CartEntities> items,
     double totalPrice,
+    String fullName,
   );
   Future<CartModel> toGetNewestReceipt(String orderId);
 }
