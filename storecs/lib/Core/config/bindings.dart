@@ -81,6 +81,11 @@ import 'package:storecs/features/sales_export/data/data_source/export_reports_da
 import 'package:storecs/features/sales_export/data/data_source/export_reports_data_source_repo/export_reports_data_source_repo.dart';
 import 'package:storecs/features/sales_export/data/repository/export_reports_implementer.dart';
 import 'package:storecs/features/sales_export/domain/repository/export_reports_repo.dart';
+import 'package:storecs/features/settings_page/data/data_source/tax_rules_data_source_implementer/tax_rules_data_source_implementer.dart';
+import 'package:storecs/features/settings_page/data/data_source/tax_rules_data_source_repo/tax_rules_data_source_repo.dart';
+import 'package:storecs/features/settings_page/data/repository/tax_rules_implementer.dart';
+import 'package:storecs/features/settings_page/domain/repository/tax_rules_repository.dart';
+import 'package:storecs/features/settings_page/presentation/state_management/tax_rules_controller.dart';
 import 'package:storecs/features/staff_list/data/data_source/data_source_implementer/staff_list_data_source_implementer.dart';
 import 'package:storecs/features/staff_list/data/data_source/data_source_repo/staff_list_data_source_repo.dart';
 import 'package:storecs/features/staff_list/data/repository/staff_list_repository.dart';
@@ -304,6 +309,16 @@ class AppBindingsControllers extends Bindings {
     //////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////
+    sl.registerFactory<TaxRulesDataSourceRepo>(
+      () => TaxRulesDataSourceImplementer(dio: dio),
+    );
+    sl.registerFactory<TaxRulesRepository>(
+      () => TaxRulesImplementer(sl<TaxRulesDataSourceRepo>()),
+    );
+    //////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////
 
     sl.registerFactory<SignInController>(
       () => SignInController(sl<AuthRepo>()),
@@ -358,6 +373,9 @@ class AppBindingsControllers extends Bindings {
     );
     sl.registerFactory<ChangeStatusController>(
       () => ChangeStatusController(sl<AttendanceRepo>()),
+    );
+    sl.registerFactory<TaxRulesController>(
+      () => TaxRulesController(sl<TaxRulesRepository>()),
     );
   }
 }

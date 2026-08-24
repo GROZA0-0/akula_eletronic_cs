@@ -2,10 +2,9 @@ import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:iconsax/iconsax.dart';
-import 'package:storecs/Core/styles/alerts.dart';
+import 'package:storecs/Core/config/call_controller.dart';
 import 'package:storecs/Core/styles/colors.dart';
 import 'package:storecs/Core/styles/text_styles.dart';
-import 'package:storecs/main.dart';
 
 class TaxRuleTemplateWidget extends StatefulWidget {
   const TaxRuleTemplateWidget({super.key});
@@ -15,40 +14,11 @@ class TaxRuleTemplateWidget extends StatefulWidget {
 }
 
 class _TaxRuleTemplatePageState extends State<TaxRuleTemplateWidget> {
-  final Alerts alerts = Alerts(messengerKey);
-  // Template 1 State Variables
-  final TextEditingController _taxNameController = TextEditingController(
-    text: 'Standard Sales Tax',
-  );
-  final TextEditingController _taxRateController = TextEditingController(
-    text: '16.0',
-  );
-
-  String _taxBasis = 'Tax-Exclusive (Added at checkout)';
-  String _roundingRule = 'Round to nearest 0.01';
-  bool _applyToAllProducts = true;
-
   @override
   void dispose() {
-    _taxNameController.dispose();
-    _taxRateController.dispose();
+    taxRulesController.taxNameController.dispose();
+    taxRulesController.taxRateController.dispose();
     super.dispose();
-  }
-
-  void _saveTaxRule() {
-    // Collect data to send to Node.js/MongoDB backend
-    final taxConfig = {
-      'ruleId': 'TAX-001',
-      'taxName': _taxNameController.text,
-      'rate': double.tryParse(_taxRateController.text) ?? 0.0,
-      'appliesTo': _applyToAllProducts ? 'All Products' : 'Custom Categories',
-      'basis': _taxBasis.split(' ')[0], // Extracts just 'Tax-Exclusive'
-      'rounding': 'nearest_0.01',
-    };
-
-    // Print or send via API
-    debugPrint("Saving Tax Rule: $taxConfig");
-    alerts.ifSuccess('Tax Template saved.');
   }
 
   @override
@@ -63,7 +33,7 @@ class _TaxRuleTemplatePageState extends State<TaxRuleTemplateWidget> {
           Padding(
             padding: const EdgeInsets.only(right: 16.0),
             child: ElevatedButton.icon(
-              onPressed: _saveTaxRule,
+              onPressed: () => taxRulesController.saveTaxRule(),
               style: ElevatedButton.styleFrom(
                 backgroundColor: accentColor,
                 padding: const EdgeInsets.symmetric(
@@ -167,7 +137,7 @@ class _TaxRuleTemplatePageState extends State<TaxRuleTemplateWidget> {
                 flex: 2,
                 child: _buildTextField(
                   label: 'Tax Name',
-                  controller: _taxNameController,
+                  controller: taxRulesController.taxNameController,
                   icon: Iconsax.tag,
                 ),
               ),
@@ -176,7 +146,7 @@ class _TaxRuleTemplatePageState extends State<TaxRuleTemplateWidget> {
                 flex: 1,
                 child: _buildTextField(
                   label: 'Rate (%)',
-                  controller: _taxRateController,
+                  controller: taxRulesController.taxRateController,
                   icon: Iconsax.percentage_square,
                   keyboardType: const TextInputType.numberWithOptions(
                     decimal: true,
@@ -193,25 +163,27 @@ class _TaxRuleTemplatePageState extends State<TaxRuleTemplateWidget> {
               Expanded(
                 child: _buildDropdownField(
                   label: 'Tax Basis',
-                  value: _taxBasis,
+                  value: taxRulesController.taxBasis,
                   items: [
                     'Tax-Exclusive (Added at checkout)',
                     'Tax-Inclusive (Included in price)',
                   ],
-                  onChanged: (val) => setState(() => _taxBasis = val!),
+                  onChanged: (val) =>
+                      setState(() => taxRulesController.taxBasis = val!),
                 ),
               ),
               const SizedBox(width: 16),
               Expanded(
                 child: _buildDropdownField(
                   label: 'Rounding Rule',
-                  value: _roundingRule,
+                  value: taxRulesController.roundingRule,
                   items: [
                     'Round to nearest 0.01',
                     'Round up to nearest 0.05',
                     'Always round up',
                   ],
-                  onChanged: (val) => setState(() => _roundingRule = val!),
+                  onChanged: (val) =>
+                      setState(() => taxRulesController.roundingRule = val!),
                 ),
               ),
             ],
@@ -236,10 +208,10 @@ class _TaxRuleTemplatePageState extends State<TaxRuleTemplateWidget> {
                 style: TextStyle(color: colorGrey, fontSize: 12),
               ),
               activeColor: accentColor,
-              value: _applyToAllProducts,
+              value: taxRulesController.applyToAllProducts,
               onChanged: (bool value) {
                 setState(() {
-                  _applyToAllProducts = value;
+                  taxRulesController.applyToAllProducts = value;
                 });
               },
             ),
