@@ -81,10 +81,15 @@ import 'package:storecs/features/sales_export/data/data_source/export_reports_da
 import 'package:storecs/features/sales_export/data/data_source/export_reports_data_source_repo/export_reports_data_source_repo.dart';
 import 'package:storecs/features/sales_export/data/repository/export_reports_implementer.dart';
 import 'package:storecs/features/sales_export/domain/repository/export_reports_repo.dart';
-import 'package:storecs/features/settings_page/data/data_source/tax_rules_data_source_implementer/tax_rules_data_source_implementer.dart';
-import 'package:storecs/features/settings_page/data/data_source/tax_rules_data_source_repo/tax_rules_data_source_repo.dart';
+import 'package:storecs/features/settings_page/data/data_source/data_source_implementer/product_matrix_data_source_implementer.dart';
+import 'package:storecs/features/settings_page/data/data_source/data_source_implementer/tax_rules_data_source_implementer.dart';
+import 'package:storecs/features/settings_page/data/data_source/data_source_repo/product_matrix_data_source_repo.dart';
+import 'package:storecs/features/settings_page/data/data_source/data_source_repo/tax_rules_data_source_repo.dart';
+import 'package:storecs/features/settings_page/data/repository/product_matrix_implementer.dart';
 import 'package:storecs/features/settings_page/data/repository/tax_rules_implementer.dart';
+import 'package:storecs/features/settings_page/domain/repository/product_matrix_repository.dart';
 import 'package:storecs/features/settings_page/domain/repository/tax_rules_repository.dart';
+import 'package:storecs/features/settings_page/presentation/state_management/product_matrix_controller.dart';
 import 'package:storecs/features/settings_page/presentation/state_management/tax_rules_controller.dart';
 import 'package:storecs/features/staff_list/data/data_source/data_source_implementer/staff_list_data_source_implementer.dart';
 import 'package:storecs/features/staff_list/data/data_source/data_source_repo/staff_list_data_source_repo.dart';
@@ -319,6 +324,18 @@ class AppBindingsControllers extends Bindings {
     //////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////
+    sl.registerFactory<ProductMatrixDataSourceRepo>(
+      () => ProductMatrixDataSourceImplementer(dio: dio),
+    );
+    sl.registerFactory<ProductMatrixRepository>(
+      () => ProductMatrixImplementer(
+        dataSourceRepo: sl<ProductMatrixDataSourceRepo>(),
+      ),
+    );
+    //////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////
 
     sl.registerFactory<SignInController>(
       () => SignInController(sl<AuthRepo>()),
@@ -376,6 +393,9 @@ class AppBindingsControllers extends Bindings {
     );
     sl.registerFactory<TaxRulesController>(
       () => TaxRulesController(sl<TaxRulesRepository>()),
+    );
+    sl.registerFactory<ProductMatrixController>(
+      () => ProductMatrixController(sl<ProductMatrixRepository>()),
     );
   }
 }

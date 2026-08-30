@@ -6,6 +6,7 @@ import 'package:storecs/Core/styles/animations.dart';
 import 'package:storecs/Core/styles/colors.dart';
 import 'package:storecs/Core/styles/sizes.dart';
 import 'package:storecs/Core/styles/text_styles.dart';
+import 'package:storecs/features/settings_page/presentation/page/product_matrix_page.dart';
 import 'package:storecs/features/settings_page/presentation/page/tax_rules.dart';
 
 class SettingsWidgets extends StatefulWidget {
@@ -56,13 +57,6 @@ class InventoryAndSerialNumberSettingsSection extends StatelessWidget {
       icon: Iconsax.box_search,
       items: [
         SettingsTileItem(
-          title: 'Serial Number Capture',
-          subtitle:
-              'Forces or allows scanning of unique serial numbers/IMEIs during sales and returns to track warranties.',
-          icon: Iconsax.barcode,
-          onTap: () {},
-        ),
-        SettingsTileItem(
           title: 'Stock Alerts',
           subtitle:
               'Sets low-stock thresholds for high-demand gadgets or accessories to trigger reorders automatically.',
@@ -74,7 +68,8 @@ class InventoryAndSerialNumberSettingsSection extends StatelessWidget {
           subtitle:
               'Configures variants like storage capacity, RAM, color, or carrier locking.',
           icon: Iconsax.category,
-          onTap: () {},
+          onTap: () =>
+              Navigator.push(context, naviToAnotherPage(ProductMatrixPage())),
         ),
       ],
     );

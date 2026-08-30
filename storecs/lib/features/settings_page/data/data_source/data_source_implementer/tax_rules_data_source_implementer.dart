@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:storecs/Core/config/env.dart';
-import 'package:storecs/features/settings_page/data/data_source/tax_rules_data_source_repo/tax_rules_data_source_repo.dart';
+import 'package:storecs/features/settings_page/data/data_source/data_source_repo/tax_rules_data_source_repo.dart';
+
 import 'package:storecs/features/settings_page/data/model/tax_rules_model.dart';
 
 class TaxRulesDataSourceImplementer implements TaxRulesDataSourceRepo {

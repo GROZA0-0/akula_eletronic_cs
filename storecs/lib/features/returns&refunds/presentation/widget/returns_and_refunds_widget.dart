@@ -1,3 +1,4 @@
+import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
@@ -16,87 +17,92 @@ class ReturnsAndRefundsWidget extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: invisible,
-        title: Text("Returns/Refunds", style: textAppBar),
+        title: FadeInLeft(child: Text("Returns/Refunds", style: textAppBar)),
         iconTheme: IconThemeData(color: white),
       ),
-      body: Dialog(
-        backgroundColor: white,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-        child: SingleChildScrollView(
-          child: Container(
-            width: size.width * 0.8,
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: TextField(
-                        controller: returnAndRefundController.orderIdText,
-                        decoration: const InputDecoration(
-                          labelText: "Enter Order ID / Scan Receipt Barcode",
-                          prefixIcon: Icon(Icons.search),
-                          border: OutlineInputBorder(),
+      body: FadeInUp(
+        child: Dialog(
+          backgroundColor: white,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          child: SingleChildScrollView(
+            child: Container(
+              width: size.width * 0.8,
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          controller: returnAndRefundController.orderIdText,
+                          decoration: const InputDecoration(
+                            labelText: "Enter Order ID / Scan Receipt Barcode",
+                            prefixIcon: Icon(Icons.search),
+                            border: OutlineInputBorder(),
+                          ),
+                          onSubmitted: (_) => returnAndRefundController
+                              .getOrderBySearchingOnOrderId(),
                         ),
-                        onSubmitted: (_) => returnAndRefundController
+                      ),
+                      const SizedBox(width: 12),
+                      ElevatedButton.icon(
+                        style: ElevatedButton.styleFrom(
+                          shape: ContinuousRectangleBorder(
+                            borderRadius: BorderRadiusGeometry.circular(10),
+                          ),
+                          minimumSize: const Size(100, 54),
+                          backgroundColor: milkyblue,
+                        ),
+                        onPressed: () => returnAndRefundController
                             .getOrderBySearchingOnOrderId(),
+                        icon: const Icon(Iconsax.search_normal_1, color: white),
+                        label: Text("Search", style: textBodiesStyle),
                       ),
-                    ),
-                    const SizedBox(width: 12),
-                    ElevatedButton.icon(
-                      style: ElevatedButton.styleFrom(
-                        shape: ContinuousRectangleBorder(
-                          borderRadius: BorderRadiusGeometry.circular(10),
-                        ),
-                        minimumSize: const Size(100, 54),
-                        backgroundColor: milkyblue,
-                      ),
-                      onPressed: () => returnAndRefundController
-                          .getOrderBySearchingOnOrderId(),
-                      icon: const Icon(Iconsax.search_normal_1, color: white),
-                      label: Text("Search", style: textBodiesStyle),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                const Divider(),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  const Divider(),
 
-                Obx(() {
-                  switch (returnAndRefundController.status.value) {
-                    case ReturnStatus.initial:
-                      return const SizedBox(
-                        height: 250,
-                        child: Center(
-                          child: Text(
-                            "Scan a receipt or enter an Order ID above to start the refund process.",
-                            style: TextStyle(color: grey, fontSize: 16),
+                  Obx(() {
+                    switch (returnAndRefundController.status.value) {
+                      case ReturnStatus.initial:
+                        return const SizedBox(
+                          height: 250,
+                          child: Center(
+                            child: Text(
+                              "Scan a receipt or enter an Order ID above to start the refund process.",
+                              style: TextStyle(color: grey, fontSize: 16),
+                            ),
                           ),
-                        ),
-                      );
+                        );
 
-                    case ReturnStatus.loading:
-                      return SizedBox(height: 250, child: loadingStateBodies());
+                      case ReturnStatus.loading:
+                        return SizedBox(
+                          height: 250,
+                          child: loadingStateBodies(),
+                        );
 
-                    case ReturnStatus.error:
-                      return SizedBox(
-                        height: 250,
-                        child: Center(
-                          child: Text(
-                            "Could not find order. Please verify the ID and try again.",
-                            style: textBodiesStyle2,
+                      case ReturnStatus.error:
+                        return SizedBox(
+                          height: 250,
+                          child: Center(
+                            child: Text(
+                              "Could not find order. Please verify the ID and try again.",
+                              style: textBodiesStyle2,
+                            ),
                           ),
-                        ),
-                      );
+                        );
 
-                    case ReturnStatus.success:
-                      return _buildSuccessOrderReturnLayout(
-                        context,
-                        returnAndRefundController,
-                      );
-                  }
-                }),
-              ],
+                      case ReturnStatus.success:
+                        return _buildSuccessOrderReturnLayout(
+                          context,
+                          returnAndRefundController,
+                        );
+                    }
+                  }),
+                ],
+              ),
             ),
           ),
         ),

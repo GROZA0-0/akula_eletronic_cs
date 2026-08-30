@@ -167,11 +167,14 @@ class ListSoldOrderData extends StatelessWidget {
                     title: '${order.totalPrice.toStringAsFixed(2)} JOD',
                     textSize: 18,
                   ),
-                  TextDataTemplate(
-                    text: 'Seller',
-                    title: order.seller,
-                    textSize: 16,
-                  ),
+                  if (order.seller.isEmpty || order.seller == 'null')
+                    Container()
+                  else
+                    TextDataTemplate(
+                      text: 'Seller',
+                      title: order.seller.isEmpty ? '' : order.seller,
+                      textSize: 16,
+                    ),
                 ],
               ),
               sizeBoxHeight(size.height * 0.02),
