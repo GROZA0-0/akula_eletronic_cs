@@ -18,11 +18,9 @@ class Permissions {
   bool get settingsPageAccCondition =>
       cashierAccess || salesAccess || whAccess || supervisorAccess || qaAccess;
 
-  bool get orderActionsAccCondition =>
-      salesAccess || cashierAccess || qaAccess || accAccess;
+  bool get orderActionsAccCondition => whAccess;
 
-  bool get productsAndInventoryCondition =>
-      salesAccess || qaAccess || accAccess || hrAccess;
+  bool get productsAndInventoryCondition => qaAccess || accAccess || hrAccess;
 
   bool get reportsCondition => salesAccess;
   bool get getFeedbackCondition => whAccess || salesAccess || cashierAccess;
@@ -34,4 +32,7 @@ class Permissions {
       hrAccess ||
       cashierAccess ||
       whAccess;
+
+  bool get ordersPuschasedPageCondition =>
+      whAccess || salesAccess || cashierAccess || qaAccess;
 }

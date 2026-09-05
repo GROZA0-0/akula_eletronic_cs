@@ -9,7 +9,6 @@ import 'package:iconsax/iconsax.dart';
 import 'package:storecs/Core/Styles/Colors.dart';
 import 'package:storecs/Core/Styles/Strings.dart';
 import 'package:fl_chart/fl_chart.dart';
-
 import 'package:storecs/Core/config/account_status.dart';
 import 'package:storecs/Core/config/call_controller.dart';
 import 'package:storecs/Core/config/permissions.dart';
@@ -53,44 +52,55 @@ class _DashboardWidgetsState extends State<DashboardWidgets> {
   Widget build(BuildContext context) {
     final id = FirebaseAuth.instance.currentUser!.uid;
     final email = FirebaseAuth.instance.currentUser!.email;
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: invisible,
-        title: FadeInLeft(child: Text(Dashboard, style: textAppBar)),
-        actions: [appbarDashboardBloc(id, email!)],
-        leading: Builder(
-          builder: (context) {
-            return FadeInLeft(
-              child: DrawerIconAnimation(
-                iconData: Iconsax.menu,
-                voidCallback: () => Scaffold.of(context).openDrawer(),
-              ),
-            );
-          },
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) => DashboardBloc(
+            sl<FetchEmployeeInfoDashBoardController>(),
+            id,
+            sl<ChangeStatusController>(),
+          )..add(DashboardBlocEventLoading()),
         ),
-      ),
-      drawer: AppDrawer(id: id),
-      body: SafeArea(
-        child: FadeInUp(
-          child: Container(
-            margin: screenSize,
-            child: SingleChildScrollView(
-              child: Container(
-                decoration: BoxDecoration(
-                  border: Border.all(color: white, width: 3),
-                  borderRadius: BorderRadius.circular(10),
+      ],
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: invisible,
+          title: FadeInLeft(child: Text(Dashboard, style: textAppBar)),
+          actions: [appbarDashboardBloc(id, email!)],
+          leading: Builder(
+            builder: (context) {
+              return FadeInLeft(
+                child: DrawerIconAnimation(
+                  iconData: Iconsax.menu,
+                  voidCallback: () => Scaffold.of(context).openDrawer(),
                 ),
-                width: double.infinity,
-                padding: EdgeInsets.symmetric(
-                  vertical: size.height * 0.030,
-                  horizontal: size.width * 0.008,
-                ),
-                child: Column(
-                  children: [
-                    RowOfReviewsSection(id: id),
-                    ChartSectionWidget(),
-                    quickActionsSectionBloc(id),
-                  ],
+              );
+            },
+          ),
+        ),
+        drawer: AppDrawer(id: id),
+        body: SafeArea(
+          child: FadeInUp(
+            child: Container(
+              margin: screenSize,
+              child: SingleChildScrollView(
+                child: Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(color: white, width: 3),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  width: double.infinity,
+                  padding: EdgeInsets.symmetric(
+                    vertical: size.height * 0.030,
+                    horizontal: size.width * 0.008,
+                  ),
+                  child: Column(
+                    children: [
+                      RowOfReviewsSection(id: id),
+                      ChartSectionWidget(),
+                      quickActionsSectionBloc(),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -109,56 +119,45 @@ class _DashboardWidgetsState extends State<DashboardWidgets> {
 
       width: size.width / 4,
       height: size.width * 0.2,
-      child: MultiBlocProvider(
-        providers: [
-          BlocProvider(
-            create: (context) => DashboardBloc(
-              sl<FetchEmployeeInfoDashBoardController>(),
-              id,
-              sl<ChangeStatusController>(),
-            )..add(DashboardBlocEventLoading()),
-          ),
-        ],
-        child: BlocBuilder<DashboardBloc, DashboardBlocState>(
-          builder: (context, empState) {
-            if (empState is DashboardBlocStateLoading) {
-              return const CircleAvatar(
-                backgroundColor: grey,
-                radius: 18,
-                child: Icon(color: white, Iconsax.user),
-              );
-            } else if (empState is DashboardBlocStateError) {
-              return Container(
-                margin: EdgeInsets.only(right: size.width * 0.03),
-                child: const CircleAvatar(
-                  radius: 20,
-                  backgroundColor: redColor,
-                  child: Icon(Icons.error_outline, color: white, size: 16),
-                ),
-              );
-            } else if (empState is DashboardBlocStateLoaded) {
-              final emp = empState.enitities;
-              return FadeInRight(
-                child: Container(
-                  margin: EdgeInsets.symmetric(horizontal: size.width * 0.03),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      userStatusCircularAvatar(emp.id, emp.email),
-                      userAccountName(emp),
-                      buildProfileImage(emp.userPic),
-                    ],
-                  ),
-                ),
-              );
-            }
+      child: BlocBuilder<DashboardBloc, DashboardBlocState>(
+        builder: (context, empState) {
+          if (empState is DashboardBlocStateLoading) {
             return const CircleAvatar(
               backgroundColor: grey,
               radius: 18,
               child: Icon(color: white, Iconsax.user),
             );
-          },
-        ),
+          } else if (empState is DashboardBlocStateError) {
+            return Container(
+              margin: EdgeInsets.only(right: size.width * 0.03),
+              child: const CircleAvatar(
+                radius: 20,
+                backgroundColor: redColor,
+                child: Icon(Icons.error_outline, color: white, size: 16),
+              ),
+            );
+          } else if (empState is DashboardBlocStateLoaded) {
+            final emp = empState.enitities;
+            return FadeInRight(
+              child: Container(
+                margin: EdgeInsets.symmetric(horizontal: size.width * 0.03),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    userStatusCircularAvatar(emp.id, emp.email),
+                    userAccountName(emp),
+                    buildProfileImage(emp.userPic),
+                  ],
+                ),
+              ),
+            );
+          }
+          return const CircleAvatar(
+            backgroundColor: grey,
+            radius: 18,
+            child: Icon(color: white, Iconsax.user),
+          );
+        },
       ),
     );
   }
@@ -261,26 +260,14 @@ class _DashboardWidgetsState extends State<DashboardWidgets> {
     });
   }
 
-  Widget quickActionsSectionBloc(String id) {
-    return MultiBlocProvider(
-      key: ValueKey(id),
-      providers: [
-        BlocProvider(
-          create: (context) => DashboardBloc(
-            sl<FetchEmployeeInfoDashBoardController>(),
-            id,
-            sl<ChangeStatusController>(),
-          )..add(DashboardBlocEventLoading()),
-        ),
-      ],
-      child: BlocBuilder<DashboardBloc, DashboardBlocState>(
-        builder: (context, empState) {
-          if (empState is DashboardBlocStateLoaded) {
-            return QuickActionsSection(employee: empState.enitities);
-          }
-          return Container();
-        },
-      ),
+  Widget quickActionsSectionBloc() {
+    return BlocBuilder<DashboardBloc, DashboardBlocState>(
+      builder: (context, empState) {
+        if (empState is DashboardBlocStateLoaded) {
+          return QuickActionsSection(employee: empState.enitities);
+        }
+        return Container();
+      },
     );
   }
 
@@ -674,53 +661,54 @@ class QuickActionsSection extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            QuickActionsButton(
+            QuickActionsButtonsStatus(
+              entities: employee,
+              text: hasAccess ? 'POS Page' : 'Staff List Page',
               mainPageWidget: () => hasAccess
                   ? Navigator.push(
                       context,
                       naviToAnotherPage(PosPage(fullName: employee.name)),
                     )
                   : Navigator.push(context, naviToAnotherPage(StaffListPage())),
-              size: size,
-              text: hasAccess ? 'POS Page' : 'Staff List Page',
-              iconn: hasAccess ? Iconsax.card_pos : Iconsax.user,
+              icon: hasAccess ? Iconsax.card_pos : Iconsax.user,
             ),
 
             sizeBoxWidth(size.width * 0.01),
-
-            QuickActionsButton(
+            QuickActionsButtonsStatus(
+              entities: employee,
+              text: hasAccess ? 'order List Page' : 'Add/Edit Staff',
               mainPageWidget: () => hasAccess
                   ? Navigator.push(
                       context,
                       naviToAnotherPage(ProductListPage()),
                     )
                   : Navigator.push(context, naviToAnotherPage(SignUpPage())),
-              size: size,
-              text: hasAccess ? 'order List Page' : 'Add/Edit Staff',
-              iconn: hasAccess ? Icons.list : Icons.add,
+              icon: hasAccess ? Icons.list : Icons.add,
             ),
             sizeBoxWidth(size.width * 0.01),
-
-            QuickActionsButton(
+            QuickActionsButtonsStatus(
+              entities: employee,
+              text: hasAccess ? 'Return/Refunds' : 'Sales Report',
               mainPageWidget: () => hasAccess
-                  ? () {}
-                  : Navigator.push(context, naviToAnotherPage(ReportPage())),
-              size: size,
-              text: hasAccess ? 'Card Page' : 'Sales Report',
-              iconn: Iconsax.export,
-            ),
-            sizeBoxWidth(size.width * 0.01),
-
-            QuickActionsButton(
-              mainPageWidget: () => hasAccess
-                  ? () {}
-                  : Navigator.push(
+                  ? Navigator.push(
                       context,
                       naviToAnotherPage(ReturnsAndRefundsPage()),
+                    )
+                  : Navigator.push(context, naviToAnotherPage(ReportPage())),
+              icon: hasAccess ? Icons.compare_arrows : Iconsax.ticket,
+            ),
+
+            sizeBoxWidth(size.width * 0.01),
+            QuickActionsButtonsStatus(
+              entities: employee,
+              mainPageWidget: () => hasAccess
+                  ? Navigator.push(context, naviToAnotherPage(ProfilePage()))
+                  : Navigator.push(
+                      context,
+                      naviToAnotherPage(SalesExportPage()),
                     ),
-              size: size,
-              text: hasAccess ? 'Profit/Loss Page' : 'Returns & Refunds',
-              iconn: hasAccess ? Icons.arrow_outward : Icons.compare_arrows,
+              text: hasAccess ? 'User Profile' : 'Export Page',
+              icon: hasAccess ? Iconsax.user : Iconsax.export,
             ),
           ],
         ),
@@ -822,7 +810,11 @@ class AppDrawer extends StatelessWidget {
                   : productsExpansionTile(context, state.enitities),
               hasAccessOrderActions
                   ? Container()
-                  : ordersAndTransactions(context, state.enitities),
+                  : ordersAndTransactions(
+                      context,
+                      state.enitities,
+                      permissions,
+                    ),
               hasAccessEmpPages
                   ? Container()
                   : employees(context, state.enitities),
@@ -883,19 +875,6 @@ class AppDrawer extends StatelessWidget {
               entities: entities,
               widget: ProfilePage(),
             ),
-            /* InkWell(
-              splashColor: deepViolet.withOpacity(0.4),
-              onTap: () =>
-                  Navigator.push(context, naviToAnotherPage(ProfilePage())),
-              child: ButtonsMenuDrawer(
-                mainPageWidget: Text(''),
-                size: size,
-                text: "User Profile Page",
-                iconn: Icons.arrow_outward,
-                color: deepViolet,
-                textColor: [deepViolet, amethyst, lavenderGray],
-              ),
-            ), */
           ],
         ),
       ],
@@ -924,14 +903,7 @@ class AppDrawer extends StatelessWidget {
               children: [
                 hasAccessSalesReport
                     ? Container()
-                    : /* ButtonsMenuDrawer(
-                        mainPageWidget: Text(''),
-                        size: size,
-                        text: "Sales Report",
-                        iconn: Iconsax.ticket,
-                        color: deepViolet,
-                        textColor: [deepViolet, amethyst, lavenderGray],
-                      ), */ ButtonsMenuDrawerConditions(
+                    : ButtonsMenuDrawerConditions(
                         text: 'Sales Report',
                         icons: Iconsax.ticket,
                         entities: entities,
@@ -944,14 +916,7 @@ class AppDrawer extends StatelessWidget {
               children: [
                 hasAccessFeedback
                     ? Container()
-                    : /* ButtonsMenuDrawer(
-                        mainPageWidget: Text(''),
-                        size: size,
-                        text: "Feedback Page",
-                        iconn: FontAwesomeIcons.readme,
-                        color: deepViolet,
-                        textColor: [deepViolet, amethyst, lavenderGray],
-                      ), */ ButtonsMenuDrawerConditions(
+                    : ButtonsMenuDrawerConditions(
                         text: 'Feedback Page',
                         icons: FontAwesomeIcons.readme,
                         entities: entities,
@@ -965,21 +930,7 @@ class AppDrawer extends StatelessWidget {
               children: [
                 hasAccessExport
                     ? Container()
-                    : /* InkWell(
-                        splashColor: deepViolet.withOpacity(0.4),
-                        onTap: () => Navigator.push(
-                          context,
-                          naviToAnotherPage(SalesExportPage()),
-                        ),
-                        child: ButtonsMenuDrawer(
-                          mainPageWidget: Text(''),
-                          size: size,
-                          text: "Export Page",
-                          iconn: Iconsax.export,
-                          color: deepViolet,
-                          textColor: [deepViolet, amethyst, lavenderGray],
-                        ),
-                      ), */ ButtonsMenuDrawerConditions(
+                    : ButtonsMenuDrawerConditions(
                         text: 'Export Page',
                         icons: Iconsax.export,
                         entities: entities,
@@ -1003,19 +954,6 @@ class AppDrawer extends StatelessWidget {
         Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            /* InkWell(
-              splashColor: deepViolet.withOpacity(0.4),
-              onTap: () =>
-                  Navigator.push(context, naviToAnotherPage(StaffListPage())),
-              child: ButtonsMenuDrawer(
-                mainPageWidget: Text(''),
-                size: size,
-                text: "Staff List Page",
-                iconn: Iconsax.user,
-                color: deepViolet,
-                textColor: [deepViolet, amethyst, lavenderGray],
-              ),
-            ), */
             ButtonsMenuDrawerConditions(
               text: 'Staff List Page',
               icons: Iconsax.user,
@@ -1023,19 +961,7 @@ class AppDrawer extends StatelessWidget {
               widget: StaffListPage(),
             ),
             sizeBoxHeight(size.height * 0.012),
-            /* InkWell(
-              splashColor: deepViolet.withOpacity(0.4),
-              onTap: () =>
-                  Navigator.push(context, naviToAnotherPage(SignUpPage())),
-              child: ButtonsMenuDrawer(
-                mainPageWidget: Text(''),
-                size: size,
-                text: "Add/Edit Staff",
-                iconn: Icons.add,
-                color: deepViolet,
-                textColor: [deepViolet, amethyst, lavenderGray],
-              ),
-            ), */
+
             ButtonsMenuDrawerConditions(
               text: 'Add/Edit Staff',
               icons: Icons.add,
@@ -1051,6 +977,7 @@ class AppDrawer extends StatelessWidget {
   Widget ordersAndTransactions(
     BuildContext context,
     EmployeeInfoEntities entities,
+    Permissions permissions,
   ) {
     return ExpansionTile(
       splashColor: invisible,
@@ -1065,27 +992,14 @@ class AppDrawer extends StatelessWidget {
         Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            /* InkWell(
-              splashColor: deepViolet.withOpacity(0.4),
-              onTap: () => Navigator.push(
-                context,
-                naviToAnotherPage(OrderPurchasedHistory()),
-              ),
-              child: ButtonsMenuDrawer(
-                mainPageWidget: Text(''),
-                size: size,
-                text: "Orders Puschased Page",
-                iconn: Icons.line_style_rounded,
-                color: deepViolet,
-                textColor: [deepViolet, amethyst, lavenderGray],
-              ),
-            ), */
-            ButtonsMenuDrawerConditions(
-              text: 'Orders Puschased Page',
-              icons: Icons.line_style_rounded,
-              entities: entities,
-              widget: OrderPurchasedHistory(),
-            ),
+            permissions.ordersPuschasedPageCondition
+                ? Container()
+                : ButtonsMenuDrawerConditions(
+                    text: 'Orders Puschased Page',
+                    icons: Icons.line_style_rounded,
+                    entities: entities,
+                    widget: OrderPurchasedHistory(),
+                  ),
             sizeBoxHeight(size.height * 0.012),
             ButtonsMenuDrawerConditions(
               text: 'Returns / Refunds',
@@ -1093,21 +1007,6 @@ class AppDrawer extends StatelessWidget {
               entities: entities,
               widget: ReturnsAndRefundsPage(),
             ),
-            /* InkWell(
-              splashColor: deepViolet.withOpacity(0.4),
-              onTap: () => Navigator.push(
-                context,
-                naviToAnotherPage(ReturnsAndRefundsPage()),
-              ),
-              child: ButtonsMenuDrawer(
-                mainPageWidget: Text(''),
-                size: size,
-                text: "Returns / Refunds",
-                iconn: Icons.compare_arrows,
-                color: deepViolet,
-                textColor: [deepViolet, amethyst, lavenderGray],
-              ),
-            ), */
           ],
         ),
       ],
@@ -1134,19 +1033,6 @@ class AppDrawer extends StatelessWidget {
           entities: entities,
           widget: ProductListPage(),
         ),
-        /* InkWell(
-          splashColor: deepViolet.withOpacity(0.4),
-          onTap: () =>
-              Navigator.push(context, naviToAnotherPage(ProductListPage())),
-          child: ButtonsMenuDrawer(
-            mainPageWidget: Text(''),
-            size: size,
-            text: "Products List Page",
-            iconn: Icons.line_style_rounded,
-            color: deepViolet,
-            textColor: [deepViolet, amethyst, lavenderGray],
-          ),
-        ), */
       ],
     );
   }
@@ -1274,17 +1160,71 @@ class ButtonsMenuDrawer extends StatelessWidget {
   }
 }
 
-class QuickActionsButton extends StatefulWidget {
+class QuickActionsButtonsStatus extends StatelessWidget {
   final VoidCallback mainPageWidget;
+  final String text;
+  final EmployeeInfoEntities entities;
+  final IconData icon;
+  const QuickActionsButtonsStatus({
+    super.key,
+    required this.entities,
+    required this.text,
+    required this.mainPageWidget,
+    required this.icon,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    if (entities.status.name == 'longBreak') {
+      return QuickActionsButton(
+        mainPageWidget: () {},
+        size: size,
+        text: text,
+        iconn: icon,
+        color: gold,
+      );
+    } else if (entities.status.name == 'busy') {
+      return QuickActionsButton(
+        mainPageWidget: () {},
+        size: size,
+        text: text,
+        iconn: icon,
+        color: redColor,
+      );
+    } else if (entities.status.name == 'offline') {
+      return QuickActionsButton(
+        mainPageWidget: () {},
+        size: size,
+        text: text,
+        iconn: icon,
+        color: grey,
+      );
+    } else if (entities.status.name == 'active') {
+      return QuickActionsButton(
+        mainPageWidget: mainPageWidget,
+        size: size,
+        text: text,
+        iconn: icon,
+        color: blueGreen,
+      );
+    }
+    return Container();
+  }
+}
+
+class QuickActionsButton extends StatefulWidget {
   final Size size;
   final String text;
   final IconData iconn;
+  final Color color;
+  final VoidCallback mainPageWidget;
   const QuickActionsButton({
     super.key,
     required this.mainPageWidget,
     required this.size,
     required this.text,
     required this.iconn,
+    required this.color,
   });
 
   @override
@@ -1306,7 +1246,7 @@ class _QuickActionsButton extends State<QuickActionsButton> {
             // width: size.width / 6,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: isHovered ? green : white),
+              border: Border.all(color: isHovered ? widget.color : white),
             ),
             child: Container(
               margin: EdgeInsets.symmetric(horizontal: size.width * 0.01),
