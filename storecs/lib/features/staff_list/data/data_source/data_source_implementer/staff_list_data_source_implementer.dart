@@ -23,4 +23,60 @@ class StaffListDataSourceImplementer implements StaffListDataSourceRepo {
       );
     }
   }
+
+  @override
+  Future<StaffListModel> toUpdateStaffDataSourceRepository(
+    String id,
+    String phone,
+    String field,
+  ) async {
+    final updateStaff = '${Env.baseURL}updateEmployeeDataRoute/$id';
+    final data = {"empPhone": phone, "empLvl": field};
+    final res = await dio.patch(
+      updateStaff,
+      data: data,
+      options: Options(
+        contentType: 'application/json',
+        validateStatus: (status) => status! < 600,
+      ),
+    );
+    if (res.statusCode == 200 || res.statusCode == 201) {
+      if (res.data == null) {
+        return StaffListModel.empEmptyInfo();
+      } else {
+        final data = res.data['data'];
+        return StaffListModel.fromBackEnd(data);
+      }
+    } else {
+      throw Exception(
+        "Any issue with updating user info Error: ${res.statusCode}",
+      );
+    }
+  }
+
+  @override
+  Future<StaffListModel> toTerminateStaffAccountDataSourceRepository(
+    String id,
+  ) async {
+    final deleteAcc = '${Env.baseURL}terminateEmployeeDataRoute/$id';
+    final res = await dio.delete(
+      deleteAcc,
+      options: Options(
+        contentType: 'application/json',
+        validateStatus: (status) => status! < 600,
+      ),
+    );
+    if (res.statusCode == 200 || res.statusCode == 201) {
+      if (res.data == null) {
+        return StaffListModel.empEmptyInfo();
+      } else {
+        final data = res.data['data'];
+        return StaffListModel.fromBackEnd(data);
+      }
+    } else {
+      throw Exception(
+        "Any issue with deleting user info Error: ${res.statusCode}",
+      );
+    }
+  }
 }

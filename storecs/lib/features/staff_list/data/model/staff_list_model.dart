@@ -47,8 +47,8 @@ class StaffListModel {
   factory StaffListModel.fromBackEnd(Map<String, dynamic> map) {
     final statusString = map['empStatus']?.toString().toLowerCase();
     return StaffListModel(
-      id: map['_id'],
-      email: map['empEmail'],
+      id: map['_id'] ?? '',
+      email: map['empEmail'] ?? '',
       name: map['empName'],
       phone: map['empPhone'],
       pic: map['empPic'],
@@ -61,7 +61,8 @@ class StaffListModel {
   }
   StaffListEntities toStaffListEntities() {
     return StaffListEntities(
-      id: id ?? '',
+      id: id.toString(),
+      email: email,
       name: name,
       phone: phone,
       pic: pic,

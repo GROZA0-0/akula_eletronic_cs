@@ -93,7 +93,7 @@ import 'package:storecs/features/settings_page/presentation/state_management/pro
 import 'package:storecs/features/settings_page/presentation/state_management/tax_rules_controller.dart';
 import 'package:storecs/features/staff_list/data/data_source/data_source_implementer/staff_list_data_source_implementer.dart';
 import 'package:storecs/features/staff_list/data/data_source/data_source_repo/staff_list_data_source_repo.dart';
-import 'package:storecs/features/staff_list/data/repository/staff_list_repository.dart';
+import 'package:storecs/features/staff_list/data/repository/staff_list_implementer.dart';
 import 'package:storecs/features/staff_list/domain/repository/staff_list_repo.dart';
 import 'package:storecs/features/staff_list/presentation/state_management/staff_list_controller.dart';
 
@@ -140,7 +140,7 @@ class AppBindingsControllers extends Bindings {
       () => StaffListDataSourceImplementer(dio: dio),
     );
     sl.registerFactory<StaffListRepo>(
-      () => StaffListRepository(repo: sl<StaffListDataSourceRepo>()),
+      () => StaffListImplementer(repo: sl<StaffListDataSourceRepo>()),
     );
 
     //////////////////////////////////////////////////////////

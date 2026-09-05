@@ -19,14 +19,14 @@ import 'package:storecs/features/product_list/presentation/state_management/prod
 import 'package:storecs/features/product_list/presentation/state_management/product_list_bloc/product_list_state_bloc.dart';
 import 'package:storecs/features/product_list/presentation/state_management/product_list_controller.dart';
 
-class ProduectListWidgets extends StatefulWidget {
-  const ProduectListWidgets({super.key});
+class ProductListWidgets extends StatefulWidget {
+  const ProductListWidgets({super.key});
 
   @override
-  State<ProduectListWidgets> createState() => _ProduectListWidgetsState();
+  State<ProductListWidgets> createState() => _ProductListWidgetsState();
 }
 
-class _ProduectListWidgetsState extends State<ProduectListWidgets> {
+class _ProductListWidgetsState extends State<ProductListWidgets> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -163,22 +163,22 @@ class CategoriesSection extends StatelessWidget {
     },
     {
       'name': "Tv's & Monitors",
-      'icon': Icons.tv,
+      'icon': FontAwesomeIcons.tv,
       'color': [pink, pink],
     },
     {
       'name': 'Accessories',
-      'icon': Icons.headphones,
+      'icon': FontAwesomeIcons.headphones,
       'color': [orange, white],
     },
     {
       'name': 'PS5',
-      'icon': Icons.sports_esports,
+      'icon': FontAwesomeIcons.playstation,
       'color': [white, white],
     },
     {
       'name': "Pc's Components",
-      'icon': Icons.computer,
+      'icon': FontAwesomeIcons.computer,
       'color': [redColor, green, black, black],
     },
   ];

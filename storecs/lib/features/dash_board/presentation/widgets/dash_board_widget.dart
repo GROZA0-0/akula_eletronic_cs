@@ -206,7 +206,7 @@ class _DashboardWidgetsState extends State<DashboardWidgets> {
                 ),
               );
             },
-            itemBuilder: (context) => circleUserStatus().toList(),
+            itemBuilder: (context) => circleUserStatus(currentStatus).toList(),
             child: Container(
               width: size.width * 0.023,
               height: size.height * 0.023,
@@ -231,8 +231,10 @@ class _DashboardWidgetsState extends State<DashboardWidgets> {
     );
   }
 
-  Iterable<PopupMenuItem<UserAccountStatus>> circleUserStatus() {
-    return UserAccountStatus.values.map((usrStatus) {
+  Iterable<PopupMenuItem<UserAccountStatus>> circleUserStatus(
+    UserAccountStatus status,
+  ) {
+    return status.availableTransitionsAccStatus.map((usrStatus) {
       return PopupMenuItem(
         value: usrStatus,
         child: Row(
@@ -512,7 +514,7 @@ class _InteractivePieChartSectionState
               ),
 
               badgeWidget: isTouched
-                  ? Icon(Icons.phone_android, color: white, size: 16)
+                  ? Icon(data['icon'], color: white, size: 16)
                   : null,
               badgePositionPercentageOffset: 1.2,
             );
@@ -814,14 +816,20 @@ class AppDrawer extends StatelessWidget {
                   fontWeight: FontWeight.w400,
                 ),
               ),
-              checkoutExpansionTile(context, fullName),
-              hasAccessPAI ? Container() : productsExpansionTile(context),
+              checkoutExpansionTile(context, fullName, state.enitities),
+              hasAccessPAI
+                  ? Container()
+                  : productsExpansionTile(context, state.enitities),
               hasAccessOrderActions
                   ? Container()
-                  : ordersAndTransactions(context),
-              hasAccessEmpPages ? Container() : employees(context),
-              hasAccessReports ? Container() : reports(state, context),
-              settings(context, hasAccessSettings),
+                  : ordersAndTransactions(context, state.enitities),
+              hasAccessEmpPages
+                  ? Container()
+                  : employees(context, state.enitities),
+              hasAccessReports
+                  ? Container()
+                  : reports(state, context, state.enitities),
+              settings(context, hasAccessSettings, state.enitities),
             ],
           ),
         ],
@@ -846,34 +854,36 @@ class AppDrawer extends StatelessWidget {
     );
   }
 
-  Widget settings(BuildContext context, bool hasAccessSettings) {
+  Widget settings(
+    BuildContext context,
+    bool hasAccessSettings,
+    EmployeeInfoEntities entities,
+  ) {
     return ExpansionTile(
       splashColor: invisible,
       collapsedIconColor: black,
       collapsedBackgroundColor: white,
-      title: textDrawerStyle('Settings'),
+      title: textDrawerStyle('Settings', [deepViolet, amethyst, lavenderGray]),
       children: [
         Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             hasAccessSettings
                 ? Container()
-                : InkWell(
-                    splashColor: deepViolet.withOpacity(0.4),
-                    onTap: () => Navigator.push(
-                      context,
-                      naviToAnotherPage(SettingsPage()),
-                    ),
-                    child: ButtonsMenuDrawer(
-                      mainPageWidget: Text(''),
-                      size: size,
-                      text: "Settings Page",
-                      iconn: Iconsax.paperclip,
-                      color: deepViolet,
-                    ),
+                : ButtonsMenuDrawerConditions(
+                    text: 'Settings Page',
+                    icons: Iconsax.paperclip,
+                    entities: entities,
+                    widget: SettingsPage(),
                   ),
             sizeBoxHeight(size.height * 0.012),
-            InkWell(
+            ButtonsMenuDrawerConditions(
+              text: 'User Profile Page',
+              icons: Icons.arrow_outward,
+              entities: entities,
+              widget: ProfilePage(),
+            ),
+            /* InkWell(
               splashColor: deepViolet.withOpacity(0.4),
               onTap: () =>
                   Navigator.push(context, naviToAnotherPage(ProfilePage())),
@@ -883,15 +893,20 @@ class AppDrawer extends StatelessWidget {
                 text: "User Profile Page",
                 iconn: Icons.arrow_outward,
                 color: deepViolet,
+                textColor: [deepViolet, amethyst, lavenderGray],
               ),
-            ),
+            ), */
           ],
         ),
       ],
     );
   }
 
-  Widget reports(DashboardBlocStateLoaded state, BuildContext context) {
+  Widget reports(
+    DashboardBlocStateLoaded state,
+    BuildContext context,
+    EmployeeInfoEntities entities,
+  ) {
     final permissions = Permissions(state: state.enitities);
     final hasAccessSalesReport = permissions.salesReportCondition;
     final hasAccessFeedback = permissions.getFeedbackCondition;
@@ -900,47 +915,49 @@ class AppDrawer extends StatelessWidget {
       splashColor: invisible,
       collapsedIconColor: black,
       collapsedBackgroundColor: white,
-      title: textDrawerStyle('Reports'),
+      title: textDrawerStyle('Reports', [deepViolet, amethyst, lavenderGray]),
       children: [
         Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            InkWell(
-              splashColor: deepViolet.withOpacity(0.4),
-              onTap: () =>
-                  Navigator.push(context, naviToAnotherPage(ReportPage())),
-              child: Column(
-                children: [
-                  hasAccessSalesReport
-                      ? Container()
-                      : ButtonsMenuDrawer(
-                          mainPageWidget: Text(''),
-                          size: size,
-                          text: "Sales Report",
-                          iconn: Iconsax.ticket,
-                          color: deepViolet,
-                        ),
-                ],
-              ),
+            Column(
+              children: [
+                hasAccessSalesReport
+                    ? Container()
+                    : /* ButtonsMenuDrawer(
+                        mainPageWidget: Text(''),
+                        size: size,
+                        text: "Sales Report",
+                        iconn: Iconsax.ticket,
+                        color: deepViolet,
+                        textColor: [deepViolet, amethyst, lavenderGray],
+                      ), */ ButtonsMenuDrawerConditions(
+                        text: 'Sales Report',
+                        icons: Iconsax.ticket,
+                        entities: entities,
+                        widget: ReportPage(),
+                      ),
+              ],
             ),
             sizeBoxHeight(size.height * 0.012),
-            InkWell(
-              splashColor: deepViolet.withOpacity(0.4),
-              onTap: () =>
-                  Navigator.push(context, naviToAnotherPage(GetFeedbackPage())),
-              child: Column(
-                children: [
-                  hasAccessFeedback
-                      ? Container()
-                      : ButtonsMenuDrawer(
-                          mainPageWidget: Text(''),
-                          size: size,
-                          text: "Feedback Page",
-                          iconn: FontAwesomeIcons.readme,
-                          color: deepViolet,
-                        ),
-                ],
-              ),
+            Column(
+              children: [
+                hasAccessFeedback
+                    ? Container()
+                    : /* ButtonsMenuDrawer(
+                        mainPageWidget: Text(''),
+                        size: size,
+                        text: "Feedback Page",
+                        iconn: FontAwesomeIcons.readme,
+                        color: deepViolet,
+                        textColor: [deepViolet, amethyst, lavenderGray],
+                      ), */ ButtonsMenuDrawerConditions(
+                        text: 'Feedback Page',
+                        icons: FontAwesomeIcons.readme,
+                        entities: entities,
+                        widget: GetFeedbackPage(),
+                      ),
+              ],
             ),
 
             sizeBoxHeight(size.height * 0.012),
@@ -948,7 +965,7 @@ class AppDrawer extends StatelessWidget {
               children: [
                 hasAccessExport
                     ? Container()
-                    : InkWell(
+                    : /* InkWell(
                         splashColor: deepViolet.withOpacity(0.4),
                         onTap: () => Navigator.push(
                           context,
@@ -960,7 +977,13 @@ class AppDrawer extends StatelessWidget {
                           text: "Export Page",
                           iconn: Iconsax.export,
                           color: deepViolet,
+                          textColor: [deepViolet, amethyst, lavenderGray],
                         ),
+                      ), */ ButtonsMenuDrawerConditions(
+                        text: 'Export Page',
+                        icons: Iconsax.export,
+                        entities: entities,
+                        widget: SalesExportPage(),
                       ),
               ],
             ),
@@ -970,17 +993,17 @@ class AppDrawer extends StatelessWidget {
     );
   }
 
-  Widget employees(BuildContext context) {
+  Widget employees(BuildContext context, EmployeeInfoEntities entities) {
     return ExpansionTile(
       splashColor: invisible,
       collapsedIconColor: black,
       collapsedBackgroundColor: white,
-      title: textDrawerStyle('Employees'),
+      title: textDrawerStyle('Employees', [deepViolet, amethyst, lavenderGray]),
       children: [
         Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            InkWell(
+            /* InkWell(
               splashColor: deepViolet.withOpacity(0.4),
               onTap: () =>
                   Navigator.push(context, naviToAnotherPage(StaffListPage())),
@@ -990,10 +1013,17 @@ class AppDrawer extends StatelessWidget {
                 text: "Staff List Page",
                 iconn: Iconsax.user,
                 color: deepViolet,
+                textColor: [deepViolet, amethyst, lavenderGray],
               ),
+            ), */
+            ButtonsMenuDrawerConditions(
+              text: 'Staff List Page',
+              icons: Iconsax.user,
+              entities: entities,
+              widget: StaffListPage(),
             ),
             sizeBoxHeight(size.height * 0.012),
-            InkWell(
+            /* InkWell(
               splashColor: deepViolet.withOpacity(0.4),
               onTap: () =>
                   Navigator.push(context, naviToAnotherPage(SignUpPage())),
@@ -1003,7 +1033,14 @@ class AppDrawer extends StatelessWidget {
                 text: "Add/Edit Staff",
                 iconn: Icons.add,
                 color: deepViolet,
+                textColor: [deepViolet, amethyst, lavenderGray],
               ),
+            ), */
+            ButtonsMenuDrawerConditions(
+              text: 'Add/Edit Staff',
+              icons: Icons.add,
+              entities: entities,
+              widget: SignUpPage(),
             ),
           ],
         ),
@@ -1011,17 +1048,24 @@ class AppDrawer extends StatelessWidget {
     );
   }
 
-  Widget ordersAndTransactions(BuildContext context) {
+  Widget ordersAndTransactions(
+    BuildContext context,
+    EmployeeInfoEntities entities,
+  ) {
     return ExpansionTile(
       splashColor: invisible,
       collapsedIconColor: black,
       collapsedBackgroundColor: white,
-      title: textDrawerStyle('Orders & Transactions'),
+      title: textDrawerStyle('Orders & Transactions', [
+        deepViolet,
+        amethyst,
+        lavenderGray,
+      ]),
       children: [
         Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            InkWell(
+            /* InkWell(
               splashColor: deepViolet.withOpacity(0.4),
               onTap: () => Navigator.push(
                 context,
@@ -1033,10 +1077,23 @@ class AppDrawer extends StatelessWidget {
                 text: "Orders Puschased Page",
                 iconn: Icons.line_style_rounded,
                 color: deepViolet,
+                textColor: [deepViolet, amethyst, lavenderGray],
               ),
+            ), */
+            ButtonsMenuDrawerConditions(
+              text: 'Orders Puschased Page',
+              icons: Icons.line_style_rounded,
+              entities: entities,
+              widget: OrderPurchasedHistory(),
             ),
             sizeBoxHeight(size.height * 0.012),
-            InkWell(
+            ButtonsMenuDrawerConditions(
+              text: 'Returns / Refunds',
+              icons: Icons.compare_arrows,
+              entities: entities,
+              widget: ReturnsAndRefundsPage(),
+            ),
+            /* InkWell(
               splashColor: deepViolet.withOpacity(0.4),
               onTap: () => Navigator.push(
                 context,
@@ -1048,22 +1105,36 @@ class AppDrawer extends StatelessWidget {
                 text: "Returns / Refunds",
                 iconn: Icons.compare_arrows,
                 color: deepViolet,
+                textColor: [deepViolet, amethyst, lavenderGray],
               ),
-            ),
+            ), */
           ],
         ),
       ],
     );
   }
 
-  Widget productsExpansionTile(BuildContext context) {
+  Widget productsExpansionTile(
+    BuildContext context,
+    EmployeeInfoEntities entities,
+  ) {
     return ExpansionTile(
       splashColor: invisible,
       collapsedIconColor: black,
       collapsedBackgroundColor: white,
-      title: textDrawerStyle('Products / Inventory'),
+      title: textDrawerStyle('Products / Inventory', [
+        deepViolet,
+        amethyst,
+        lavenderGray,
+      ]),
       children: [
-        InkWell(
+        ButtonsMenuDrawerConditions(
+          text: 'Products List Page',
+          icons: Icons.line_style_rounded,
+          entities: entities,
+          widget: ProductListPage(),
+        ),
+        /* InkWell(
           splashColor: deepViolet.withOpacity(0.4),
           onTap: () =>
               Navigator.push(context, naviToAnotherPage(ProductListPage())),
@@ -1073,35 +1144,100 @@ class AppDrawer extends StatelessWidget {
             text: "Products List Page",
             iconn: Icons.line_style_rounded,
             color: deepViolet,
+            textColor: [deepViolet, amethyst, lavenderGray],
           ),
-        ),
+        ), */
       ],
     );
   }
 
-  Widget checkoutExpansionTile(BuildContext context, String fullName) {
+  Widget checkoutExpansionTile(
+    BuildContext context,
+    String fullName,
+    EmployeeInfoEntities entities,
+  ) {
     return ExpansionTile(
       splashColor: invisible,
       collapsedIconColor: black,
       collapsedBackgroundColor: white,
-      title: textDrawerStyle('Sales / Checkout'),
+      title: textDrawerStyle('Sales / Checkout', [
+        deepViolet,
+        amethyst,
+        lavenderGray,
+      ]),
       children: [
-        InkWell(
-          splashColor: deepViolet.withOpacity(0.4),
-          onTap: () => Navigator.push(
-            context,
-            naviToAnotherPage(PosPage(fullName: fullName)),
-          ),
-          child: ButtonsMenuDrawer(
-            mainPageWidget: Text(''),
-            size: size,
-            text: "POS Page",
-            iconn: Iconsax.card_pos,
-            color: deepViolet,
-          ),
+        ButtonsMenuDrawerConditions(
+          text: 'POS Page',
+          icons: Iconsax.card_pos,
+          entities: entities,
+          widget: PosPage(fullName: fullName),
         ),
       ],
     );
+  }
+}
+
+class ButtonsMenuDrawerConditions extends StatelessWidget {
+  final String text;
+  /* final Color color;
+  final List<Color> textColor; */
+  final IconData icons;
+  final EmployeeInfoEntities entities;
+  final Widget widget;
+  const ButtonsMenuDrawerConditions({
+    super.key,
+    required this.text,
+    /*  required this.color,
+    required this.textColor, */
+    required this.icons,
+    required this.entities,
+    required this.widget,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    if (entities.status.name == 'longBreak') {
+      return ButtonsMenuDrawer(
+        mainPageWidget: Text(''),
+        size: size,
+        text: text,
+        iconn: icons,
+        color: gold,
+        textColor: [gold, gold, gold],
+      );
+    } else if (entities.status.name == 'busy') {
+      return ButtonsMenuDrawer(
+        mainPageWidget: Text(''),
+        size: size,
+        text: text,
+        iconn: icons,
+        color: redColor,
+        textColor: [redColor, redColor, redColor],
+      );
+    } else if (entities.status.name == 'offline') {
+      return ButtonsMenuDrawer(
+        mainPageWidget: Text(''),
+        size: size,
+        text: text,
+        iconn: icons,
+        color: colorGrey,
+        textColor: [colorGrey, colorGrey, colorGrey],
+      );
+    } else if (entities.status.name == 'active') {
+      return InkWell(
+        splashColor: deepViolet.withOpacity(0.4),
+        onTap: () => Navigator.push(context, naviToAnotherPage(widget)),
+        child: ButtonsMenuDrawer(
+          mainPageWidget: Text(''),
+          size: size,
+          text: text,
+          iconn: icons,
+          color: deepViolet,
+          textColor: [deepViolet, amethyst, lavenderGray],
+        ),
+      );
+    }
+    return Container();
   }
 }
 
@@ -1111,6 +1247,7 @@ class ButtonsMenuDrawer extends StatelessWidget {
   final String text;
   final IconData iconn;
   final Color color;
+  final List<Color> textColor;
   const ButtonsMenuDrawer({
     super.key,
     required this.mainPageWidget,
@@ -1118,6 +1255,7 @@ class ButtonsMenuDrawer extends StatelessWidget {
     required this.text,
     required this.iconn,
     required this.color,
+    required this.textColor,
   });
 
   @override
@@ -1129,7 +1267,7 @@ class ButtonsMenuDrawer extends StatelessWidget {
         children: [
           Icon(iconn, color: color),
           sizeBoxWidth(size.width * 0.009),
-          textDrawerStyle(text),
+          textDrawerStyle(text, textColor),
         ],
       ),
     );

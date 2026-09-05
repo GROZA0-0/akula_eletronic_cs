@@ -24,10 +24,10 @@ TextStyle textStyleForButtons(double fontSize) {
   );
 }
 
-Widget textDrawerStyle(String text) {
+Widget textDrawerStyle(String text, List<Color> textColor) {
   return ShaderMask(
     shaderCallback: (bounds) => LinearGradient(
-      colors: [deepViolet, amethyst, lavenderGray],
+      colors: textColor /* [deepViolet, amethyst, lavenderGray] */,
       begin: Alignment.topLeft,
       end: Alignment.bottomRight,
     ).createShader(bounds),

@@ -68,8 +68,13 @@ class CategoryDashboardBloc
     on<CategoryChartDashboardBlocEventLoading>((event, emit) async {
       emit(CategoryChartDashboardBlocStateLoading());
       try {
-        final getChart = await categoryController.fetchChartDashboard();
-        emit(CategoryChartDashboardBlocStateLoaded(entities: getChart));
+        await emit.forEach(
+          categoryController.fetchChartDashboard(),
+          onData: (entities) =>
+              CategoryChartDashboardBlocStateLoaded(entities: entities),
+        );
+        /* final getChart = await categoryController.fetchChartDashboard();
+        emit(CategoryChartDashboardBlocStateLoaded(entities: getChart)); */
       } catch (e) {
         emit(CategoryChartDashboardBlocStateError(err: e.toString()));
       }

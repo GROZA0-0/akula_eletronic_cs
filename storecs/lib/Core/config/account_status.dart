@@ -36,4 +36,21 @@ extension UserAccountStatusExtension on UserAccountStatus {
         return 'Offline';
     }
   }
+
+  /* check which status are selectable from current status then show it's list of status */
+  List<UserAccountStatus> get availableTransitionsAccStatus {
+    switch (this) {
+      case UserAccountStatus.offline:
+        return [UserAccountStatus.active, UserAccountStatus.offline];
+      case UserAccountStatus.busy:
+      case UserAccountStatus.longBreak:
+        return [
+          UserAccountStatus.active,
+          UserAccountStatus.longBreak,
+          UserAccountStatus.busy,
+        ];
+      case UserAccountStatus.active:
+        return UserAccountStatus.values;
+    }
+  }
 }

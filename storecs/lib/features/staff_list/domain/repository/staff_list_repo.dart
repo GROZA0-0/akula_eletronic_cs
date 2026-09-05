@@ -2,4 +2,10 @@ import 'package:storecs/features/staff_list/domain/entities/staff_list_entities.
 
 abstract class StaffListRepo {
   Future<List<StaffListEntities>> toStaffListdomainRepo();
+  Future<StaffListEntities> toUpdateStaffRepository(
+    String id,
+    String phone,
+    String field,
+  );
+  Future<StaffListEntities> toTerminateStaffAccountRepository(String id);
 }
