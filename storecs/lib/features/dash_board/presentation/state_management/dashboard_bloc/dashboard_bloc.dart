@@ -49,8 +49,11 @@ class ReviewDashboardBloc
     on<DashboardBlocEventLoading>((event, emit) async {
       emit(ReviewDashboardBlocStateLoading());
       try {
-        final getReview = await reviewBoardController.getReviews();
-        emit(ReviewDashboardBlocStateLoaded(entities: getReview));
+        await emit.forEach(
+          reviewBoardController.getReviews(),
+          onData: (enitites) =>
+              ReviewDashboardBlocStateLoaded(entities: enitites),
+        );
       } catch (e) {
         print("any errors into dashboard bloc ${e.toString()}");
         emit((ReviewDashboardBlocStateError(err: e.toString())));

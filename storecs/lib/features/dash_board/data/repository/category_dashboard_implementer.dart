@@ -7,13 +7,15 @@ class CategoryDashboardImplementer implements CategoryDashboardRepo {
   final CategoryDashboardDataSourceRepo sourceRepo;
   CategoryDashboardImplementer({required this.sourceRepo});
 
-  final controller = BehaviorSubject<CategoryDashboardEntities>();
+  final controller = BehaviorSubject<List<CategoryDashboardEntities>>();
 
   @override
   Future<List<CategoryDashboardEntities>> getChartRepo() async {
     try {
       final model = await sourceRepo.getCategoryAvgSales();
-      return model.map((e) => e.toCategoryDashboardEntities()).toList();
+      final entity = model.map((e) => e.toCategoryDashboardEntities()).toList();
+      controller.add(entity);
+      return entity;
     } catch (e) {
       print("any errors in CategoryDashboardImplementer $e");
       throw e.toString();
@@ -21,5 +23,5 @@ class CategoryDashboardImplementer implements CategoryDashboardRepo {
   }
 
   @override
-  Stream<CategoryDashboardEntities> get getChart => controller.stream;
+  Stream<List<CategoryDashboardEntities>> get getChart => controller.stream;
 }

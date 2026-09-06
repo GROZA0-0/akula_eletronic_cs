@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:iconsax/iconsax.dart';
 import 'package:storecs/Core/styles/colors.dart';
 import 'package:storecs/features/dash_board/domain/entities/category_dashboard_entities.dart';
 import 'package:storecs/features/dash_board/domain/repository/category_dashboard_repo.dart';
@@ -13,12 +11,7 @@ class FetchCategoryDashboardController {
     greenColor,
     orange,
     blueColor,
-  ];
-  static List<IconData> iconPalette = [
-    Icons.tablet_android,
-    FontAwesomeIcons.playstation,
-    FontAwesomeIcons.headphones,
-    Iconsax.more,
+    accentColor,
   ];
 
   Stream<List<CategoryDashboardEntities>> fetchChartDashboard() async* {
@@ -58,21 +51,20 @@ class FetchCategoryDashboardController {
     if (totalAvgSum <= 0) return [];
 
     final List<Map<String, dynamic>> finalChartData = [];
-    const int topCount = 3;
+    const int topCount = 4;
     double othersAvgValue = 0.0;
 
     for (int i = 0; i < validCategories.length; i++) {
       final item = validCategories[i];
 
       if (i < topCount) {
-        /* Add top 3 categories directly */
+        /* Add top  categories directly */
         double percentage = (item.avgValue / totalAvgSum) * 100;
         finalChartData.add({
           'label': item.category,
           'value': percentage,
           'avgAmount': item.avgValue,
           'color': colorPalette[i % colorPalette.length],
-          'icon': iconPalette[i % iconPalette.length],
         });
       } else {
         /* Accumulate remaining items into "Others" sum */
@@ -88,7 +80,6 @@ class FetchCategoryDashboardController {
         'value': othersPercentage,
         'avgAmount': othersAvgValue,
         'color': colorPalette[finalChartData.length % colorPalette.length],
-        'icon': iconPalette[finalChartData.length % iconPalette.length],
       });
     }
 

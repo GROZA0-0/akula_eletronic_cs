@@ -499,10 +499,6 @@ class _InteractivePieChartSectionState
                 fontWeight: FontWeight.bold,
                 color: white,
               ),
-
-              badgeWidget: isTouched
-                  ? Icon(data['icon'], color: white, size: 16)
-                  : null,
               badgePositionPercentageOffset: 1.2,
             );
           }).toList(),
@@ -581,21 +577,7 @@ class RowOfReviewsSection extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
-                  padding: const EdgeInsets.all(8.0),
-                  decoration: BoxDecoration(
-                    // color: green,
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(width: 1, color: white),
-                  ),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(Revenues, style: textBodiesStyle),
-                      Text('$totalRev JOD', style: textBodiesStyle),
-                    ],
-                  ),
-                ),
+                ReviewsSectionInfo(title: Revenues, subTitle: '$totalRev JOD'),
                 sizeBoxWidth(size.width * 0.009),
                 ReviewsSectionInfo(
                   title: Orders,
@@ -912,17 +894,11 @@ class AppDrawer extends StatelessWidget {
               ],
             ),
             sizeBoxHeight(size.height * 0.012),
-            Column(
-              children: [
-                hasAccessFeedback
-                    ? Container()
-                    : ButtonsMenuDrawerConditions(
-                        text: 'Feedback Page',
-                        icons: FontAwesomeIcons.readme,
-                        entities: entities,
-                        widget: GetFeedbackPage(),
-                      ),
-              ],
+            ButtonsMenuDrawerConditions(
+              text: 'Feedback Page',
+              icons: FontAwesomeIcons.readme,
+              entities: entities,
+              widget: GetFeedbackPage(),
             ),
 
             sizeBoxHeight(size.height * 0.012),
@@ -1149,6 +1125,7 @@ class ButtonsMenuDrawer extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
+          sizeBoxWidth(size.width * 0.003),
           Icon(iconn, color: color),
           sizeBoxWidth(size.width * 0.009),
           textDrawerStyle(text, textColor),
