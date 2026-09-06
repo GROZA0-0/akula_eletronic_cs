@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:storecs/Core/config/wrapper.dart';
+import 'package:storecs/Core/styles/animations.dart';
 import 'package:storecs/Core/styles/colors.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -21,8 +22,11 @@ class _SplashScreenState extends State<SplashScreen> {
 
   void _navigateToNextScreen() async {
     await Future.delayed(const Duration(seconds: 3));
-
-    Get.offAll(() => const Wrapper(), transition: Transition.fadeIn);
+    Navigator.pushAndRemoveUntil(
+      navigator!.context,
+      splashNaviRoute(Wrapper()),
+      (route) => false,
+    );
   }
 
   @override

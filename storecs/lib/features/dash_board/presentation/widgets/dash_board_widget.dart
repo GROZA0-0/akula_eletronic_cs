@@ -1065,16 +1065,14 @@ class AppDrawer extends StatelessWidget {
 
 class ButtonsMenuDrawerConditions extends StatelessWidget {
   final String text;
-  /* final Color color;
-  final List<Color> textColor; */
+
   final IconData icons;
   final EmployeeInfoEntities entities;
   final Widget widget;
   const ButtonsMenuDrawerConditions({
     super.key,
     required this.text,
-    /*  required this.color,
-    required this.textColor, */
+
     required this.icons,
     required this.entities,
     required this.widget,

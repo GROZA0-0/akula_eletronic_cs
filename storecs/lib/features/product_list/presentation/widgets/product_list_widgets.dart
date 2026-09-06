@@ -111,14 +111,14 @@ class _SwapSectionState extends State<SwapSection> {
                         color: invisible,
                         borderRadius: BorderRadius.circular(20),
                         border: Border.all(
-                          color: isSelected ? greenColor : white,
+                          color: isSelected ? blueGreen : white,
                           width: 2,
                         ),
                       ),
                       child: Text(
                         action,
                         style: TextStyle(
-                          color: isSelected ? greenColor : white,
+                          color: isSelected ? blueGreen : white,
                           fontWeight: isSelected
                               ? FontWeight.bold
                               : FontWeight.normal,
@@ -572,7 +572,7 @@ class InsertProductTextFieldTemplate extends StatelessWidget {
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(color: greenColor, width: 2),
+            borderSide: const BorderSide(color: blueGreen, width: 2),
           ),
           errorBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),

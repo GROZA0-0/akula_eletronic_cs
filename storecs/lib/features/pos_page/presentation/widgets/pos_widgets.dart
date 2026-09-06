@@ -499,7 +499,7 @@ class _CardButtonState extends State<CardButtons> {
           height: widget.height,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
-            border: Border.all(color: passMouse ? green : white, width: 2),
+            border: Border.all(color: passMouse ? blueGreen : white, width: 2),
           ),
           child: Center(child: Text(widget.text, style: textBodiesStyle)),
         ),
@@ -686,14 +686,14 @@ class _CategoryTabsState extends State<CategoryTabs> {
                       color: Colors.transparent,
                       borderRadius: BorderRadius.circular(20),
                       border: Border.all(
-                        color: isSelected ? greenColor : white,
+                        color: isSelected ? blueGreen : white,
                         width: 2,
                       ),
                     ),
                     child: Text(
                       cat,
                       style: TextStyle(
-                        color: isSelected ? greenColor : white,
+                        color: isSelected ? blueGreen : white,
                         fontWeight: isSelected
                             ? FontWeight.bold
                             : FontWeight.normal,

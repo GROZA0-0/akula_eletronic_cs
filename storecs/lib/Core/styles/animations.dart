@@ -6,7 +6,6 @@ import 'package:storecs/Core/Styles/themes.dart';
 import 'package:storecs/Core/styles/colors.dart';
 import 'package:storecs/Core/styles/sizes.dart';
 
-
 class DrawerIconAnimation extends StatefulWidget {
   final IconData iconData;
   final VoidCallback voidCallback;
@@ -62,12 +61,12 @@ class _DrawerIconAnimationState extends State<DrawerIconAnimation>
           });
         },
         child: GestureDetector(
-          onTap: voidCallback /* () => Scaffold.of(context).openDrawer() */,
+          onTap: voidCallback,
           child: RotationTransition(
             filterQuality: FilterQuality.high,
             alignment: Alignment.center,
             turns: Tween(begin: 0.0, end: 1.1).animate(controller),
-            child: Icon(iconData, color: isanimating ? green : white),
+            child: Icon(iconData, color: isanimating ? blueGreen : white),
           ),
         ),
       ),
@@ -134,10 +133,7 @@ Widget reportSectionLoading() {
 PageRouteBuilder<dynamic> naviToAnotherPage(Widget targetPage) {
   return PageRouteBuilder(
     pageBuilder: (context, animation, secondaryAnimation) {
-      /* final dashboardBloc = context.read<DashboardBloc>(); */
       return GradientBackground(child: targetPage);
-
-      /* GradientBackground(child: targetPage); */
     },
     transitionsBuilder: (context, animation, secondaryAnimation, child) {
       const begin = Offset(1.0, 0.0);
@@ -155,13 +151,7 @@ PageRouteBuilder<dynamic> naviToAnotherPage(Widget targetPage) {
 PageRouteBuilder<dynamic> feedbacktNaviRoute(Widget targetPage) {
   return PageRouteBuilder(
     pageBuilder: (context, animation, secondaryAnimation) {
-      /* final dashboardBloc = context.read<DashboardBloc>(); */
-      return GradientBackground(child: targetPage); /* BlocProvider.value(
-        value: dashboardBloc,
-        child: GradientBackground(child: targetPage),
-      ); */
-
-      /* GradientBackground(child: targetPage); */
+      return GradientBackground(child: targetPage);
     },
     transitionsBuilder: (context, animation, secondaryAnimation, child) {
       const begin = Offset(1.0, 0.0);
@@ -176,4 +166,14 @@ PageRouteBuilder<dynamic> feedbacktNaviRoute(Widget targetPage) {
   );
 }
 
-// final feedbacktNaviRoute = Transition.downToUp;
+PageRouteBuilder<dynamic> splashNaviRoute(Widget targetPage) {
+  return PageRouteBuilder(
+    pageBuilder: (context, animation, secondaryAnimation) {
+      return GradientBackground(child: targetPage);
+    },
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      return FadeTransition(opacity: animation, child: child);
+    },
+    transitionDuration: const Duration(milliseconds: 300),
+  );
+}
