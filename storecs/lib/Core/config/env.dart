@@ -1,3 +1,3 @@
 class Env {
-  static const baseURL = "http://127.0.0.1:3004/";
+  static const baseURL = "http://localhost:3004/";
 }

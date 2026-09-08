@@ -41,6 +41,15 @@ class _SalesExportWidgetState extends State<SalesExportWidget> {
   }
 
   @override
+  void dispose() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _searchController.clear();
+      _selectedDateRange = null;
+    });
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(

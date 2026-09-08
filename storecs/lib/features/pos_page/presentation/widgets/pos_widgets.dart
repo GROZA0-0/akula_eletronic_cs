@@ -6,7 +6,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:storecs/Core/config/call_controller.dart';
@@ -43,6 +42,12 @@ class _PosWidgetsState extends State<PosWidgets> {
     "PS5",
     "Pc's Components",
   ];
+  @override
+  void dispose() {
+    cartController.cartItems = [];
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final bool passMouse = false;
@@ -131,7 +136,7 @@ class _PosWidgetsState extends State<PosWidgets> {
   }
 }
 
-class CartSection extends StatelessWidget {
+class CartSection extends StatefulWidget {
   final List<String> categories;
   final bool passMouse;
   final String fullName;
@@ -143,26 +148,36 @@ class CartSection extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: size.width / 3,
-      height: size.height * 1.250,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: white),
-      ),
-      child: Container(
-        margin: EdgeInsets.symmetric(vertical: size.height * 0.02),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            customerOrder(),
+  State<CartSection> createState() => _CartSectionState();
+}
 
-            emptyCardSection(),
-            orderPriceDetails(context, fullName),
-          ],
-        ),
-      ),
+class _CartSectionState extends State<CartSection> {
+  @override
+  Widget build(BuildContext context) {
+    return ListenableBuilder(
+      listenable: cartController,
+      builder: (context, _) {
+        return Container(
+          width: size.width / 3,
+          height: size.height * 1.250,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(color: white),
+          ),
+          child: Container(
+            margin: EdgeInsets.symmetric(vertical: size.height * 0.02),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                customerOrder(),
+
+                emptyCardSection(),
+                orderPriceDetails(context, widget.fullName),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 
@@ -177,31 +192,29 @@ class CartSection extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          Obx(
-            () => Container(
-              width: size.width,
-              margin: EdgeInsets.symmetric(horizontal: size.width * 0.02),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  PriceRow(
-                    label: 'Order Price :-',
-                    value: '${cartController.subTotal.toStringAsFixed(2)} JOD',
-                  ),
+          Container(
+            width: size.width,
+            margin: EdgeInsets.symmetric(horizontal: size.width * 0.02),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                PriceRow(
+                  label: 'Order Price :-',
+                  value: '${cartController.subTotal.toStringAsFixed(2)} JOD',
+                ),
 
-                  sizeBoxHeight(size.height * 0.02),
-                  PriceRow(
-                    label: 'Tax (5%) :-',
-                    value: '${cartController.taxAmount.toStringAsFixed(2)} JOD',
-                  ),
+                sizeBoxHeight(size.height * 0.02),
+                PriceRow(
+                  label: 'Tax (5%) :-',
+                  value: '${cartController.taxAmount.toStringAsFixed(2)} JOD',
+                ),
 
-                  sizeBoxHeight(size.height * 0.02),
-                  PriceRow(
-                    label: 'Total Price :-',
-                    value: '${cartController.total.toStringAsFixed(2)} JOD',
-                  ),
-                ],
-              ),
+                sizeBoxHeight(size.height * 0.02),
+                PriceRow(
+                  label: 'Total Price :-',
+                  value: '${cartController.total.toStringAsFixed(2)} JOD',
+                ),
+              ],
             ),
           ),
 
@@ -209,7 +222,20 @@ class CartSection extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               CardButtons(
-                callback: () async => await cartController.purchase(fullName),
+                callback: () async {
+                  await cartController.purchase(fullName);
+
+                  if (context.mounted) {
+                    /* go to the last category that selected */
+                    final currentCategory = context
+                        .read<PosBloc>()
+                        .currentCategory;
+                    /* refresh the page of last category that selected  */
+                    context.read<PosBloc>().add(
+                      PosBlocEventLoaded(category: currentCategory),
+                    );
+                  }
+                },
                 height: size.height / 14,
                 width: size.width / 5.5,
                 text: "Confirm Processed",
@@ -403,28 +429,31 @@ class CartSection extends StatelessWidget {
 
   Widget emptyCardSection() {
     return Expanded(
-      child: Obx(() {
-        if (cartController.cartItems.isEmpty) {
-          return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(Icons.shopping_cart_outlined, color: white, size: 50),
-                SizedBox(height: 8),
-                Text('Cart is empty', style: textBodiesStyle),
-              ],
-            ),
-          );
-        } else {
-          return ListView.builder(
-            itemCount: cartController.cartItems.length,
-            itemBuilder: (context, index) {
-              final item = cartController.cartItems[index];
-              return CartItemWidget(item: item);
-            },
-          );
-        }
-      }),
+      child: ListenableBuilder(
+        listenable: cartController,
+        builder: (context, _) {
+          if (cartController.cartItems.isEmpty) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.shopping_cart_outlined, color: white, size: 50),
+                  SizedBox(height: 8),
+                  Text('Cart is empty', style: textBodiesStyle),
+                ],
+              ),
+            );
+          } else {
+            return ListView.builder(
+              itemCount: cartController.cartItems.length,
+              itemBuilder: (context, index) {
+                final item = cartController.cartItems[index];
+                return CartItemWidget(item: item);
+              },
+            );
+          }
+        },
+      ),
     );
   }
 
@@ -441,13 +470,11 @@ class CartSection extends StatelessWidget {
             children: [
               /* customer Order */
               Text("Customer Order", style: textBodiesStyle),
-              Obx(
-                () => Text(
-                  '${cartController.totalItems} items',
-                  style: GoogleFonts.aleo(
-                    color: greenColor,
-                    fontWeight: FontWeight.w400,
-                  ),
+              Text(
+                '${cartController.totalItems} items',
+                style: GoogleFonts.aleo(
+                  color: greenColor,
+                  fontWeight: FontWeight.w400,
                 ),
               ),
               DrawerIconAnimation(
@@ -753,8 +780,8 @@ class ProductsGrid extends StatelessWidget {
             ),
             itemCount: state.entities.length,
             itemBuilder: (context, index) {
-              final product = state.entities[index];
-              return ProductCard(entities: product);
+              // final product = state.entities[index];
+              return ProductCard(state: state, index: index);
             },
           );
         }
@@ -764,15 +791,23 @@ class ProductsGrid extends StatelessWidget {
   }
 }
 
-class ProductCard extends StatelessWidget {
-  final PosEntities entities;
-  const ProductCard({super.key, required this.entities});
+class ProductCard extends StatefulWidget {
+  final PosBlocStateLoaded state;
+  final int index;
+  const ProductCard({super.key, required this.state, required this.index});
 
   @override
+  State<ProductCard> createState() => _ProductCardState();
+}
+
+class _ProductCardState extends State<ProductCard> {
+  @override
   Widget build(BuildContext context) {
+    final entities = widget.state.entities[widget.index];
     return GestureDetector(
-      onTap: () =>
-          entities.stock > 0 ? cartController.addToCart(entities) : null,
+      onTap: () => widget.state.entities[widget.index].stock > 0
+          ? cartController.addToCart(widget.state.entities[widget.index])
+          : null,
       child: Container(
         height: size.height / 2,
         decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
@@ -780,18 +815,20 @@ class ProductCard extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            entities.image.isNotEmpty ? fetchItemImage() : itemHasNoImage(),
+            widget.state.entities[widget.index].image.isNotEmpty
+                ? fetchItemImage(entities)
+                : itemHasNoImage(),
 
             sizeBoxHeight(size.height * 0.008),
 
-            itemDetails(),
+            itemDetails(entities),
           ],
         ),
       ),
     );
   }
 
-  Widget itemDetails() {
+  Widget itemDetails(PosEntities entities) {
     return Flexible(
       flex: 1,
       child: Container(
@@ -849,7 +886,7 @@ class ProductCard extends StatelessWidget {
     );
   }
 
-  Widget fetchItemImage() {
+  Widget fetchItemImage(PosEntities entities) {
     return Flexible(
       flex: 3,
       child: Container(

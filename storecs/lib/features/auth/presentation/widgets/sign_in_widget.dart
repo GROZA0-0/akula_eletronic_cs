@@ -16,6 +16,16 @@ class SignInWidgets extends StatefulWidget {
 
 class _SignInWidgetsState extends State<SignInWidgets> {
   @override
+  void dispose() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      signInController.email.clear();
+      signInController.password.clear();
+      signInController.isPassVisible = true;
+    });
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: invisible,
@@ -35,9 +45,14 @@ class _SignInWidgetsState extends State<SignInWidgets> {
   }
 }
 
-class SignInBody extends StatelessWidget {
+class SignInBody extends StatefulWidget {
   const SignInBody({super.key});
 
+  @override
+  State<SignInBody> createState() => _SignInBodyState();
+}
+
+class _SignInBodyState extends State<SignInBody> {
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -95,8 +110,8 @@ class SignInBody extends StatelessWidget {
       width: size.width * 0.3,
       child: TextFormField(
         controller: signInController.password,
-        obscureText: true,
-        // validator: validator,
+        obscureText: signInController.isPassVisible,
+        onFieldSubmitted: (value) => signInController.signInTrigger(),
         style: textBodiesStyle,
         decoration: InputDecoration(
           labelText: "Password",
@@ -104,6 +119,7 @@ class SignInBody extends StatelessWidget {
             color: white,
             fontWeight: FontWeight.w400,
           ),
+          suffixIcon: togglePassword(),
           prefixIcon: const Icon(Iconsax.lock_1, color: white),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
@@ -115,7 +131,7 @@ class SignInBody extends StatelessWidget {
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(color: greenColor, width: 2),
+            borderSide: const BorderSide(color: blueGreen, width: 2),
           ),
           errorBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
@@ -156,7 +172,7 @@ class SignInBody extends StatelessWidget {
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(color: greenColor, width: 2),
+            borderSide: const BorderSide(color: blueGreen, width: 2),
           ),
           errorBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
@@ -170,6 +186,17 @@ class SignInBody extends StatelessWidget {
           fillColor: Colors.transparent,
         ),
       ),
+    );
+  }
+
+  Widget togglePassword() {
+    return GestureDetector(
+      onTap: () => setState(() {
+        signInController.isPassVisible = !signInController.isPassVisible;
+      }),
+      child: signInController.isPassVisible
+          ? const Icon(Iconsax.eye_slash, color: white)
+          : const Icon(Iconsax.eye, color: white),
     );
   }
 }

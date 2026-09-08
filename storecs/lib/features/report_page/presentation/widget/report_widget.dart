@@ -15,7 +15,16 @@ class ReportWidget extends StatefulWidget {
 }
 
 class _ReportWidgetState extends State<ReportWidget> {
+  
   bool isHovered = false;
+  @override
+  void dispose() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+    reportController.title.clear();
+    reportController.subTitle.clear();
+  });
+    super.dispose();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(

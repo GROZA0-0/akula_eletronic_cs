@@ -1,13 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:get/get.dart';
 import 'package:storecs/Core/styles/alerts.dart';
 import 'package:storecs/Core/styles/loader.dart';
 import 'package:storecs/features/issues_or_suggestions/domain/repository/feedback_repository.dart';
 import 'package:storecs/main.dart';
 
-class FeedbackController {
+class FeedbackController extends ChangeNotifier {
   final FeedbackRepository repository;
   FeedbackController({required this.repository});
 
@@ -20,14 +19,25 @@ class FeedbackController {
     'Other',
   ];
   List<String> severity = ['Low', 'Medium', 'High'];
-  final selectedIssueCategories = ''.obs;
-  final selectedSeverity = ''.obs;
-  void changeIssue(String level) => selectedIssueCategories.value = level;
-  void changeSeverit(String level) => selectedSeverity.value = level;
+  String selectedIssueCategories = '';
+  String selectedSeverity = '';
+
+  /* Call notifyListeners() to update the value when call it */
+  void changeIssue(String level) {
+    selectedIssueCategories = level;
+    notifyListeners();
+  }
+
+  void changeSeverit(String level) {
+    selectedSeverity = level;
+    notifyListeners();
+  }
+
   final empId = FirebaseAuth.instance.currentUser!.uid;
   final empEmail = FirebaseAuth.instance.currentUser!.email;
   TextEditingController note = TextEditingController();
   final Alerts alerts = Alerts(messengerKey);
+
   Future<void> storeFeedback() async {
     if (selectedIssueCategories.isEmpty) {
       alerts.ifErrors('The issue is require');
@@ -39,12 +49,13 @@ class FeedbackController {
         await repository.storeFeedbackEntities(
           empId,
           empEmail!,
-          selectedIssueCategories.value,
-          selectedSeverity.value,
+          selectedIssueCategories,
+          selectedSeverity,
           note.text.trim(),
         );
         alerts.ifSuccess('Report has been sent');
         clearUi();
+        notifyListeners();
       } on PlatformException catch (e) {
         print('The Error Is: ${e.message.toString()}');
         alerts.ifErrors(e.message.toString());
@@ -60,8 +71,8 @@ class FeedbackController {
   }
 
   void clearUi() {
-    selectedIssueCategories.value.isEmpty;
-    selectedSeverity.value.isEmpty;
+    selectedIssueCategories = '';
+    selectedSeverity = '';
     note.clear();
   }
 }

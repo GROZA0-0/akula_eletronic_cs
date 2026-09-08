@@ -23,8 +23,8 @@ class AuthImplement implements AuthRepo {
         id: credential.user!.uid,
         email: credential.user!.email!,
       );
-    } on FirebaseAuthException catch (e) {
-      throw e.message ?? "Authentication sign in failed";
+    } on FirebaseAuthException {
+      rethrow;
     }
   }
 

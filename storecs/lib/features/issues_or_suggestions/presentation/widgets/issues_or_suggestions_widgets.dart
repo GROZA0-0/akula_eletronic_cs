@@ -1,6 +1,5 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:storecs/Core/config/call_controller.dart';
@@ -19,6 +18,16 @@ class IssuesOrSuggestionsWidgets extends StatefulWidget {
 class _IssuesOrSuggestionsWidgetsState
     extends State<IssuesOrSuggestionsWidgets> {
   @override
+  void dispose() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      feedbackController.selectedIssueCategories = '';
+      feedbackController.selectedSeverity = '';
+      feedbackController.note.clear();
+    });
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -31,22 +40,29 @@ class _IssuesOrSuggestionsWidgetsState
       body: SafeArea(
         child: Center(
           child: FadeInUp(
-            child: Container(
-              width: size.width / 1.2,
-              decoration: BoxDecoration(
-                border: Border.all(color: white, width: 3),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Column(
-                children: [
-                  IssueCategoriesTabs(
-                    issueCategories: feedbackController.issueCategories,
+            child: ListenableBuilder(
+              listenable: feedbackController,
+              builder: (context, _) {
+                return Container(
+                  width: size.width / 1.2,
+                  decoration: BoxDecoration(
+                    border: Border.all(color: white, width: 3),
+                    borderRadius: BorderRadius.circular(10),
                   ),
-                  SeverityCategoriesTabs(severity: feedbackController.severity),
-                  addANotePrompt(),
-                  sendReportButton(),
-                ],
-              ),
+                  child: Column(
+                    children: [
+                      IssueCategoriesTabs(
+                        issueCategories: feedbackController.issueCategories,
+                      ),
+                      SeverityCategoriesTabs(
+                        severity: feedbackController.severity,
+                      ),
+                      addANotePrompt(),
+                      sendReportButton(),
+                    ],
+                  ),
+                );
+              },
             ),
           ),
         ),
@@ -59,7 +75,7 @@ class _IssuesOrSuggestionsWidgetsState
       onTap: () => feedbackController.storeFeedback(),
       child: Container(
         decoration: BoxDecoration(
-          border: Border.all(color: /* isHovered ? green : */ white, width: 3),
+          border: Border.all(color: white, width: 3),
           borderRadius: BorderRadius.circular(10),
         ),
         width: size.width * 0.4,
@@ -142,48 +158,43 @@ class SeverityCategoriesTabs extends StatelessWidget {
               ),
             ),
           ),
-          Obx(
-            () => Row(
-              spacing: 8.0,
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: severity.map((serv) {
-                final isSelected =
-                    feedbackController.selectedSeverity.value == serv;
-                return GestureDetector(
-                  onTap: () => feedbackController.changeSeverit(serv),
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 200),
-                    margin: EdgeInsets.only(
-                      right: size.width * 0.008,
-                      top: size.height * 0.01,
-                    ),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 8,
-                    ),
-                    decoration: BoxDecoration(
-                      color: isSelected
-                          ? Colors.green.withOpacity(0.2)
-                          : Colors.transparent,
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(
-                        color: isSelected ? Colors.green : Colors.white,
-                        width: 2,
-                      ),
-                    ),
-                    child: Text(
-                      serv,
-                      style: TextStyle(
-                        color: isSelected ? Colors.green : Colors.white,
-                        fontWeight: isSelected
-                            ? FontWeight.bold
-                            : FontWeight.normal,
-                      ),
+          Row(
+            spacing: 8.0,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: severity.map((serv) {
+              final isSelected = feedbackController.selectedSeverity == serv;
+              return GestureDetector(
+                onTap: () => feedbackController.changeSeverit(serv),
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 200),
+                  margin: EdgeInsets.only(
+                    right: size.width * 0.008,
+                    top: size.height * 0.01,
+                  ),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
+                  ),
+                  decoration: BoxDecoration(
+                    color: isSelected ? blueGreen.withOpacity(0.2) : invisible,
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(
+                      color: isSelected ? blueGreen : white,
+                      width: 2,
                     ),
                   ),
-                );
-              }).toList(),
-            ),
+                  child: Text(
+                    serv,
+                    style: TextStyle(
+                      color: isSelected ? blueGreen : white,
+                      fontWeight: isSelected
+                          ? FontWeight.bold
+                          : FontWeight.normal,
+                    ),
+                  ),
+                ),
+              );
+            }).toList(),
           ),
         ],
       ),
@@ -215,49 +226,45 @@ class IssueCategoriesTabs extends StatelessWidget {
             ),
           ),
 
-          Obx(
-            () => Wrap(
-              spacing: 8.0,
-              runSpacing: 8.0,
-              children: issueCategories.map((issue) {
-                final isSelected =
-                    feedbackController.selectedIssueCategories.value == issue;
+          Wrap(
+            spacing: 8.0,
+            runSpacing: 8.0,
+            children: issueCategories.map((issue) {
+              final isSelected =
+                  feedbackController.selectedIssueCategories == issue;
 
-                return GestureDetector(
-                  onTap: () => feedbackController.changeIssue(issue),
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 200),
-                    margin: EdgeInsets.only(
-                      right: size.width * 0.008,
-                      top: size.height * 0.01,
-                    ),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 8,
-                    ),
-                    decoration: BoxDecoration(
-                      color: isSelected
-                          ? Colors.green.withOpacity(0.2)
-                          : Colors.transparent,
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(
-                        color: isSelected ? Colors.green : Colors.white,
-                        width: 2,
-                      ),
-                    ),
-                    child: Text(
-                      issue,
-                      style: TextStyle(
-                        color: isSelected ? Colors.green : Colors.white,
-                        fontWeight: isSelected
-                            ? FontWeight.bold
-                            : FontWeight.normal,
-                      ),
+              return GestureDetector(
+                onTap: () => feedbackController.changeIssue(issue),
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 200),
+                  margin: EdgeInsets.only(
+                    right: size.width * 0.008,
+                    top: size.height * 0.01,
+                  ),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
+                  ),
+                  decoration: BoxDecoration(
+                    color: isSelected ? blueGreen.withOpacity(0.2) : invisible,
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(
+                      color: isSelected ? blueGreen : white,
+                      width: 2,
                     ),
                   ),
-                );
-              }).toList(),
-            ),
+                  child: Text(
+                    issue,
+                    style: TextStyle(
+                      color: isSelected ? blueGreen : white,
+                      fontWeight: isSelected
+                          ? FontWeight.bold
+                          : FontWeight.normal,
+                    ),
+                  ),
+                ),
+              );
+            }).toList(),
           ),
         ],
       ),

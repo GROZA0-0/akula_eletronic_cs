@@ -870,7 +870,6 @@ class AppDrawer extends StatelessWidget {
   ) {
     final permissions = Permissions(state: state.enitities);
     final hasAccessSalesReport = permissions.salesReportCondition;
-    final hasAccessFeedback = permissions.getFeedbackCondition;
     final hasAccessExport = permissions.getFeedbackCondition;
     return ExpansionTile(
       splashColor: invisible,

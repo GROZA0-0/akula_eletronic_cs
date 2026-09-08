@@ -20,6 +20,20 @@ class SignUpWidget extends StatefulWidget {
 
 class _SignUpWidgetState extends State<SignUpWidget> {
   @override
+  void dispose() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      signUpController.email.clear();
+      signUpController.password.clear();
+      signUpController.name.clear();
+      signUpController.phone.clear();
+      signUpController.staffLevels.clear();
+      signUpController.selectedFile.value = null;
+      signUpController.passVisible = true;
+    });
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -54,7 +68,8 @@ class _SignUpWidgetState extends State<SignUpWidget> {
                   SignUpTextFieldTemplate(
                     text: PasswordTextField,
                     controller: signUpController.password,
-                    passVisible: true,
+                    passVisible: signUpController.passVisible,
+                    suffixIcon: togglePassword(),
                     icon: Icon(RemixIcons.lock_password_fill, color: white),
                   ),
                   SignUpTextFieldTemplate(
@@ -167,6 +182,17 @@ class _SignUpWidgetState extends State<SignUpWidget> {
       ),
     );
   }
+
+  Widget togglePassword() {
+    return GestureDetector(
+      onTap: () => setState(() {
+        signUpController.passVisible = !signUpController.passVisible;
+      }),
+      child: signUpController.passVisible
+          ? const Icon(Iconsax.eye_slash, color: white)
+          : const Icon(Iconsax.eye, color: white),
+    );
+  }
 }
 
 class SignUpTextFieldTemplate extends StatelessWidget {
@@ -174,11 +200,13 @@ class SignUpTextFieldTemplate extends StatelessWidget {
     super.key,
     required this.text,
     required this.icon,
+    this.suffixIcon,
     required this.controller,
     required this.passVisible,
   });
   final String text;
   final Icon icon;
+  final Widget? suffixIcon;
   final TextEditingController controller;
   final bool passVisible;
 
@@ -202,6 +230,7 @@ class SignUpTextFieldTemplate extends StatelessWidget {
             fontSize: 30,
             fontWeight: FontWeight.w400,
           ),
+          suffixIcon: suffixIcon,
           prefixIcon: icon,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),

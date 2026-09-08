@@ -33,6 +33,7 @@ class SignUpController {
   final Rx<File?> selectedFile = Rx<File?>(null);
   final FirebaseAuth auth = FirebaseAuth.instance;
   final selectedlevel = ''.obs;
+  bool passVisible = true;
   final List<String> staffLevels = [
     "Manager",
     "Supervisor",

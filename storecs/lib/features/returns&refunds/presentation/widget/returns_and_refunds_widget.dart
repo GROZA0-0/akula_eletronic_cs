@@ -1,6 +1,7 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:storecs/Core/config/call_controller.dart';
 import 'package:storecs/Core/styles/animations.dart';
@@ -9,8 +10,27 @@ import 'package:storecs/Core/styles/sizes.dart';
 import 'package:storecs/Core/styles/text_styles.dart';
 import 'package:storecs/features/returns&refunds/presentation/state_management/return_and_refund_controller.dart';
 
-class ReturnsAndRefundsWidget extends StatelessWidget {
+class ReturnsAndRefundsWidget extends StatefulWidget {
   const ReturnsAndRefundsWidget({super.key});
+
+  @override
+  State<ReturnsAndRefundsWidget> createState() =>
+      _ReturnsAndRefundsWidgetState();
+}
+
+class _ReturnsAndRefundsWidgetState extends State<ReturnsAndRefundsWidget> {
+  @override
+  void dispose() {
+    super.dispose();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      returnAndRefundController.orderIdText.clear();
+      returnAndRefundController.itemsDetailsModel = [];
+      returnAndRefundController.refundReason = '';
+      returnAndRefundController.refundItemModel = [];
+      returnAndRefundController.restoreInventory = false;
+      returnAndRefundController.status = ReturnStatus.initial;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,8 +42,11 @@ class ReturnsAndRefundsWidget extends StatelessWidget {
       ),
       body: FadeInUp(
         child: Dialog(
-          backgroundColor: white,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          backgroundColor: surfaceCardColor,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8),
+            side: BorderSide(color: white),
+          ),
           child: SingleChildScrollView(
             child: Container(
               width: size.width * 0.8,
@@ -36,9 +59,11 @@ class ReturnsAndRefundsWidget extends StatelessWidget {
                       Expanded(
                         child: TextField(
                           controller: returnAndRefundController.orderIdText,
-                          decoration: const InputDecoration(
+                          style: textBodiesStyle,
+                          decoration: InputDecoration(
                             labelText: "Enter Order ID / Scan Receipt Barcode",
-                            prefixIcon: Icon(Icons.search),
+                            labelStyle: textBodiesStyle,
+                            prefixIcon: Icon(Icons.search, color: white),
                             border: OutlineInputBorder(),
                           ),
                           onSubmitted: (_) => returnAndRefundController
@@ -63,46 +88,48 @@ class ReturnsAndRefundsWidget extends StatelessWidget {
                   ),
                   const SizedBox(height: 16),
                   const Divider(),
-
-                  Obx(() {
-                    switch (returnAndRefundController.status.value) {
-                      case ReturnStatus.initial:
-                        return const SizedBox(
-                          height: 250,
-                          child: Center(
-                            child: Text(
-                              "Scan a receipt or enter an Order ID above to start the refund process.",
-                              style: TextStyle(color: grey, fontSize: 16),
+                  ListenableBuilder(
+                    listenable: returnAndRefundController,
+                    builder: (context, child) {
+                      switch (returnAndRefundController.status) {
+                        case ReturnStatus.initial:
+                          return SizedBox(
+                            height: 250,
+                            child: Center(
+                              child: Text(
+                                "Scan a receipt or enter an Order ID above to start the refund process.",
+                                style: textBodiesStyle,
+                              ),
                             ),
-                          ),
-                        );
+                          );
 
-                      case ReturnStatus.loading:
-                        return SizedBox(
-                          height: 250,
-                          child: loadingStateBodies(),
-                        );
+                        case ReturnStatus.loading:
+                          return SizedBox(
+                            height: 250,
+                            child: loadingStateBodies(),
+                          );
 
-                      case ReturnStatus.error:
-                        return SizedBox(
-                          height: 250,
-                          child: Center(
-                            child: Text(
-                              "Could not find order. Please verify the ID and try again.",
-                              style: textBodiesStyle2,
+                        case ReturnStatus.error:
+                          return SizedBox(
+                            height: 250,
+                            child: Center(
+                              child: Text(
+                                "Could not find order. Please verify the ID and try again.",
+                                style: textBodiesStyle2,
+                              ),
                             ),
-                          ),
-                        );
+                          );
 
-                      case ReturnStatus.success:
-                        return _buildSuccessOrderReturnLayout(
-                          context,
-                          returnAndRefundController,
-                        );
-                    }
-                  }),
+                        case ReturnStatus.success:
+                          return _buildSuccessOrderReturnLayout(
+                            context,
+                            returnAndRefundController,
+                          );
+                      }
+                    },
+                  ),
                 ],
-              ),
+              ) /* */,
             ),
           ),
         ),
@@ -121,64 +148,80 @@ class ReturnsAndRefundsWidget extends StatelessWidget {
           children: [
             Text(
               "Order Return: #${controller.entities.orderId}",
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: GoogleFonts.aleo(
+                fontSize: 18,
+                color: white,
+                fontWeight: FontWeight.w400,
+              ),
             ),
             IconButton(
-              icon: const Icon(Icons.cancel_outlined, color: Colors.grey),
+              icon: const Icon(Icons.cancel_outlined, color: grey),
               onPressed: () => Navigator.of(context).pop(),
             ),
           ],
         ),
-        const SizedBox(height: 10),
+        SizedBox(height: size.height * 0.010),
 
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
           child: Row(
             children: [
-              const Expanded(
+              Expanded(
                 flex: 1,
                 child: Text(
                   "S.No.",
-                  style: TextStyle(fontWeight: FontWeight.bold),
+                  style: GoogleFonts.aleo(
+                    color: grey,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
               ),
               Expanded(
                 flex: 1,
 
-                child: Obx(
-                  () => Checkbox(
-                    value: controller.isAllSelected,
-                    onChanged: (val) =>
-                        controller.toggleSelectAll(val ?? false),
-                  ),
+                child: Checkbox(
+                  value: controller.isAllSelected,
+                  onChanged: (val) => controller.toggleSelectAll(val ?? false),
                 ),
               ),
-              const Expanded(
+              Expanded(
                 flex: 3,
                 child: Text(
                   "Product Name",
-                  style: TextStyle(fontWeight: FontWeight.bold),
+                  style: GoogleFonts.aleo(
+                    color: white,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
               ),
-              const Expanded(
+              Expanded(
                 flex: 1,
                 child: Text(
                   "Qty Bought",
-                  style: TextStyle(fontWeight: FontWeight.bold),
+                  style: GoogleFonts.aleo(
+                    color: white,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
               ),
-              const Expanded(
+              Expanded(
                 flex: 1,
                 child: Text(
                   "Unit Price",
-                  style: TextStyle(fontWeight: FontWeight.bold),
+                  style: GoogleFonts.aleo(
+                    color: white,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
               ),
-              const Expanded(
+              Expanded(
                 flex: 2,
                 child: Text(
                   "Return Quantity",
-                  style: TextStyle(fontWeight: FontWeight.bold),
+                  style: GoogleFonts.aleo(
+                    color: white,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
               ),
             ],
@@ -186,76 +229,115 @@ class ReturnsAndRefundsWidget extends StatelessWidget {
         ),
 
         // --- ORDER ITEMS LIST ---
-        Obx(
-          () => ListView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: controller.itemsDetailsModel.length,
-            itemBuilder: (context, index) {
-              // Re-get item from controller to track its reactive state
-              final item = controller.itemsDetailsModel[index];
+        ListView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: controller.itemsDetailsModel.length,
+          itemBuilder: (context, index) {
+            // Re-get item from controller to track its reactive state
+            final item = controller.itemsDetailsModel[index];
 
-              return Container(
-                color: index % 2 == 0 ? grey : white,
-                padding: const EdgeInsets.symmetric(
-                  vertical: 6,
-                  horizontal: 16,
-                ),
-                child: Row(
-                  children: [
-                    Expanded(flex: 1, child: Text("${index + 1}")),
-
-                    Expanded(
-                      flex: 1,
-                      child: Checkbox(
-                        value: item.isSelected,
-                        onChanged: (val) =>
-                            controller.itemSection(index, val ?? false),
+            return Container(
+              color: index % 2 == 0 ? grey : white,
+              padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 16),
+              child: Row(
+                children: [
+                  Expanded(
+                    flex: 1,
+                    child: Text(
+                      "${index + 1}",
+                      style: GoogleFonts.aleo(
+                        fontSize: 14,
+                        color: surfaceCardColor,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
+                  ),
 
-                    Expanded(flex: 3, child: Text(item.name)),
-
-                    Expanded(flex: 1, child: Text("${item.quantity}")),
-
-                    Expanded(
-                      flex: 1,
-                      child: Text("${item.price.toStringAsFixed(2)} JOD"),
+                  Expanded(
+                    flex: 1,
+                    child: Checkbox(
+                      value: item.isSelected,
+                      onChanged: (val) =>
+                          controller.itemSection(index, val ?? false),
                     ),
+                  ),
 
-                    Expanded(
-                      flex: 2,
-                      child: Row(
-                        children: [
-                          SizedBox(
-                            width: 60,
-                            height: 35,
-                            child: TextFormField(
-                              key: ValueKey('${item.id}_$index'),
-                              initialValue: item.returnQuantity == 0
-                                  ? ''
-                                  : '${item.returnQuantity}',
-                              keyboardType: TextInputType.number,
-                              textAlign: TextAlign.center,
-                              decoration: const InputDecoration(
-                                contentPadding: EdgeInsets.zero,
-                                border: OutlineInputBorder(),
-                              ),
-                              onChanged: (value) {
-                                final qty = int.tryParse(value) ?? 0;
-                                controller.updateReturnQty(index, qty);
-                              },
+                  Expanded(
+                    flex: 3,
+                    child: Text(
+                      item.name,
+                      style: GoogleFonts.aleo(
+                        fontSize: 14,
+                        color: surfaceCardColor,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+
+                  Expanded(
+                    flex: 1,
+                    child: Text(
+                      "${item.quantity}",
+                      style: GoogleFonts.aleo(
+                        fontSize: 14,
+                        color: surfaceCardColor,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+
+                  Expanded(
+                    flex: 1,
+                    child: Text(
+                      "${item.price.toStringAsFixed(2)} JOD",
+                      style: GoogleFonts.aleo(
+                        fontSize: 14,
+                        color: surfaceCardColor,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+
+                  Expanded(
+                    flex: 2,
+                    child: Row(
+                      children: [
+                        SizedBox(
+                          width: 60,
+                          height: 35,
+                          child: TextFormField(
+                            key: ValueKey('${item.id}_$index'),
+                            initialValue: item.returnQuantity == 0
+                                ? ''
+                                : '${item.returnQuantity}',
+                            keyboardType: TextInputType.number,
+                            textAlign: TextAlign.center,
+                            decoration: const InputDecoration(
+                              contentPadding: EdgeInsets.zero,
+                              border: OutlineInputBorder(),
                             ),
+                            onChanged: (value) {
+                              final qty = int.tryParse(value) ?? 0;
+                              controller.updateReturnQty(index, qty);
+                            },
                           ),
-                          Text(" / ${item.quantity}"),
-                        ],
-                      ),
+                        ),
+                        Text(
+                          " / ${item.quantity}",
+                          style: GoogleFonts.aleo(
+                            fontSize: 14,
+                            color: surfaceCardColor,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-              );
-            },
-          ),
+                  ),
+                ],
+              ),
+            );
+          },
         ),
 
         const SizedBox(height: 16),
@@ -264,12 +346,9 @@ class ReturnsAndRefundsWidget extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             const Text("Restore Quantity to Inventory"),
-            Obx(
-              () => Checkbox(
-                value: controller.restoreInventory.value,
-                onChanged: (val) =>
-                    controller.restoreInventory.value = val ?? false,
-              ),
+            Checkbox(
+              value: controller.restoreInventory,
+              onChanged: (val) => controller.restoreInventory = val ?? false,
             ),
           ],
         ),
@@ -283,17 +362,19 @@ class ReturnsAndRefundsWidget extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Obx(
-                    () => Text(
-                      "Payment Method: ${controller.paymentMethod.value}",
-                      style: const TextStyle(fontWeight: FontWeight.w500),
+                  Text(
+                    "Payment Method: ${controller.paymentMethod.value}",
+                    style: GoogleFonts.aleo(
+                      color: grey,
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
                   const SizedBox(height: 8),
-                  Obx(
-                    () => Text(
-                      "Original Total: ${controller.originalTotal.value.toStringAsFixed(2)} JOD",
-                      style: const TextStyle(color: grey),
+                  Text(
+                    "Original Total: ${controller.originalTotal.value.toStringAsFixed(2)} JOD",
+                    style: GoogleFonts.aleo(
+                      color: grey,
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
                 ],
@@ -304,24 +385,58 @@ class ReturnsAndRefundsWidget extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  Obx(
-                    () => Text(
-                      "Return Amount: £${controller.calculatedReturnAmount.toStringAsFixed(2)}",
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: greenColor,
-                      ),
+                  Text(
+                    "Return Amount: ${controller.calculatedReturnAmount.toStringAsFixed(2)} JOD",
+                    style: GoogleFonts.aleo(
+                      fontSize: 18,
+                      color: greenColor,
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
                   const SizedBox(height: 12),
-                  TextField(
-                    decoration: const InputDecoration(
-                      labelText: "Reason for Return (Optional)",
-                      border: OutlineInputBorder(),
+                  TextFormField(
+                    style: GoogleFonts.aleo(
+                      color: grey,
+                      fontWeight: FontWeight.w400,
+                    ),
+                    decoration: InputDecoration(
+                      labelText: "Reason of Refund",
+                      labelStyle: GoogleFonts.aleo(
+                        color: white,
+                        fontWeight: FontWeight.w400,
+                      ),
+                      prefixIcon: const Icon(
+                        FontAwesomeIcons.question,
+                        color: white,
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: const BorderSide(color: white, width: 2),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: const BorderSide(color: white, width: 2),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: const BorderSide(
+                          color: blueGreen,
+                          width: 2,
+                        ),
+                      ),
+                      errorBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: const BorderSide(color: redColor),
+                      ),
+                      focusedErrorBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: const BorderSide(color: redColor, width: 2),
+                      ),
+                      filled: true,
+                      fillColor: Colors.transparent,
                     ),
                     maxLines: 2,
-                    onChanged: (val) => controller.refundReason.value = val,
+                    onChanged: (val) => controller.refundReason = val,
                   ),
                 ],
               ),

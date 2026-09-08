@@ -76,8 +76,6 @@ class CategoryDashboardBloc
           onData: (entities) =>
               CategoryChartDashboardBlocStateLoaded(entities: entities),
         );
-        /* final getChart = await categoryController.fetchChartDashboard();
-        emit(CategoryChartDashboardBlocStateLoaded(entities: getChart)); */
       } catch (e) {
         emit(CategoryChartDashboardBlocStateError(err: e.toString()));
       }

@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:storecs/features/pos_page/domain/enitities/pos_entities.dart';
 import 'package:storecs/features/pos_page/presentation/state_management/pos_bloc/pos_bloc_event.dart';
 import 'package:storecs/features/pos_page/presentation/state_management/pos_bloc/pos_bloc_state.dart';
 import 'package:storecs/features/pos_page/presentation/state_management/pos_controller.dart';
@@ -9,7 +10,6 @@ class PosBloc extends Bloc<PosBlocEvent, PosBlocState> {
   PosBloc(this.controller, this.currentCategory)
     : super(PosBlocStateLoading()) {
     on<PosBlocEventLoading>((event, emit) async {
-      /* emit(PosBlocStateLoading()); */
       add(PosBlocEventLoaded(category: currentCategory));
     });
     on<PosBlocEventLoaded>(onFetchByCategory);
@@ -19,15 +19,24 @@ class PosBloc extends Bloc<PosBlocEvent, PosBlocState> {
     PosBlocEventLoaded event,
     Emitter<PosBlocState> emit,
   ) async {
+    emit(PosBlocStateLoading());
     try {
-      emit(PosBlocStateLoading());
       currentCategory = event.category;
-      final product = await controller.getCategoriesWithItems(event.category);
-      if (product.isEmpty) {
-        emit(PosBlocStateEmpty());
-      } else {
-        emit(PosBlocStateLoaded(entities: product, category: event.category));
-      }
+      await emit.forEach<List<PosEntities>>(
+        controller.getCategoriesWithItems(event.category),
+        onData: (entities) {
+          if (entities.isEmpty) {
+            return PosBlocStateEmpty();
+          } else {
+            return PosBlocStateLoaded(
+              entities: entities,
+              category: event.category,
+            );
+          }
+        },
+        onError: (error, stackTrace) =>
+            PosBlocStateError(err: error.toString()),
+      );
     } catch (e) {
       print('BLoC  onFetchByCategory error: $e');
       emit(PosBlocStateError(err: e.toString()));

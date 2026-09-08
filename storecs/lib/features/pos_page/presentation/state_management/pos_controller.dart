@@ -1,4 +1,3 @@
-
 import 'package:storecs/features/pos_page/domain/enitities/cart_entities.dart';
 import 'package:storecs/features/pos_page/domain/enitities/pos_entities.dart';
 import 'package:storecs/features/pos_page/domain/repository/pos_repo.dart';
@@ -20,11 +19,16 @@ class PosController {
     }
   }
 
-  Future<List<PosEntities>> getCategoriesWithItems(String category) async {
+  Stream<List<PosEntities>> getCategoriesWithItems(String category) async* {
     try {
       final product = await repo.toGetProductsWithCategoriesRepo(category);
       entities = product;
-      return entities;
+      yield entities;
+      await for (final _ in repo.getItems) {
+        final product = await repo.toGetProductsWithCategoriesRepo(category);
+        entities = product;
+        yield entities;
+      }
     } catch (e) {
       print("error in getCategoriesWithItems controller $e");
       throw e.toString();

@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:storecs/Core/styles/alerts.dart';
@@ -8,10 +9,10 @@ import 'package:storecs/features/pos_page/domain/enitities/pos_entities.dart';
 import 'package:storecs/features/pos_page/domain/repository/list_of_items_purchased_repo.dart';
 import 'package:storecs/main.dart';
 
-class CartController {
+class CartController extends ChangeNotifier {
   final ListOfItemsPurchasedRepo repo;
   CartController({required this.repo});
-  final RxList<CartEntities> cartItems = <CartEntities>[].obs;
+  List<CartEntities> cartItems = [];
   final double taxRate = 0.05;
   double get subTotal =>
       cartItems.fold(0, (sum, item) => sum + item.totalPrice);
@@ -45,6 +46,7 @@ class CartController {
           initialQuantity: 1,
         ),
       );
+      notifyListeners();
       alerts.ifSuccess('Product has been added successfully.');
       // print('Added to cart: ${entities.name}');
     }
@@ -52,6 +54,7 @@ class CartController {
 
   void removeItem(String id) {
     cartItems.removeWhere((element) => element.id == id);
+    notifyListeners();
   }
 
   void increaseQty(String id) {
@@ -76,13 +79,16 @@ class CartController {
     if (nextQuantity > availableStock) {
       alerts.ifErrors('No more stock available!');
       /* check if the qty that user asked for reached to the limit */
+      notifyListeners();
     } else if (nextQuantity > maxLimitByPrice) {
       alerts.ifErrors(
         'You have reached the purchase limit of $maxLimitByPrice for this item.',
       );
+      notifyListeners();
     } else {
       cartItems[index].quantity.value++;
-      cartItems.refresh();
+      cartItems;
+      notifyListeners();
     }
   }
 
@@ -91,14 +97,15 @@ class CartController {
     if (index != -1) {
       if (cartItems[index].quantity > 1) {
         cartItems[index].quantity.value--;
-        cartItems.refresh();
+        cartItems;
       }
     }
+    notifyListeners();
   }
 
   void clearCart() {
     cartItems.clear();
-    print('✅ Cart cleared');
+    notifyListeners();
   }
 
   Future<void> purchase(String fullName) async {
@@ -116,6 +123,7 @@ class CartController {
       purchasedReceipt = result;
       cartItems.clear();
       alerts.ifSuccess('Purchase Successfully.');
+      notifyListeners();
     } on PlatformException catch (e) {
       print('The Error Is: ${e.message.toString()}');
       alerts.ifErrors(e.message.toString());
@@ -133,6 +141,7 @@ class CartController {
     try {
       final result = await repo.toGetReceiptRepo(orderId);
       purchasedReceipt = result;
+      notifyListeners();
     } on PlatformException catch (e) {
       print('The Error Is: ${e.message.toString()}');
       alerts.ifErrors(e.message.toString());

@@ -10,21 +10,21 @@ import 'package:storecs/main.dart';
 
 enum ReturnStatus { initial, loading, success, error }
 
-class ReturnAndRefundController  {
+class ReturnAndRefundController extends ChangeNotifier {
   final StoreReturnAndRefundInfoRepository refundRepo;
   final OrderDetailsRepo repo;
   ReturnAndRefundController({required this.repo, required this.refundRepo});
   final Alerts alerts = Alerts(messengerKey);
-  final status = ReturnStatus.initial.obs;
-  final errMessage = ''.obs;
+  ReturnStatus status = ReturnStatus.initial;
+  final errMessage = '';
 
   final paymentMethod = 'N/A'.obs;
   final originalTotal = 0.0.obs;
-  RxList<ItemsDetailsModel> itemsDetailsModel =
-      <ItemsDetailsModel>[].obs; /* will show the items of the order */
-  List<RefundItemModel> refundItemModel = <RefundItemModel>[];
-  final restoreInventory = false.obs; /* make a restore or not  */
-  final refundReason = ''.obs;
+  List<ItemsDetailsModel> itemsDetailsModel =
+      []; /* will show the items of the order */
+  List<RefundItemModel> refundItemModel = [];
+  bool restoreInventory = false; /* make a restore or not  */
+  String refundReason = '';
   OrdersDetailsEntities entities = OrdersDetailsEntities(
     /* info the order */
     orderId: '',
@@ -40,10 +40,11 @@ class ReturnAndRefundController  {
     if (searchOrderId.isEmpty) {
       /* if clicked on search, give alert */
       final error = "Please enter an Order ID.";
-      status.value = ReturnStatus.error;
+      status = ReturnStatus.error;
       alerts.ifErrors(error);
+      notifyListeners();
     }
-    status.value = ReturnStatus.loading;
+    status = ReturnStatus.loading;
 
     try {
       final order = await repo.getOrderDetails(
@@ -52,13 +53,14 @@ class ReturnAndRefundController  {
       if (order.orderId.isEmpty || order.items.isEmpty) {
         /* check if the order is exist in database or not */
         final error = 'Order not found.';
-        status.value = ReturnStatus.error;
+        status = ReturnStatus.error;
         alerts.ifErrors(error);
+        notifyListeners();
       }
       entities = order; /* inject the order method in entities variable */
       originalTotal.value = order.totalPrice;
-      restoreInventory.value = false;
-      refundReason.value = '';
+      restoreInventory = false;
+      refundReason = '';
       itemsDetailsModel.assignAll(
         /* reseting the select and return qty field to avoid the order caching after searchin on another order */
         order.items.map((item) {
@@ -67,7 +69,8 @@ class ReturnAndRefundController  {
           return item;
         }).toList(),
       );
-      status.value = ReturnStatus.success;
+      status = ReturnStatus.success;
+      notifyListeners();
     } catch (e) {
       print("error in details of order details controller $e");
       throw e.toString();
@@ -85,6 +88,7 @@ class ReturnAndRefundController  {
       item.returnQuantity = 0;
     }
     itemsDetailsModel[idx] = item; /* for reactive */
+    notifyListeners();
   }
 
   void updateReturnQty(int idx, int qty) {
@@ -98,6 +102,7 @@ class ReturnAndRefundController  {
     item.isSelected = qty > 0;
 
     itemsDetailsModel[idx] = item;
+    notifyListeners();
   }
 
   bool get isAllSelected =>
@@ -112,6 +117,7 @@ class ReturnAndRefundController  {
       item.returnQuantity = val ? item.quantity : 0;
       itemsDetailsModel[i] = item; /* update items */
     }
+    notifyListeners();
   }
 
   double get calculatedReturnAmount {
@@ -144,23 +150,34 @@ class ReturnAndRefundController  {
     }).toList();
 
     try {
-      status.value = ReturnStatus.loading;
+      status = ReturnStatus.loading;
       await refundRepo.storeTheRefundInfoRepo(
         entities.orderId,
-        restoreInventory.value,
-        refundReason.value,
+        restoreInventory,
+        refundReason,
         calculatedReturnAmount,
         payload,
       );
-      status.value = ReturnStatus.success;
+      status = ReturnStatus.success;
       final mess = 'Refund success';
       alerts.ifSuccess(mess);
+      cleanUi();
     } catch (e) {
-      status.value = ReturnStatus
+      status = ReturnStatus
           .error; /* Switch status back to form view so they can try again */
       print("Error submitting return: $e");
 
       alerts.ifErrors('Submission Failed');
     }
+    notifyListeners();
+  }
+
+  void cleanUi() {
+    orderIdText.clear();
+    itemsDetailsModel = [];
+    refundReason = '';
+    refundItemModel = [];
+    restoreInventory = false;
+    status = ReturnStatus.initial;
   }
 }
