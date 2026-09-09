@@ -651,7 +651,10 @@ class QuickActionsSection extends StatelessWidget {
                       context,
                       naviToAnotherPage(PosPage(fullName: employee.name)),
                     )
-                  : Navigator.push(context, naviToAnotherPage(StaffListPage())),
+                  : Navigator.push(
+                      context,
+                      naviToAnotherPage(StaffListPage(entities: employee)),
+                    ),
               icon: hasAccess ? Iconsax.card_pos : Iconsax.user,
             ),
 
@@ -933,7 +936,7 @@ class AppDrawer extends StatelessWidget {
               text: 'Staff List Page',
               icons: Iconsax.user,
               entities: entities,
-              widget: StaffListPage(),
+              widget: StaffListPage(entities: entities),
             ),
             sizeBoxHeight(size.height * 0.012),
 

@@ -6,7 +6,7 @@ import 'package:storecs/features/staff_list/domain/entities/staff_list_entities.
 import 'package:storecs/features/staff_list/domain/repository/staff_list_repo.dart';
 import 'package:storecs/main.dart';
 
-class StaffListController {
+class StaffListController extends ChangeNotifier {
   final StaffListRepo repository;
   StaffListController({required this.repository});
 
@@ -23,6 +23,7 @@ class StaffListController {
   );
   final List<String> staffLevels = [
     "Manager",
+    "Team Leader",
     "Supervisor",
     "Q/A",
     "Cashier",
@@ -32,16 +33,20 @@ class StaffListController {
     "IT",
     "Warehouse keeper",
   ];
-  final selectedlevel = ''.obs;
-  void changeLevel(String level) => selectedlevel.value = level;
+  String selectedlevel = '';
+  void changeLevel(String level) {
+    selectedlevel = level;
+    notifyListeners();
+  }
+
   TextEditingController txtPhone = TextEditingController();
-  TextEditingController txtField = TextEditingController();
 
   Future<List<StaffListEntities>> getStaff() async {
     try {
       final staff = await repository.toStaffListdomainRepo();
       // print("info of user [$staff]");
       entities = staff.toList();
+      notifyListeners();
       return staff;
     } catch (e) {
       print("error in dashboard controller $e");
@@ -55,13 +60,15 @@ class StaffListController {
       final updateStaff = await repository.toUpdateStaffRepository(
         id,
         txtPhone.text.trim(),
-        selectedlevel.value,
+        selectedlevel,
       );
       specificEntities.phone = txtPhone.text.trim();
+      // specificEntities.level = staffLevels[index];
       specificEntities = updateStaff;
       Loader.stopLoading();
       alerts.ifSuccess('Employee Updated !');
       clearFields();
+      notifyListeners();
       return updateStaff;
     } catch (e) {
       print("error in staff update info controller $e");
@@ -74,8 +81,8 @@ class StaffListController {
     try {
       final deleteAcc = await repository.toTerminateStaffAccountRepository(id);
       Loader.stopLoading();
-      alerts.ifSuccess('Employee Account Terminated !');
-      Navigator.pop(navigator!.context);
+      alerts.ifSuccess('Employee Account Has Been Terminated !');
+      notifyListeners();
       return deleteAcc;
     } catch (e) {
       print("error in staff delete account controller $e");
@@ -85,6 +92,6 @@ class StaffListController {
 
   void clearFields() {
     txtPhone.clear();
-    selectedlevel.value.isEmpty;
+    selectedlevel.isEmpty;
   }
 }

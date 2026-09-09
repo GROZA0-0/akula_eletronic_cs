@@ -4,7 +4,6 @@ import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:get/get.dart';
 
 import 'package:image_picker/image_picker.dart';
 import 'package:storecs/Core/Styles/Loader.dart';
@@ -15,7 +14,7 @@ import 'package:storecs/features/auth/data/data_source/data_source_repo/auth_dat
 import 'package:storecs/features/auth/domain/repository/employee_repo.dart';
 import 'package:storecs/main.dart';
 
-class SignUpController {
+class SignUpController extends ChangeNotifier {
   final AuthRepo repository = sl<AuthRepo>();
   final AuthDataSource source = sl<AuthDataSource>();
 
@@ -27,15 +26,16 @@ class SignUpController {
   final TextEditingController phone = TextEditingController();
   final TextEditingController level = TextEditingController();
   final Alerts alerts = Alerts(messengerKey);
-  final RxBool whenLoading = false.obs;
-  final RxString imageFileUrl = ''.obs;
+  bool whenLoading = false;
+  String imageFileUrl = '';
   final ImagePicker picker = ImagePicker();
-  final Rx<File?> selectedFile = Rx<File?>(null);
+  File? selectedFile;
   final FirebaseAuth auth = FirebaseAuth.instance;
-  final selectedlevel = ''.obs;
+  String selectedlevel = '';
   bool passVisible = true;
-  final List<String> staffLevels = [
+  List<String> staffLevels = [
     "Manager",
+    "Team Leader",
     "Supervisor",
     "Q/A",
     "Cashier",
@@ -46,7 +46,10 @@ class SignUpController {
     "Warehouse keeper",
   ];
 
-  void changeLevel(String level) => selectedlevel.value = level;
+  void changeLevel(String level) {
+    selectedlevel = level;
+    notifyListeners();
+  }
 
   get newId => auth.currentUser?.uid ?? '';
 
@@ -56,7 +59,8 @@ class SignUpController {
       imageQuality: 80,
     );
     if (file != null) {
-      selectedFile.value = File(file.path);
+      selectedFile = File(file.path);
+      notifyListeners();
     }
   }
 
@@ -70,16 +74,16 @@ class SignUpController {
       alerts.ifErrors(NameIsRequire);
     } else if (phone.text.trim().isEmpty) {
       alerts.ifErrors(PhoneIsRequire);
-    } else if (selectedlevel.value.isEmpty) {
+    } else if (selectedlevel.isEmpty) {
       alerts.ifErrors(LevelIsRequire);
-    } else if (selectedFile.value == null) {
+    } else if (selectedFile == null) {
       alerts.ifErrors('Product Picture is require');
     } else {
       Loader.startLoading();
       try {
         String base64Image = "";
-        if (selectedFile.value != null && await selectedFile.value!.exists()) {
-          final List<int> imageBytes = await selectedFile.value!.readAsBytes();
+        if (selectedFile != null && await selectedFile!.exists()) {
+          final List<int> imageBytes = await selectedFile!.readAsBytes();
           base64Image = base64Encode(imageBytes);
           await source.signUpWithEmail(email.text, password.text);
           final currentMgr = auth.currentUser;
@@ -93,11 +97,12 @@ class SignUpController {
             name.text.trim(),
             phone.text.trim(),
             base64Image,
-            selectedlevel.value,
+            selectedlevel,
           );
-          imageFileUrl.value = newEmp.empPic;
+          imageFileUrl = newEmp.empPic;
           alerts.ifSuccess(EmployeeCreated);
           clearUi();
+          notifyListeners();
         }
       } on PlatformException catch (e) {
         print('The Error Is: ${e.message.toString()}');
@@ -119,6 +124,7 @@ class SignUpController {
     name.clear();
     phone.clear();
     level.clear();
-    selectedFile.value = null;
+    selectedFile = null;
+    staffLevels = [];
   }
 }

@@ -1,6 +1,7 @@
 class ItemsDetailsModel {
   final String id;
   final String name;
+  final String category;
   final String brand;
   final String image;
   double price;
@@ -12,6 +13,7 @@ class ItemsDetailsModel {
   ItemsDetailsModel({
     required this.id,
     required this.name,
+    required this.category,
     required this.brand,
     required this.image,
     required this.price,
@@ -25,7 +27,7 @@ class ItemsDetailsModel {
       "_id": id,
       "pName": name,
       "pBrand": brand,
-
+      "pCategory":category,
       "pImage": image,
 
       "pPrice": price,
@@ -39,8 +41,8 @@ class ItemsDetailsModel {
     return ItemsDetailsModel(
       id: map['_id'].toString(),
       name: map['pName'] ?? '',
-      brand: map['pBrand'] ?? "",
-
+      brand: map['pBrand'] ?? '',
+      category: map['pCategory']??'',
       image: map['pImage'] ?? '',
 
       price: (map['pPrice'] ?? 0.0).toDouble(),

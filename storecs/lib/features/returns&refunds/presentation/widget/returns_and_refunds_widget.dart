@@ -266,7 +266,7 @@ class _ReturnsAndRefundsWidgetState extends State<ReturnsAndRefundsWidget> {
                   Expanded(
                     flex: 3,
                     child: Text(
-                      item.name,
+                      '${item.brand} ${item.name}',
                       style: GoogleFonts.aleo(
                         fontSize: 14,
                         color: surfaceCardColor,
@@ -345,10 +345,19 @@ class _ReturnsAndRefundsWidgetState extends State<ReturnsAndRefundsWidget> {
         Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            const Text("Restore Quantity to Inventory"),
+            Text(
+              "Restore Quantity to Inventory",
+              style: GoogleFonts.aleo(color: grey, fontWeight: FontWeight.w500),
+            ),
             Checkbox(
+              activeColor: blueGreen,
+              checkColor: white,
               value: controller.restoreInventory,
-              onChanged: (val) => controller.restoreInventory = val ?? false,
+              onChanged: (val) {
+                setState(() {
+                  controller.restoreInventory = val ?? false;
+                });
+              },
             ),
           ],
         ),

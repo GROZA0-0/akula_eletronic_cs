@@ -144,6 +144,7 @@ class ReturnAndRefundController extends ChangeNotifier {
       return RefundItemModel(
         id: item.id,
         pName: item.name,
+        pCategory: item.category,
         returnQuantity: item.returnQuantity,
         refundPrice: (item.price * item.returnQuantity).toString(),
       );

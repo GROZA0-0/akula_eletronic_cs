@@ -3,7 +3,7 @@ import 'package:storecs/features/returns&refunds/domain/entities/store_the_refun
 
 class StoreTheRefundInfoModel {
   final String? orderId;
-  final bool? restoreInventory;
+
   final String refundReason;
   final double totalRefundAmount;
   final List<RefundItemModel> items;
@@ -11,7 +11,7 @@ class StoreTheRefundInfoModel {
 
   StoreTheRefundInfoModel({
     required this.orderId,
-    required this.restoreInventory,
+
     required this.refundReason,
     required this.totalRefundAmount,
     required this.items,
@@ -21,7 +21,7 @@ class StoreTheRefundInfoModel {
   static StoreTheRefundInfoModel emptyRefund() {
     return StoreTheRefundInfoModel(
       orderId: '',
-      restoreInventory: false,
+
       refundReason: '',
       totalRefundAmount: 0.0,
       items: [],
@@ -39,7 +39,7 @@ class StoreTheRefundInfoModel {
   factory StoreTheRefundInfoModel.fromJson(Map<String, dynamic> map) {
     return StoreTheRefundInfoModel(
       orderId: map['orderId']?.toString() ?? '',
-      restoreInventory: map['restoreInventory'] ?? false,
+
       refundReason: map['refundReason'] ?? '',
       totalRefundAmount: (map['totalRefundAmount'] ?? 0.0),
       items: map['items'] != null
