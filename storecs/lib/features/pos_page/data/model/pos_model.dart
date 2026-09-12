@@ -48,8 +48,8 @@ class POSModel {
       image: '',
       barcode: '',
       description: '',
-      price: 0,
-      costPrice: 0,
+      price: 0.0,
+      costPrice: 0.0,
       stock: 0,
     );
   }

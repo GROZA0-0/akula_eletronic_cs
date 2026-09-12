@@ -13,7 +13,7 @@ class ReviewModel {
   factory ReviewModel.fromJson(Map<String, dynamic> json) {
     return ReviewModel(
       items: json['items'] != null ? List.from(json['items']) : [],
-      totalPrice: json['totalPrice'] ?? 0.0,
+      totalPrice: (json['totalPrice'] as num).toDouble(),
     );
   }
 

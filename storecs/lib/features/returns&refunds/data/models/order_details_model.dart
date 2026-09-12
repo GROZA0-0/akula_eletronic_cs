@@ -31,7 +31,7 @@ class OrderDetailsModel {
               json['items'].map((x) => ItemsDetailsModel.fromJson(x)),
             )
           : [],
-      totalPrice: (json['totalPrice'] ?? 0.0),
+      totalPrice: (json['totalPrice'] as num?)?.toDouble() ?? 0.0,
       time: json['createdAt'] != null
           ? DateTime.parse(json['createdAt'])
           : DateTime.now(),

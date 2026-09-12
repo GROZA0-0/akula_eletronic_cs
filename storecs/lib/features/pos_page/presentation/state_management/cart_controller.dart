@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:storecs/Core/config/call_controller.dart';
 import 'package:storecs/Core/styles/alerts.dart';
 import 'package:storecs/Core/styles/loader.dart';
 import 'package:storecs/features/pos_page/domain/enitities/cart_entities.dart';
@@ -121,6 +122,12 @@ class CartController extends ChangeNotifier {
         fullName,
       );
       purchasedReceipt = result;
+      await profitLossController.storeCase(
+        purchasedReceipt!.orderId,
+        'Purchased',
+
+        purchasedReceipt!.totalPrice,
+      );
       cartItems.clear();
       alerts.ifSuccess('Purchase Successfully.');
       notifyListeners();

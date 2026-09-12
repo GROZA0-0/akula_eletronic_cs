@@ -3,7 +3,7 @@ class RefundItemModel {
   final String pName;
   final String pCategory;
   final int returnQuantity;
-  final String refundPrice;
+  final double refundPrice;
 
   RefundItemModel({
     required this.id,
@@ -26,8 +26,8 @@ class RefundItemModel {
       id: map['_id']?.toString() ?? '',
       pName: map['pName']?.toString() ?? '',
       pCategory: map['pCategory']?.toString() ?? '',
-      returnQuantity: map['returnQuantity'] ?? 0,
-      refundPrice: map['refundPrice']?.toString() ?? '0.0',
+      returnQuantity: map['returnQuantity'] ?? 0.0,
+      refundPrice: (map['price'] as num?)?.toDouble() ?? 0.0,
     );
   }
 }

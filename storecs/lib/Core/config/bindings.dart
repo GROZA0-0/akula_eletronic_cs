@@ -63,6 +63,11 @@ import 'package:storecs/features/profile_page/data/data_source/profile_data_sour
 import 'package:storecs/features/profile_page/data/repository/profile_implementer.dart';
 import 'package:storecs/features/profile_page/domain/repository/profile_repository.dart';
 import 'package:storecs/features/profile_page/presentation/state_management/profile_controller.dart';
+import 'package:storecs/features/profit_loss_page/data/data_source/profit_loss_data_source_implementer/profit_loss_data_source_implementer.dart';
+import 'package:storecs/features/profit_loss_page/data/data_source/profit_loss_data_source_repository/profit_loss_data_source_repository.dart';
+import 'package:storecs/features/profit_loss_page/data/repository/profit_loss_implementer.dart';
+import 'package:storecs/features/profit_loss_page/domain/repository/profit_loss_repository.dart';
+import 'package:storecs/features/profit_loss_page/presentation/state_management/profit_loss_controller.dart';
 import 'package:storecs/features/report_page/data/data_source/report_data_source_implementer/report_data_source_implementer.dart';
 import 'package:storecs/features/report_page/data/data_source/report_data_source_repository/report_data_source_repository.dart';
 import 'package:storecs/features/report_page/data/repository/report_implementer.dart';
@@ -336,6 +341,18 @@ class AppBindingsControllers extends Bindings {
     //////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////
+    sl.registerFactory<ProfitLossDataSourceRepository>(
+      () => ProfitLossDataSourceImplementer(dio: dio),
+    );
+    sl.registerFactory<ProfitLossRepository>(
+      () => ProfitLossImplementer(
+        repository: sl<ProfitLossDataSourceRepository>(),
+      ),
+    );
+    //////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////
 
     sl.registerFactory<SignInController>(
       () => SignInController(sl<AuthRepo>()),
@@ -396,6 +413,9 @@ class AppBindingsControllers extends Bindings {
     );
     sl.registerFactory<ProductMatrixController>(
       () => ProductMatrixController(sl<ProductMatrixRepository>()),
+    );
+    sl.registerFactory<ProfitLossController>(
+      () => ProfitLossController(repository: sl<ProfitLossRepository>()),
     );
   }
 }

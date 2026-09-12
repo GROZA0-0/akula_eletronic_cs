@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:storecs/Core/config/call_controller.dart';
 import 'package:storecs/Core/styles/alerts.dart';
 import 'package:storecs/features/returns&refunds/data/models/items_details_model.dart';
 import 'package:storecs/features/returns&refunds/data/models/refund_item_model.dart';
@@ -146,7 +147,7 @@ class ReturnAndRefundController extends ChangeNotifier {
         pName: item.name,
         pCategory: item.category,
         returnQuantity: item.returnQuantity,
-        refundPrice: (item.price * item.returnQuantity).toString(),
+        refundPrice: (item.price * item.returnQuantity),
       );
     }).toList();
 
@@ -158,6 +159,11 @@ class ReturnAndRefundController extends ChangeNotifier {
         refundReason,
         calculatedReturnAmount,
         payload,
+      );
+      await profitLossController.storeCase(
+        entities.orderId,
+        'Refunded',
+        calculatedReturnAmount,
       );
       status = ReturnStatus.success;
       final mess = 'Refund success';

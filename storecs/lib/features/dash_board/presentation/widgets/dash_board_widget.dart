@@ -30,6 +30,7 @@ import 'package:storecs/features/order_purchased_history/presentation/pages/orde
 import 'package:storecs/features/pos_page/presentation/page/pos_page.dart';
 import 'package:storecs/features/product_list/presentation/pages/product_list.dart';
 import 'package:storecs/features/profile_page/presentation/page/profile_page.dart';
+import 'package:storecs/features/profit_loss_page/presentation/page/profit_loss_logs_page.dart';
 import 'package:storecs/features/report_page/presentation/page/report_page.dart';
 import 'package:storecs/features/report_page/presentation/state_management/report_bloc/report_bloc.dart';
 import 'package:storecs/features/report_page/presentation/state_management/report_bloc/report_bloc_event.dart';
@@ -980,11 +981,20 @@ class AppDrawer extends StatelessWidget {
                   ),
             sizeBoxHeight(size.height * 0.012),
             ButtonsMenuDrawerConditions(
-              text: 'Returns / Refunds',
+              text: 'Returns / Refunds Page',
               icons: Icons.compare_arrows,
               entities: entities,
               widget: ReturnsAndRefundsPage(),
             ),
+            sizeBoxHeight(size.height * 0.012),
+            permissions.ordersPuschasedPageCondition
+                ? Container()
+                : ButtonsMenuDrawerConditions(
+                    text: 'Profits / Loss Page',
+                    icons: Iconsax.chart_success,
+                    entities: entities,
+                    widget: ProfitLossLogsPage(),
+                  ),
           ],
         ),
       ],

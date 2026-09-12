@@ -27,7 +27,7 @@ class ItemsDetailsModel {
       "_id": id,
       "pName": name,
       "pBrand": brand,
-      "pCategory":category,
+      "pCategory": category,
       "pImage": image,
 
       "pPrice": price,
@@ -42,12 +42,12 @@ class ItemsDetailsModel {
       id: map['_id'].toString(),
       name: map['pName'] ?? '',
       brand: map['pBrand'] ?? '',
-      category: map['pCategory']??'',
+      category: map['pCategory'] ?? '',
       image: map['pImage'] ?? '',
 
-      price: (map['pPrice'] ?? 0.0).toDouble(),
+      price: (map['pPrice'] as num?)?.toDouble()??0.0,
 
-      stock: (map['pStock'] ?? 0).toInt(),
+      stock: (map['pStock'] as num).toInt(),
       initialQuantity: (map['quantity'] ?? 1).toInt(),
     );
   }

@@ -40,7 +40,7 @@ class DefaultFirebaseOptions {
     }
   }
 
-  static FirebaseOptions web = FirebaseOptions(
+  static const FirebaseOptions web = FirebaseOptions(
     apiKey: 'AIzaSyBR5UHiVWMaYmDyMGQGYChTrMzpHgxPzQU',
     appId: '1:1094066154571:web:be7b6c22dfcbe5b07271ce',
     messagingSenderId: '1094066154571',
@@ -50,7 +50,7 @@ class DefaultFirebaseOptions {
     measurementId: 'G-L0L3HL00D1',
   );
 
-  static FirebaseOptions android = FirebaseOptions(
+  static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyD4rsfGANCNsOdClF75LPOoxlmgax9cp6s',
     appId: '1:1094066154571:android:3808e600e55923107271ce',
     messagingSenderId: '1094066154571',
@@ -58,25 +58,29 @@ class DefaultFirebaseOptions {
     storageBucket: 'electronic-store-46793.firebasestorage.app',
   );
 
-  static FirebaseOptions ios = FirebaseOptions(
+  static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyCZ8cFexhLy5BlTpswzI1wVz9RPIhdiA7M',
     appId: '1:1094066154571:ios:aa4c44450e6b75777271ce',
     messagingSenderId: '1094066154571',
     projectId: 'electronic-store-46793',
     storageBucket: 'electronic-store-46793.firebasestorage.app',
+    androidClientId: '1094066154571-1282r3p6u4bmsl2qce3q5hp5omu33ol2.apps.googleusercontent.com',
+    iosClientId: '1094066154571-ioei51s9qkc171v8p1t2p4bkh5qlgho8.apps.googleusercontent.com',
     iosBundleId: 'com.example.storecs',
   );
 
-  static FirebaseOptions macos = FirebaseOptions(
+  static const FirebaseOptions macos = FirebaseOptions(
     apiKey: 'AIzaSyCZ8cFexhLy5BlTpswzI1wVz9RPIhdiA7M',
     appId: '1:1094066154571:ios:aa4c44450e6b75777271ce',
     messagingSenderId: '1094066154571',
     projectId: 'electronic-store-46793',
     storageBucket: 'electronic-store-46793.firebasestorage.app',
+    androidClientId: '1094066154571-1282r3p6u4bmsl2qce3q5hp5omu33ol2.apps.googleusercontent.com',
+    iosClientId: '1094066154571-ioei51s9qkc171v8p1t2p4bkh5qlgho8.apps.googleusercontent.com',
     iosBundleId: 'com.example.storecs',
   );
 
-  static FirebaseOptions windows = FirebaseOptions(
+  static const FirebaseOptions windows = FirebaseOptions(
     apiKey: 'AIzaSyBR5UHiVWMaYmDyMGQGYChTrMzpHgxPzQU',
     appId: '1:1094066154571:web:af679f4fc66935c17271ce',
     messagingSenderId: '1094066154571',
