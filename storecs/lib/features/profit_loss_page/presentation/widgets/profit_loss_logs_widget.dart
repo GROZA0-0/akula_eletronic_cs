@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 import 'package:storecs/Core/config/call_controller.dart';
 import 'package:storecs/Core/styles/animations.dart';
 import 'package:storecs/Core/styles/colors.dart';
@@ -31,10 +32,12 @@ class _ProfitLossLogsWidgetState extends State<ProfitLossLogsWidget> {
         iconTheme: IconThemeData(color: white),
       ),
       body: SafeArea(
-        child: Container(
-          margin: screenSize,
-          width: double.infinity,
-          child: Column(children: [orderColumn(), TransactionLogsWidget()]),
+        child: FadeInUp(
+          child: Container(
+            margin: screenSize,
+            width: double.infinity,
+            child: Column(children: [orderColumn(), TransactionLogsWidget()]),
+          ),
         ),
       ),
     );
@@ -42,21 +45,20 @@ class _ProfitLossLogsWidgetState extends State<ProfitLossLogsWidget> {
 
   Widget orderColumn() {
     return Container(
-      margin: EdgeInsets.only(right: size.width * 0.05),
-      child: Container(
-        padding: EdgeInsets.symmetric(
-          horizontal: size.width * 0.02,
-          vertical: size.height * 0.01,
-        ),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            Text('OrderId', style: textBodiesStyle),
-            Text('Order Details', style: textBodiesStyle),
-            Text('Order Type', style: textBodiesStyle),
-          ],
-        ),
+      margin: EdgeInsets.symmetric(
+        horizontal: size.width * 0.01,
+        vertical: size.height * 0.01,
+      ),
+      width: size.width / 1.43,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text('OrderId', style: textBodiesStyle),
+          Text('Order Details', style: textBodiesStyle),
+          Text('Order Type', style: textBodiesStyle),
+          Text('Log Order at', style: textBodiesStyle),
+        ],
       ),
     );
   }
@@ -68,33 +70,32 @@ class TransactionLogsWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Expanded(
-      child: FadeInUp(
-        child: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
-            border: Border.all(color: white),
-          ),
-          child: MultiBlocProvider(
-            providers: [
-              BlocProvider(
-                create: (context) =>
-                    ProfitLossLogsBloc(sl<ProfitLossController>())
-                      ..add(ProfitLossLogsBlocEventLoading()),
-              ),
-            ],
-            child: BlocBuilder<ProfitLossLogsBloc, ProfitLossLogsBlocState>(
-              builder: (context, state) {
-                if (state is ProfitLossLogsBlocStateLoading) {
-                  return loadingStateBlocMethod(size);
-                } else if (state is ProfitLossLogsBlocStateError) {
-                  Center(child: Text(state.err, style: textBodiesStyle2));
-                } else if (state is ProfitLossLogsBlocStateLoaded) {
-                  List<ProfitLossEntities> list = List.from(state.entities);
-                  return tranInfo(list);
-                }
-                return Container();
-              },
+      child: Container(
+        width: size.width * 0.80,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: white),
+        ),
+        child: MultiBlocProvider(
+          providers: [
+            BlocProvider(
+              create: (context) =>
+                  ProfitLossLogsBloc(sl<ProfitLossController>())
+                    ..add(ProfitLossLogsBlocEventLoading()),
             ),
+          ],
+          child: BlocBuilder<ProfitLossLogsBloc, ProfitLossLogsBlocState>(
+            builder: (context, state) {
+              if (state is ProfitLossLogsBlocStateLoading) {
+                return loadingStateBlocMethod(size);
+              } else if (state is ProfitLossLogsBlocStateError) {
+                Center(child: Text(state.err, style: textBodiesStyle2));
+              } else if (state is ProfitLossLogsBlocStateLoaded) {
+                List<ProfitLossEntities> list = List.from(state.entities);
+                return tranInfo(list);
+              }
+              return Container();
+            },
           ),
         ),
       ),
@@ -109,7 +110,10 @@ class TransactionLogsWidget extends StatelessWidget {
       itemBuilder: (context, index) {
         final profit = list[index].orderType == 'Purchased';
         return Container(
-          margin: EdgeInsets.symmetric(vertical: size.height * 0.005),
+          margin: EdgeInsets.symmetric(
+            vertical: size.height * 0.005,
+            horizontal: size.width * 0.01,
+          ),
           child: Column(
             children: [
               Row(
@@ -129,6 +133,7 @@ class TransactionLogsWidget extends StatelessWidget {
                           color: redColor,
                           icon: FontAwesomeIcons.arrowDown,
                         ),
+                  createdAtTxt(list, index),
                 ],
               ),
               Divider(color: white),
@@ -139,10 +144,24 @@ class TransactionLogsWidget extends StatelessWidget {
     );
   }
 
-  Text totalPriceTxt(List<ProfitLossEntities> list, int index) =>
-      Text('${list[index].totalPrice} JOD', style: textBodiesStyle);
+  Widget createdAtTxt(List<ProfitLossEntities> list, int index) {
+    return SizedBox(
+      child: Text(
+        DateFormat('yyyy/MM/dd hh:mm:ss a').format(list[index].createdAt!),
+        style: textBodiesStyle,
+      ),
+    );
+  }
 
-  Text orderIdTxt(List<ProfitLossEntities> list, int index) =>
+  Widget totalPriceTxt(List<ProfitLossEntities> list, int index) => SizedBox(
+    width: size.width / 14,
+    child: Text(
+      '${list[index].totalPrice.toStringAsFixed(2)} JOD',
+      style: textBodiesStyle,
+    ),
+  );
+
+  Widget orderIdTxt(List<ProfitLossEntities> list, int index) =>
       Text(list[index].orderId, style: textBodiesStyle);
 }
 
@@ -160,14 +179,18 @@ class PurhcaseRefundSectionWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Text(
-          orderType,
-          style: GoogleFonts.aleo(color: color, fontWeight: FontWeight.w400),
-        ),
-        Icon(icon, color: color),
-      ],
+    return SizedBox(
+      width: size.width / 15,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            orderType,
+            style: GoogleFonts.aleo(color: color, fontWeight: FontWeight.w400),
+          ),
+          Icon(icon, color: color),
+        ],
+      ),
     );
   }
 }

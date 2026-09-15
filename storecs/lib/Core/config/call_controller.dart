@@ -14,6 +14,7 @@ import 'package:storecs/features/profit_loss_page/presentation/state_management/
 import 'package:storecs/features/report_page/presentation/state_management/report_controller.dart';
 import 'package:storecs/features/returns&refunds/presentation/state_management/return_and_refund_controller.dart';
 import 'package:storecs/features/settings_page/presentation/state_management/product_matrix_controller.dart';
+import 'package:storecs/features/settings_page/presentation/state_management/stock_alerts_controller.dart';
 import 'package:storecs/features/settings_page/presentation/state_management/tax_rules_controller.dart';
 import 'package:storecs/features/staff_list/presentation/state_management/staff_list_controller.dart';
 
@@ -36,3 +37,4 @@ final getFeedbackController = sl<GetFeedbackController>();
 final taxRulesController = sl<TaxRulesController>();
 final productMatrixController = sl<ProductMatrixController>();
 final profitLossController = sl<ProfitLossController>();
+final stockAlertsController = sl<StockAlertsController>();

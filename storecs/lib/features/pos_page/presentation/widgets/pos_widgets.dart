@@ -13,6 +13,7 @@ import 'package:storecs/Core/styles/Strings.dart';
 import 'package:storecs/Core/styles/alerts.dart';
 import 'package:storecs/Core/styles/animations.dart';
 import 'package:storecs/Core/styles/colors.dart';
+import 'package:storecs/Core/styles/low_stock_alerts_banner.dart';
 import 'package:storecs/Core/styles/sizes.dart';
 import 'package:storecs/Core/styles/text_styles.dart';
 import 'package:storecs/features/pos_page/domain/enitities/cart_entities.dart';
@@ -86,48 +87,55 @@ class _PosWidgetsState extends State<PosWidgets> {
         ),
         body: SafeArea(
           child: FadeInUp(
-            child: Container(
-              width: double.infinity,
-              height: double.infinity,
-              margin: screenSize,
-              child: Container(
-                decoration: BoxDecoration(
-                  border: Border.all(color: white, width: 3),
-                  borderRadius: BorderRadius.circular(10),
-                ),
+            child: Column(
+              children: [
+                const LowStockAlertsBanner(),
+                Expanded(
+                  child: Container(
+                    width: double.infinity,
+                    height: double.infinity,
+                    margin: screenSize,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(color: white, width: 3),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
 
-                padding: EdgeInsets.symmetric(
-                  vertical: size.height * 0.032,
-                  horizontal: size.width * 0.008,
-                ),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Container(
-                        decoration: BoxDecoration(
-                          border: Border.all(color: white),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        height: size.height * 1.250,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            CategoryTabs(categories: categories),
-                            Expanded(child: ProductsGrid()),
-                          ],
-                        ),
+                      padding: EdgeInsets.symmetric(
+                        vertical: size.height * 0.032,
+                        horizontal: size.width * 0.008,
+                      ),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Container(
+                              decoration: BoxDecoration(
+                                border: Border.all(color: white),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              height: size.height * 1.250,
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  CategoryTabs(categories: categories),
+                                  Expanded(child: ProductsGrid()),
+                                ],
+                              ),
+                            ),
+                          ),
+                          sizeBoxWidth(size.width * 0.02),
+
+                          CartSection(
+                            passMouse: passMouse,
+                            categories: categories,
+                            fullName: widget.fullName,
+                          ),
+                        ],
                       ),
                     ),
-                    sizeBoxWidth(size.width * 0.02),
-
-                    CartSection(
-                      passMouse: passMouse,
-                      categories: categories,
-                      fullName: widget.fullName,
-                    ),
-                  ],
+                  ),
                 ),
-              ),
+              ],
             ),
           ),
         ),
@@ -528,7 +536,15 @@ class _CardButtonState extends State<CardButtons> {
             borderRadius: BorderRadius.circular(10),
             border: Border.all(color: passMouse ? blueGreen : white, width: 2),
           ),
-          child: Center(child: Text(widget.text, style: textBodiesStyle)),
+          child: Center(
+            child: Text(
+              widget.text,
+              style: GoogleFonts.aleo(
+                color: passMouse ? blueGreen : white,
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+          ),
         ),
       ),
     );

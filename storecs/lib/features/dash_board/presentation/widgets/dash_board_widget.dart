@@ -13,6 +13,7 @@ import 'package:storecs/Core/config/account_status.dart';
 import 'package:storecs/Core/config/call_controller.dart';
 import 'package:storecs/Core/config/permissions.dart';
 import 'package:storecs/Core/styles/animations.dart';
+import 'package:storecs/Core/styles/low_stock_alerts_banner.dart';
 import 'package:storecs/Core/styles/sizes.dart';
 import 'package:storecs/Core/styles/text_styles.dart';
 import 'package:storecs/Features/auth/presentation/pages/sign_up_page.dart';
@@ -50,6 +51,14 @@ class DashboardWidgets extends StatefulWidget {
 
 class _DashboardWidgetsState extends State<DashboardWidgets> {
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      stockAlertsController.getLowStockAlerts();
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     final id = FirebaseAuth.instance.currentUser!.uid;
     final email = FirebaseAuth.instance.currentUser!.email;
@@ -82,28 +91,33 @@ class _DashboardWidgetsState extends State<DashboardWidgets> {
         drawer: AppDrawer(id: id),
         body: SafeArea(
           child: FadeInUp(
-            child: Container(
-              margin: screenSize,
-              child: SingleChildScrollView(
-                child: Container(
-                  decoration: BoxDecoration(
-                    border: Border.all(color: white, width: 3),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  width: double.infinity,
-                  padding: EdgeInsets.symmetric(
-                    vertical: size.height * 0.030,
-                    horizontal: size.width * 0.008,
-                  ),
-                  child: Column(
-                    children: [
-                      RowOfReviewsSection(id: id),
-                      ChartSectionWidget(),
-                      quickActionsSectionBloc(),
-                    ],
+            child: Column(
+              children: [
+                const LowStockAlertsBanner(),
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: Container(
+                      margin: screenSize,
+                      decoration: BoxDecoration(
+                        border: Border.all(color: white, width: 3),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      width: double.infinity,
+                      padding: EdgeInsets.symmetric(
+                        vertical: size.height * 0.030,
+                        horizontal: size.width * 0.008,
+                      ),
+                      child: Column(
+                        children: [
+                          RowOfReviewsSection(id: id),
+                          ChartSectionWidget(),
+                          quickActionsSectionBloc(),
+                        ],
+                      ),
+                    ),
                   ),
                 ),
-              ),
+              ],
             ),
           ),
         ),
@@ -1230,7 +1244,7 @@ class _QuickActionsButton extends State<QuickActionsButton> {
           onTap: widget.mainPageWidget,
           child: Container(
             height: size.height / 12,
-            // width: size.width / 6,
+
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(8),
               border: Border.all(color: isHovered ? widget.color : white),
@@ -1241,8 +1255,14 @@ class _QuickActionsButton extends State<QuickActionsButton> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Icon(widget.iconn, color: white),
-                  Text(widget.text, style: textBodiesStyle),
+                  Icon(widget.iconn, color: isHovered ? widget.color : white),
+                  Text(
+                    widget.text,
+                    style: GoogleFonts.aleo(
+                      color: isHovered ? widget.color : white,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
                 ],
               ),
             ),

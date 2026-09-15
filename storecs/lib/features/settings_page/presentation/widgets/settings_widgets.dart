@@ -6,7 +6,10 @@ import 'package:storecs/Core/styles/animations.dart';
 import 'package:storecs/Core/styles/colors.dart';
 import 'package:storecs/Core/styles/sizes.dart';
 import 'package:storecs/Core/styles/text_styles.dart';
+import 'package:storecs/features/settings_page/presentation/page/label_scanner_page.dart';
 import 'package:storecs/features/settings_page/presentation/page/product_matrix_page.dart';
+
+import 'package:storecs/features/settings_page/presentation/page/stocks_alerts_page.dart';
 import 'package:storecs/features/settings_page/presentation/page/tax_rules.dart';
 
 class SettingsWidgets extends StatefulWidget {
@@ -61,7 +64,8 @@ class InventoryAndSerialNumberSettingsSection extends StatelessWidget {
           subtitle:
               'Sets low-stock thresholds for high-demand gadgets or accessories to trigger reorders automatically.',
           icon: Iconsax.notification,
-          onTap: () {},
+          onTap: () =>
+              Navigator.push(context, naviToAnotherPage(StocksAlertsPage())),
         ),
         SettingsTileItem(
           title: 'Product Matrix / Attributes',
@@ -90,7 +94,8 @@ class HardwareAndPeripheralsConfigurationSection extends StatelessWidget {
           subtitle:
               'Adjusts scanner triggers, key capture delays, and pairing for specialized barcode or QR scanners.',
           icon: Iconsax.scan,
-          onTap: () {},
+          onTap: () =>
+              Navigator.push(context, naviToAnotherPage(LabelScannerPage())),
         ),
         SettingsTileItem(
           title: 'Customer-Facing Display',
