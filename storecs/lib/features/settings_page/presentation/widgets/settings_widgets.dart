@@ -8,6 +8,7 @@ import 'package:storecs/Core/styles/sizes.dart';
 import 'package:storecs/Core/styles/text_styles.dart';
 import 'package:storecs/features/settings_page/presentation/page/label_scanner_page.dart';
 import 'package:storecs/features/settings_page/presentation/page/product_matrix_page.dart';
+import 'package:storecs/features/settings_page/presentation/page/staff_permissions_page.dart';
 
 import 'package:storecs/features/settings_page/presentation/page/stocks_alerts_page.dart';
 import 'package:storecs/features/settings_page/presentation/page/tax_rules.dart';
@@ -138,7 +139,10 @@ class PaymentsPricingAndSecuritySection extends StatelessWidget {
           subtitle:
               'Restricts high-level actions like manual price overrides, open-box discounts, or processing returns to manager PIN codes.',
           icon: Iconsax.user_tick,
-          onTap: () {},
+          onTap: () => Navigator.push(
+            context,
+            naviToAnotherPage(StaffPermissionsPage()),
+          ),
         ),
       ],
     );

@@ -13,7 +13,6 @@ class SalesExportPage extends StatelessWidget {
     final sl = GetIt.instance;
     return BlocProvider<ExportReportsBloc>(
       create: (context) => ExportReportsBloc(sl<ExportReportsRepo>()),
-      /* ..add(ExportReportsBlocEventLoading()), */
       child: SalesExportWidget(),
     );
   }

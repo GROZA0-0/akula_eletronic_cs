@@ -92,7 +92,8 @@ class _StaffListWidgetsState extends State<StaffListWidgets> {
                       final bool isEditingTtisRow = editingIndex == index;
                       final hasPermission = Permissions(
                         state: staffEntities,
-                      ).editAndDeleteCondition;
+                        pageAccess: staffPermissionsController.hasAccess,
+                      ).hasAccess('Edit And Delete Access');
                       return Container(
                         margin: EdgeInsets.symmetric(
                           vertical: size.height * 0.005,
@@ -112,62 +113,14 @@ class _StaffListWidgetsState extends State<StaffListWidgets> {
 
                             SizedBox(width: size.width * 0.01),
                             hasPermission
-                                ? Container()
-                                : Row(
-                                    children: [
-                                      EmpButtonActions(
-                                        onTap: () async {
-                                          if (isEditingTtisRow) {
-                                            /* in edit mode, click on check to save */
-                                            if (staffListController
-                                                    .selectedlevel ==
-                                                employee.level) {
-                                              setState(() {
-                                                editingIndex = null;
-                                              });
-                                            } else {
-                                              final updateStaff =
-                                                  await staffListController
-                                                      .updateStaffInfo(
-                                                        employee.id,
-                                                      );
-                                              setState(() {
-                                                state.entities[index] =
-                                                    updateStaff; /* refresh to get the latest info */
-                                                editingIndex = null;
-                                              });
-                                            }
-                                          } else {
-                                            setState(() {
-                                              staffListController
-                                                      .txtPhone
-                                                      .text =
-                                                  employee.phone ?? '';
-                                              staffListController
-                                                      .selectedlevel =
-                                                  employee.level ?? '';
-                                              editingIndex = index;
-                                            });
-                                          }
-                                        },
-                                        color: isEditingTtisRow
-                                            ? greenColor
-                                            : white,
-                                        icon: isEditingTtisRow
-                                            ? FontAwesomeIcons.check
-                                            : Iconsax.edit,
-                                      ),
-                                      EmpButtonActions(
-                                        onTap: () =>
-                                            termniateStaffAccountDialog(
-                                              context,
-                                              employee,
-                                            ),
-                                        color: redColor,
-                                        icon: Iconsax.trash,
-                                      ),
-                                    ],
-                                  ),
+                                ? editAndDeleteMethodSectionWithPermissions(
+                                    isEditingTtisRow,
+                                    employee,
+                                    state,
+                                    index,
+                                    context,
+                                  )
+                                : Container(),
                           ],
                         ),
                       );
@@ -180,6 +133,53 @@ class _StaffListWidgetsState extends State<StaffListWidgets> {
           ),
         ),
       ),
+    );
+  }
+
+  Widget editAndDeleteMethodSectionWithPermissions(
+    bool isEditingTtisRow,
+    StaffListEntities employee,
+    StaffListBlocStateLoaded state,
+    int index,
+    BuildContext context,
+  ) {
+    return Row(
+      children: [
+        EmpButtonActions(
+          onTap: () async {
+            if (isEditingTtisRow) {
+              /* in edit mode, click on check to save */
+              if (staffListController.selectedlevel == employee.level) {
+                setState(() {
+                  editingIndex = null;
+                });
+              } else {
+                final updateStaff = await staffListController.updateStaffInfo(
+                  employee.id,
+                );
+                setState(() {
+                  state.entities[index] =
+                      updateStaff; /* refresh to get the latest info */
+                  editingIndex = null;
+                });
+              }
+            } else {
+              setState(() {
+                staffListController.txtPhone.text = employee.phone ?? '';
+                staffListController.selectedlevel = employee.level ?? '';
+                editingIndex = index;
+              });
+            }
+          },
+          color: isEditingTtisRow ? greenColor : white,
+          icon: isEditingTtisRow ? FontAwesomeIcons.check : Iconsax.edit,
+        ),
+        EmpButtonActions(
+          onTap: () => termniateStaffAccountDialog(context, employee),
+          color: redColor,
+          icon: Iconsax.trash,
+        ),
+      ],
     );
   }
 

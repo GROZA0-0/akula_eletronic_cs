@@ -55,6 +55,7 @@ class _DashboardWidgetsState extends State<DashboardWidgets> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       stockAlertsController.getLowStockAlerts();
+      staffPermissionsController.getActions();
     });
   }
 
@@ -644,8 +645,20 @@ class QuickActionsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final permissions = Permissions(state: employee);
-    final hasAccess = permissions.empPagesAccCondition;
+    final permissions = Permissions(
+      state: employee,
+      pageAccess: staffPermissionsController.hasAccess,
+    );
+    final hasAccessInStaffListPage = permissions.hasAccess(
+      'Employee Pages Access',
+    );
+    final hasAccessInAddEditStaff = permissions.hasAccess(
+      'Add New Staff Access',
+    );
+    final hasAccessInSalesReportAccess = permissions.hasAccess(
+      'Sales Report Access',
+    );
+    final hasAccessInReportsAccess = permissions.hasAccess('Reports Access');
     return Column(
       children: [
         Container(
@@ -660,55 +673,61 @@ class QuickActionsSection extends StatelessWidget {
           children: [
             QuickActionsButtonsStatus(
               entities: employee,
-              text: hasAccess ? 'POS Page' : 'Staff List Page',
-              mainPageWidget: () => hasAccess
+              text: hasAccessInStaffListPage ? 'Staff List Page' : 'POS Page',
+              mainPageWidget: () => hasAccessInStaffListPage
                   ? Navigator.push(
-                      context,
-                      naviToAnotherPage(PosPage(fullName: employee.name)),
-                    )
-                  : Navigator.push(
                       context,
                       naviToAnotherPage(StaffListPage(entities: employee)),
-                    ),
-              icon: hasAccess ? Iconsax.card_pos : Iconsax.user,
-            ),
-
-            sizeBoxWidth(size.width * 0.01),
-            QuickActionsButtonsStatus(
-              entities: employee,
-              text: hasAccess ? 'order List Page' : 'Add/Edit Staff',
-              mainPageWidget: () => hasAccess
-                  ? Navigator.push(
-                      context,
-                      naviToAnotherPage(ProductListPage()),
                     )
-                  : Navigator.push(context, naviToAnotherPage(SignUpPage())),
-              icon: hasAccess ? Icons.list : Icons.add,
-            ),
-            sizeBoxWidth(size.width * 0.01),
-            QuickActionsButtonsStatus(
-              entities: employee,
-              text: hasAccess ? 'Return/Refunds' : 'Sales Report',
-              mainPageWidget: () => hasAccess
-                  ? Navigator.push(
-                      context,
-                      naviToAnotherPage(ReturnsAndRefundsPage()),
-                    )
-                  : Navigator.push(context, naviToAnotherPage(ReportPage())),
-              icon: hasAccess ? Icons.compare_arrows : Iconsax.ticket,
-            ),
-
-            sizeBoxWidth(size.width * 0.01),
-            QuickActionsButtonsStatus(
-              entities: employee,
-              mainPageWidget: () => hasAccess
-                  ? Navigator.push(context, naviToAnotherPage(ProfilePage()))
                   : Navigator.push(
                       context,
-                      naviToAnotherPage(SalesExportPage()),
+                      naviToAnotherPage(PosPage(fullName: employee.name)),
                     ),
-              text: hasAccess ? 'User Profile' : 'Export Page',
-              icon: hasAccess ? Iconsax.user : Iconsax.export,
+              icon: hasAccessInStaffListPage ? Iconsax.user : Iconsax.card_pos,
+            ),
+
+            sizeBoxWidth(size.width * 0.01),
+            QuickActionsButtonsStatus(
+              entities: employee,
+              text: hasAccessInAddEditStaff
+                  ? 'Add/Edit Staff'
+                  : 'order List Page',
+              mainPageWidget: () => hasAccessInAddEditStaff
+                  ? Navigator.push(context, naviToAnotherPage(SignUpPage()))
+                  : Navigator.push(
+                      context,
+                      naviToAnotherPage(ProductListPage()),
+                    ),
+              icon: hasAccessInAddEditStaff ? Icons.add : Icons.list,
+            ),
+            sizeBoxWidth(size.width * 0.01),
+            QuickActionsButtonsStatus(
+              entities: employee,
+              text: hasAccessInSalesReportAccess
+                  ? 'Sales Report'
+                  : 'Return/Refunds',
+              mainPageWidget: () => hasAccessInSalesReportAccess
+                  ? Navigator.push(context, naviToAnotherPage(ReportPage()))
+                  : Navigator.push(
+                      context,
+                      naviToAnotherPage(ReturnsAndRefundsPage()),
+                    ),
+              icon: hasAccessInSalesReportAccess
+                  ? Iconsax.ticket
+                  : Icons.compare_arrows,
+            ),
+
+            sizeBoxWidth(size.width * 0.01),
+            QuickActionsButtonsStatus(
+              entities: employee,
+              mainPageWidget: () => hasAccessInReportsAccess
+                  ? Navigator.push(
+                      context,
+                      naviToAnotherPage(SalesExportPage()),
+                    )
+                  : Navigator.push(context, naviToAnotherPage(ProfilePage())),
+              text: hasAccessInReportsAccess ? 'Export Page' : 'User Profile',
+              icon: hasAccessInReportsAccess ? Iconsax.export : Iconsax.user,
             ),
           ],
         ),
@@ -781,12 +800,17 @@ class AppDrawer extends StatelessWidget {
     BuildContext context,
     String fullName,
   ) {
-    final permissions = Permissions(state: state.enitities);
-    final hasAccessEmpPages = permissions.empPagesAccCondition;
-    final hasAccessPAI = permissions.productsAndInventoryCondition;
-    final hasAccessReports = permissions.reportsCondition;
-    final hasAccessSettings = permissions.settingsPageAccCondition;
-    final hasAccessOrderActions = permissions.orderActionsAccCondition;
+    final permissions = Permissions(
+      state: state.enitities,
+      pageAccess: staffPermissionsController.hasAccess,
+    );
+    final hasAccessEmpPages = permissions.hasAccess('Employee Pages Access');
+    final hasAccessPAI = permissions.hasAccess(
+      'Products And Inventory Accesss',
+    );
+    final hasAccessReports = permissions.hasAccess('Reports Access');
+    final hasAccessSettings = permissions.hasAccess('Settings Page Access');
+    final hasAccessOrderActions = permissions.hasAccess('Order Actions Access');
     return SizedBox(
       width: size.width / 1.2,
       height: size.height / 1.09,
@@ -806,21 +830,20 @@ class AppDrawer extends StatelessWidget {
               ),
               checkoutExpansionTile(context, fullName, state.enitities),
               hasAccessPAI
-                  ? Container()
-                  : productsExpansionTile(context, state.enitities),
+                  ? productsExpansionTile(context, state.enitities)
+                  : Container(),
               hasAccessOrderActions
-                  ? Container()
-                  : ordersAndTransactions(
-                      context,
-                      state.enitities,
-                      permissions,
-                    ),
+                  ? ordersAndTransactions(context, state.enitities, permissions)
+                  : Container(),
+
               hasAccessEmpPages
-                  ? Container()
-                  : employees(context, state.enitities),
+                  ? employees(context, state.enitities, permissions)
+                  : Container(),
+
               hasAccessReports
-                  ? Container()
-                  : reports(state, context, state.enitities),
+                  ? reports(state, context, state.enitities)
+                  : Container(),
+
               settings(context, hasAccessSettings, state.enitities),
             ],
           ),
@@ -861,13 +884,14 @@ class AppDrawer extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             hasAccessSettings
-                ? Container()
-                : ButtonsMenuDrawerConditions(
+                ? ButtonsMenuDrawerConditions(
                     text: 'Settings Page',
                     icons: Iconsax.paperclip,
                     entities: entities,
                     widget: SettingsPage(),
-                  ),
+                  )
+                : Container(),
+
             sizeBoxHeight(size.height * 0.012),
             ButtonsMenuDrawerConditions(
               text: 'User Profile Page',
@@ -886,9 +910,12 @@ class AppDrawer extends StatelessWidget {
     BuildContext context,
     EmployeeInfoEntities entities,
   ) {
-    final permissions = Permissions(state: state.enitities);
-    final hasAccessSalesReport = permissions.salesReportCondition;
-    final hasAccessExport = permissions.getFeedbackCondition;
+    final permissions = Permissions(
+      state: state.enitities,
+      pageAccess: staffPermissionsController.hasAccess,
+    );
+    final hasAccessSalesReport = permissions.hasAccess('Sales Report Access');
+    final hasAccessExport = permissions.hasAccess('Get Feedback Access');
     return ExpansionTile(
       splashColor: invisible,
       collapsedIconColor: black,
@@ -901,13 +928,13 @@ class AppDrawer extends StatelessWidget {
             Column(
               children: [
                 hasAccessSalesReport
-                    ? Container()
-                    : ButtonsMenuDrawerConditions(
+                    ? ButtonsMenuDrawerConditions(
                         text: 'Sales Report',
                         icons: Iconsax.ticket,
                         entities: entities,
                         widget: ReportPage(),
-                      ),
+                      )
+                    : Container(),
               ],
             ),
             sizeBoxHeight(size.height * 0.012),
@@ -922,13 +949,13 @@ class AppDrawer extends StatelessWidget {
             Column(
               children: [
                 hasAccessExport
-                    ? Container()
-                    : ButtonsMenuDrawerConditions(
+                    ? ButtonsMenuDrawerConditions(
                         text: 'Export Page',
                         icons: Iconsax.export,
                         entities: entities,
                         widget: SalesExportPage(),
-                      ),
+                      )
+                    : Container(),
               ],
             ),
           ],
@@ -937,7 +964,11 @@ class AppDrawer extends StatelessWidget {
     );
   }
 
-  Widget employees(BuildContext context, EmployeeInfoEntities entities) {
+  Widget employees(
+    BuildContext context,
+    EmployeeInfoEntities entities,
+    Permissions permissions,
+  ) {
     return ExpansionTile(
       splashColor: invisible,
       collapsedIconColor: black,
@@ -954,13 +985,14 @@ class AppDrawer extends StatelessWidget {
               widget: StaffListPage(entities: entities),
             ),
             sizeBoxHeight(size.height * 0.012),
-
-            ButtonsMenuDrawerConditions(
-              text: 'Add/Edit Staff',
-              icons: Icons.add,
-              entities: entities,
-              widget: SignUpPage(),
-            ),
+            permissions.hasAccess('Add New Staff Access')
+                ? ButtonsMenuDrawerConditions(
+                    text: 'Add/Edit Staff',
+                    icons: Icons.add,
+                    entities: entities,
+                    widget: SignUpPage(),
+                  )
+                : Container(),
           ],
         ),
       ],
@@ -985,14 +1017,14 @@ class AppDrawer extends StatelessWidget {
         Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            permissions.ordersPuschasedPageCondition
-                ? Container()
-                : ButtonsMenuDrawerConditions(
+            permissions.hasAccess('Orders Puschased Access')
+                ? ButtonsMenuDrawerConditions(
                     text: 'Orders Puschased Page',
                     icons: Icons.line_style_rounded,
                     entities: entities,
                     widget: OrderPurchasedHistory(),
-                  ),
+                  )
+                : Container(),
             sizeBoxHeight(size.height * 0.012),
             ButtonsMenuDrawerConditions(
               text: 'Returns / Refunds Page',
@@ -1001,14 +1033,14 @@ class AppDrawer extends StatelessWidget {
               widget: ReturnsAndRefundsPage(),
             ),
             sizeBoxHeight(size.height * 0.012),
-            permissions.ordersPuschasedPageCondition
-                ? Container()
-                : ButtonsMenuDrawerConditions(
+            permissions.hasAccess('Orders Puschased Access')
+                ? ButtonsMenuDrawerConditions(
                     text: 'Profits / Loss Page',
                     icons: Iconsax.chart_success,
                     entities: entities,
                     widget: ProfitLossLogsPage(),
-                  ),
+                  )
+                : Container(),
           ],
         ),
       ],
