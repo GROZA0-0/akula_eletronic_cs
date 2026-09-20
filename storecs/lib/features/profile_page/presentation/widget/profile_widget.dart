@@ -8,7 +8,6 @@ import 'package:iconsax/iconsax.dart';
 import 'package:storecs/Core/config/call_controller.dart';
 import 'package:storecs/Core/styles/animations.dart';
 import 'package:storecs/Core/styles/colors.dart';
-import 'package:storecs/Core/styles/sizes.dart';
 import 'package:storecs/Core/styles/text_styles.dart';
 import 'package:storecs/features/profile_page/domain/entities/profile_entities.dart';
 import 'package:storecs/features/profile_page/presentation/state_management/profile_bloc/profile_bloc.dart';
@@ -16,127 +15,152 @@ import 'package:storecs/features/profile_page/presentation/state_management/prof
 import 'package:storecs/features/profile_page/presentation/state_management/profile_bloc/profile_bloc_state.dart';
 import 'package:storecs/features/profile_page/presentation/state_management/profile_controller.dart';
 
-class ProfileWidget extends StatefulWidget {
+class ProfileWidget extends StatelessWidget {
   const ProfileWidget({super.key});
 
-  @override
-  State<ProfileWidget> createState() => _ProfileWidgetState();
-}
-
-class _ProfileWidgetState extends State<ProfileWidget> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: invisible,
+        backgroundColor: Colors.transparent,
+        elevation: 0,
         title: FadeInLeft(child: Text("User Profile Page", style: textAppBar)),
-        iconTheme: IconThemeData(color: white),
+        iconTheme: const IconThemeData(color: white),
       ),
       body: SafeArea(
         child: SingleChildScrollView(
-          child: FadeInUp(child: profileBlocWidget()),
+          child: FadeInUp(
+            child: BlocProvider(
+              create: (context) =>
+                  ProfileBloc(sl<ProfileController>())
+                    ..add(ProfileBlocEventLoading()),
+              child: const ProfileBlocConsumerView(),
+            ),
+          ),
         ),
       ),
     );
   }
+}
 
-  Widget profileBlocWidget() {
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider(
-          create: (context) =>
-              ProfileBloc(sl<ProfileController>())
-                ..add(ProfileBlocEventLoading()),
-        ),
-      ],
-      child: BlocBuilder<ProfileBloc, ProfileBlocState>(
-        builder: (context, state) {
-          if (state is ProfileBlocStateLoading) {
-            return loadingStateBodies();
-          } else if (state is ProfileBlocStateError) {
-            return Center(
+class ProfileBlocConsumerView extends StatelessWidget {
+  const ProfileBlocConsumerView({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<ProfileBloc, ProfileBlocState>(
+      builder: (context, state) {
+        if (state is ProfileBlocStateLoading) {
+          return loadingStateBodies();
+        } else if (state is ProfileBlocStateError) {
+          return Center(
+            child: Padding(
+              padding: EdgeInsets.all(24.0),
               child: Text(
                 'No Profile Fetch, Kindly Try Again',
                 style: textBodiesStyle2,
+                textAlign: TextAlign.center,
               ),
-            );
-          } else if (state is ProfileBlocStateLoaded) {
-            final profile = state.entities;
-            final checkStatus = profile.status.name;
-            return fetchProfileInfoFromTheBloc(profile, checkStatus);
-          }
-          return SizedBox.shrink();
-        },
-      ),
+            ),
+          );
+        } else if (state is ProfileBlocStateLoaded) {
+          final profile = state.entities;
+          return ProfileCardView(profile: profile);
+        }
+        return const SizedBox.shrink();
+      },
     );
   }
+}
 
-  Widget fetchProfileInfoFromTheBloc(
-    ProfileEntities profile,
-    String checkStatus,
-  ) {
+class ProfileCardView extends StatelessWidget {
+  final ProfileEntities profile;
+
+  const ProfileCardView({super.key, required this.profile});
+
+  @override
+  Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+
     return Container(
       width: double.infinity,
-      height: size.height,
       decoration: BoxDecoration(
         border: Border.all(color: white),
         borderRadius: BorderRadius.circular(8),
       ),
       margin: EdgeInsets.only(
-        top: size.height * 0.1,
+        top: size.height * 0.05,
         left: size.width * 0.02,
         right: size.width * 0.02,
+        bottom: size.height * 0.05,
+      ),
+      padding: EdgeInsets.symmetric(
+        vertical: size.height * 0.03,
+        horizontal: size.width * 0.03,
       ),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          sizeBoxHeight(size.height * 0.02),
-          buildProfileImage(profile.picture),
-          sizeBoxHeight(size.height * 0.02),
-          ProfileInfoWidget(profile: profile, checkStatus: checkStatus),
+          ProfileAvatarWidget(base64Image: profile.picture),
+          SizedBox(height: size.height * 0.03),
+          ProfileInfoDetailsWidget(
+            profile: profile,
+            checkStatus: profile.status.name,
+          ),
         ],
       ),
     );
   }
+}
 
-  Widget buildProfileImage(String base64Image) {
+class ProfileAvatarWidget extends StatelessWidget {
+  final String base64Image;
+
+  const ProfileAvatarWidget({super.key, required this.base64Image});
+
+  @override
+  Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+
     if (base64Image.isEmpty) {
       return const CircleAvatar(
         backgroundColor: grey,
-        radius: 100,
-        child: Icon(color: white, Iconsax.user),
+        radius: 80,
+        child: Icon(Iconsax.user, color: white, size: 60),
       );
-    } else {
-      try {
-        String sanitizedBase64 = base64Image.contains(',')
-            ? base64Image.split(',').last
-            : base64Image;
+    }
 
-        sanitizedBase64 = sanitizedBase64.replaceAll(RegExp(r'\s+'), '');
-        final bytes = base64Decode(sanitizedBase64);
-        return Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(100),
-            border: Border.all(color: white),
-          ),
-          child: CircleAvatar(radius: 100, backgroundImage: MemoryImage(bytes)),
-        );
-      } catch (e) {
-        print("error rending base64 : $e");
-        return Container(
-          margin: EdgeInsets.only(right: size.width * 0.03),
-          child: const CircleAvatar(
-            radius: 20,
-            backgroundColor: Colors.redAccent,
-            child: Icon(Icons.error_outline, color: white, size: 16),
-          ),
-        );
-      }
+    try {
+      String sanitizedBase64 = base64Image.contains(',')
+          ? base64Image.split(',').last
+          : base64Image;
+
+      sanitizedBase64 = sanitizedBase64.replaceAll(RegExp(r'\s+'), '');
+      final bytes = base64Decode(sanitizedBase64);
+
+      return Container(
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          border: Border.all(color: white, width: 2),
+        ),
+        child: CircleAvatar(radius: 80, backgroundImage: MemoryImage(bytes)),
+      );
+    } catch (e) {
+      debugPrint("Error rendering Base64 image: $e");
+      return Container(
+        margin: EdgeInsets.only(right: size.width * 0.03),
+        child: const CircleAvatar(
+          radius: 20,
+          backgroundColor: Colors.redAccent,
+          child: Icon(Icons.error_outline, color: white, size: 16),
+        ),
+      );
     }
   }
 }
 
-class ProfileInfoWidget extends StatelessWidget {
-  const ProfileInfoWidget({
+class ProfileInfoDetailsWidget extends StatelessWidget {
+  const ProfileInfoDetailsWidget({
     super.key,
     required this.profile,
     required this.checkStatus,
@@ -147,40 +171,44 @@ class ProfileInfoWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+
     return SizedBox(
-      width: size.width * 0.3,
-      height: size.height * 0.4,
+      width: size.width > 600 ? size.width * 0.5 : size.width * 0.9,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           TextProfileTemplate(
             text: 'Employee Name: ${profile.name}',
-            size: 24,
+            fontSize: 22,
             color: white,
           ),
+          const SizedBox(height: 12),
           TextProfileTemplate(
             text: 'Employee Email: ${profile.email}',
-            size: 20,
+            fontSize: 18,
             color: lightGrey,
           ),
+          const SizedBox(height: 12),
           TextProfileTemplate(
             text: 'Employee Role: ${profile.level}',
-            size: 20,
+            fontSize: 18,
             color: lightGrey,
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
+          const SizedBox(height: 12),
+          Wrap(
+            crossAxisAlignment: WrapCrossAlignment.center,
             children: [
-              TextProfileTemplate(
+              const TextProfileTemplate(
                 text: 'Employee Status: ',
-                size: 20,
+                fontSize: 18,
                 color: lightGrey,
               ),
               TextProfileTemplate(
                 text: profile.status.name,
-                size: 20,
-                color: checkStatus == 'active' ? blueGreen : grey,
+                fontSize: 18,
+                color: checkStatus.toLowerCase() == 'active' ? blueGreen : grey,
               ),
             ],
           ),
@@ -192,12 +220,13 @@ class ProfileInfoWidget extends StatelessWidget {
 
 class TextProfileTemplate extends StatelessWidget {
   final String text;
-  final double size;
+  final double fontSize;
   final Color color;
+
   const TextProfileTemplate({
     super.key,
     required this.text,
-    required this.size,
+    required this.fontSize,
     required this.color,
   });
 
@@ -206,7 +235,7 @@ class TextProfileTemplate extends StatelessWidget {
     return Text(
       text,
       style: GoogleFonts.aleo(
-        fontSize: size,
+        fontSize: fontSize,
         color: color,
         fontWeight: FontWeight.w400,
       ),
