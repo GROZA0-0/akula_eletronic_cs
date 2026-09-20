@@ -86,23 +86,28 @@ import 'package:storecs/features/sales_export/data/data_source/export_reports_da
 import 'package:storecs/features/sales_export/data/data_source/export_reports_data_source_repo/export_reports_data_source_repo.dart';
 import 'package:storecs/features/sales_export/data/repository/export_reports_implementer.dart';
 import 'package:storecs/features/sales_export/domain/repository/export_reports_repo.dart';
-import 'package:storecs/features/settings_page/data/data_source/data_source_implementer/product_matrix_data_source_implementer.dart';
+import 'package:storecs/features/settings_page/data/data_source/data_source_implementer/customer_display_data_source_implementer.dart';
+import 'package:storecs/features/settings_page/data/data_source/data_source_implementer/payment_integration_data_source_implmeneter.dart';
 import 'package:storecs/features/settings_page/data/data_source/data_source_implementer/staff_permissions_data_source_implementer.dart';
 import 'package:storecs/features/settings_page/data/data_source/data_source_implementer/stocks_alert_data_source_implementer.dart';
 import 'package:storecs/features/settings_page/data/data_source/data_source_implementer/tax_rules_data_source_implementer.dart';
-import 'package:storecs/features/settings_page/data/data_source/data_source_repo/product_matrix_data_source_repo.dart';
+import 'package:storecs/features/settings_page/data/data_source/data_source_repo/customer_display_data_source_repo.dart';
+import 'package:storecs/features/settings_page/data/data_source/data_source_repo/payment_integration_data_source_repo.dart';
 import 'package:storecs/features/settings_page/data/data_source/data_source_repo/staff_permissions_data_source_repo.dart';
 import 'package:storecs/features/settings_page/data/data_source/data_source_repo/stocks_alert_data_source_repo.dart';
 import 'package:storecs/features/settings_page/data/data_source/data_source_repo/tax_rules_data_source_repo.dart';
-import 'package:storecs/features/settings_page/data/repository/product_matrix_implementer.dart';
+import 'package:storecs/features/settings_page/data/repository/customer_display_implementer.dart';
+import 'package:storecs/features/settings_page/data/repository/payment_integration_implementer.dart';
 import 'package:storecs/features/settings_page/data/repository/staff_permissions_implementer.dart';
 import 'package:storecs/features/settings_page/data/repository/stock_alerts_implementer.dart';
 import 'package:storecs/features/settings_page/data/repository/tax_rules_implementer.dart';
-import 'package:storecs/features/settings_page/domain/repository/product_matrix_repository.dart';
+import 'package:storecs/features/settings_page/domain/repository/customer_display_repository.dart';
+import 'package:storecs/features/settings_page/domain/repository/payment_integration_repository.dart';
 import 'package:storecs/features/settings_page/domain/repository/staff_permissions_repository.dart';
 import 'package:storecs/features/settings_page/domain/repository/stock_alerts_repository.dart';
 import 'package:storecs/features/settings_page/domain/repository/tax_rules_repository.dart';
-import 'package:storecs/features/settings_page/presentation/state_management/product_matrix_controller.dart';
+import 'package:storecs/features/settings_page/presentation/state_management/customer_display_controller.dart';
+import 'package:storecs/features/settings_page/presentation/state_management/payment_integration_controller.dart';
 import 'package:storecs/features/settings_page/presentation/state_management/staff_permissions_controller.dart';
 import 'package:storecs/features/settings_page/presentation/state_management/stock_alerts_controller.dart';
 import 'package:storecs/features/settings_page/presentation/state_management/tax_rules_controller.dart';
@@ -133,6 +138,14 @@ class AppBindingsControllers extends Bindings {
         employeeInfoDataSource: sl<EmployeeInfoDataSourceImplemter>(),
       ),
     );
+    sl.registerFactory<SignInController>(
+      () => SignInController(sl<AuthRepo>()),
+    );
+    sl.registerFactory<SignUpController>(() => SignUpController());
+    sl.registerFactory<SignOutController>(
+      () => SignOutController(sl<AuthRepo>(), sl<EmployeeInfoRepo>()),
+    );
+
     /////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////
@@ -145,6 +158,11 @@ class AppBindingsControllers extends Bindings {
     sl.registerFactory<EmployeeInfoRepo>(
       () => EmployeeInfoImplement(dataSource: sl<EmployeeInfoDataSourceRepo>()),
     );
+    sl.registerFactory<FetchEmployeeInfoDashBoardController>(
+      () => FetchEmployeeInfoDashBoardController(
+        repository: sl<EmployeeInfoRepo>(),
+      ),
+    );
 
     //////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////
@@ -156,6 +174,9 @@ class AppBindingsControllers extends Bindings {
     );
     sl.registerFactory<StaffListRepo>(
       () => StaffListImplementer(repo: sl<StaffListDataSourceRepo>()),
+    );
+     sl.registerFactory<StaffListController>(
+      () => StaffListController(repository: sl<StaffListRepo>()),
     );
 
     //////////////////////////////////////////////////////////
@@ -170,6 +191,9 @@ class AppBindingsControllers extends Bindings {
       () =>
           ProductListImplementer(implementer: sl<ProductListDataSourceRepo>()),
     );
+    sl.registerFactory<ProductListController>(
+      () => ProductListController(sl<ProductListRepo>()),
+    );
     //////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////
@@ -182,6 +206,7 @@ class AppBindingsControllers extends Bindings {
       () => PosRepository(repo: sl<PosDataSourceRepo>()),
     );
 
+    sl.registerFactory<PosController>(() => PosController(repo: sl<PosRepo>()));
     //////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////
@@ -194,6 +219,9 @@ class AppBindingsControllers extends Bindings {
       () => ListOfItemsPurchasedRepository(
         implementer: sl<ListOfItemsPurchasedDataSourceRepo>(),
       ),
+    );
+    sl.registerFactory<CartController>(
+      () => CartController(repo: sl<ListOfItemsPurchasedRepo>()),
     );
 
     //////////////////////////////////////////////////////////
@@ -222,6 +250,11 @@ class AppBindingsControllers extends Bindings {
         sourceRepo: sl<OrderPurchasedHistoryDataSourceRepo>(),
       ),
     );
+    sl.registerFactory<OrderPurchasedHistoryController>(
+      () => OrderPurchasedHistoryController(
+        repo: sl<OrderPurchasedHistoryRepo>(),
+      ),
+    );
     //////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////
@@ -233,6 +266,12 @@ class AppBindingsControllers extends Bindings {
     sl.registerFactory<StoreReturnAndRefundInfoRepository>(
       () => StoreReturnAndRefundInfoImplementer(
         repository: sl<StoreReturnAndRefundInfoDataSourceRepository>(),
+      ),
+    );
+    sl.registerFactory<ReturnAndRefundController>(
+      () => ReturnAndRefundController(
+        repo: sl<OrderDetailsRepo>(),
+        refundRepo: sl<StoreReturnAndRefundInfoRepository>(),
       ),
     );
     //////////////////////////////////////////////////////////
@@ -248,6 +287,9 @@ class AppBindingsControllers extends Bindings {
         reportDataSourceRepository: sl<ReportDataSourceRepository>(),
       ),
     );
+    sl.registerFactory<ReportController>(
+      () => ReportController(repository: sl<ReportRepository>()),
+    );
     //////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////
@@ -261,6 +303,9 @@ class AppBindingsControllers extends Bindings {
         reviewInfoDataSourceRepo: sl<ReviewInfoDataSourceRepo>(),
       ),
     );
+    sl.registerFactory(
+      () => FetchReviewsInfoDashBoardController(repo: sl<ReviewRepo>()),
+    );
     //////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////
@@ -273,6 +318,9 @@ class AppBindingsControllers extends Bindings {
         sourceRepo: sl<CategoryDashboardDataSourceRepo>(),
       ),
     );
+    sl.registerFactory<FetchCategoryDashboardController>(
+      () => FetchCategoryDashboardController(repo: sl<CategoryDashboardRepo>()),
+    );
     //////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////
@@ -283,6 +331,9 @@ class AppBindingsControllers extends Bindings {
     sl.registerFactory<FeedbackRepository>(
       () => FeedbackImplementer(sl<FeedbackDataSourceRepo>()),
     );
+     sl.registerFactory<FeedbackController>(
+      () => FeedbackController(repository: sl<FeedbackRepository>()),
+    );
     //////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////
@@ -292,6 +343,9 @@ class AppBindingsControllers extends Bindings {
     );
     sl.registerFactory<GetFeedbackRepo>(
       () => GetFeedbackImplementer(sourceRepo: sl<GetFeedbackDataSourceRepo>()),
+    );
+     sl.registerFactory<GetFeedbackController>(
+      () => GetFeedbackController(repo: sl<GetFeedbackRepo>()),
     );
     //////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////
@@ -315,6 +369,9 @@ class AppBindingsControllers extends Bindings {
     sl.registerFactory<ProfileRepository>(
       () => ProfileImplementer(sl<ProfileDataSourceRepository>()),
     );
+    sl.registerFactory<ProfileController>(
+      () => ProfileController(repository: sl<ProfileRepository>()),
+    );
     //////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////
@@ -324,6 +381,9 @@ class AppBindingsControllers extends Bindings {
     );
     sl.registerFactory<AttendanceRepo>(
       () => AttendanceImplementer(sl<AttendanceDataSourceRepository>()),
+    );
+    sl.registerFactory<ChangeStatusController>(
+      () => ChangeStatusController(sl<AttendanceRepo>()),
     );
     //////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////
@@ -335,17 +395,8 @@ class AppBindingsControllers extends Bindings {
     sl.registerFactory<TaxRulesRepository>(
       () => TaxRulesImplementer(sl<TaxRulesDataSourceRepo>()),
     );
-    //////////////////////////////////////////////////////////
-    //////////////////////////////////////////////////////////
-    //////////////////////////////////////////////////////////
-    //////////////////////////////////////////////////////////
-    sl.registerFactory<ProductMatrixDataSourceRepo>(
-      () => ProductMatrixDataSourceImplementer(dio: dio),
-    );
-    sl.registerFactory<ProductMatrixRepository>(
-      () => ProductMatrixImplementer(
-        dataSourceRepo: sl<ProductMatrixDataSourceRepo>(),
-      ),
+      sl.registerFactory<TaxRulesController>(
+      () => TaxRulesController(sl<TaxRulesRepository>()),
     );
     //////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////
@@ -359,6 +410,9 @@ class AppBindingsControllers extends Bindings {
         repository: sl<ProfitLossDataSourceRepository>(),
       ),
     );
+     sl.registerFactory<ProfitLossController>(
+      () => ProfitLossController(repository: sl<ProfitLossRepository>()),
+    );
     //////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////
@@ -369,6 +423,9 @@ class AppBindingsControllers extends Bindings {
     sl.registerFactory<StockAlertsRepository>(
       () => StockAlertsImplementer(sourceRepo: sl<StocksAlertDataSourceRepo>()),
     );
+    sl.registerFactory<StockAlertsController>(
+      () => StockAlertsController(repository: sl<StockAlertsRepository>()),
+    );
     //////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////
@@ -377,81 +434,47 @@ class AppBindingsControllers extends Bindings {
       () => StaffPermissionsDataSourceImplementer(dio: dio),
     );
     sl.registerFactory<StaffPermissionsRepository>(
-      () => StaffPermissionsImplementer(repo: sl<StaffPermissionsDataSourceRepo>()),
-    );
-    //////////////////////////////////////////////////////////
-    //////////////////////////////////////////////////////////
-    //////////////////////////////////////////////////////////
-    //////////////////////////////////////////////////////////
-
-    sl.registerFactory<SignInController>(
-      () => SignInController(sl<AuthRepo>()),
-    );
-    sl.registerFactory<SignUpController>(() => SignUpController());
-    sl.registerFactory<SignOutController>(
-      () => SignOutController(sl<AuthRepo>(), sl<EmployeeInfoRepo>()),
-    );
-    sl.registerFactory<FetchEmployeeInfoDashBoardController>(
-      () => FetchEmployeeInfoDashBoardController(
-        repository: sl<EmployeeInfoRepo>(),
+      () => StaffPermissionsImplementer(
+        repo: sl<StaffPermissionsDataSourceRepo>(),
       ),
-    );
-    sl.registerFactory<StaffListController>(
-      () => StaffListController(repository: sl<StaffListRepo>()),
-    );
-    sl.registerFactory<ProductListController>(
-      () => ProductListController(sl<ProductListRepo>()),
-    );
-    sl.registerFactory<PosController>(() => PosController(repo: sl<PosRepo>()));
-    sl.registerFactory<CartController>(
-      () => CartController(repo: sl<ListOfItemsPurchasedRepo>()),
-    );
-    sl.registerFactory<OrderPurchasedHistoryController>(
-      () => OrderPurchasedHistoryController(
-        repo: sl<OrderPurchasedHistoryRepo>(),
-      ),
-    );
-    sl.registerFactory<ReturnAndRefundController>(
-      () => ReturnAndRefundController(
-        repo: sl<OrderDetailsRepo>(),
-        refundRepo: sl<StoreReturnAndRefundInfoRepository>(),
-      ),
-    );
-    sl.registerFactory<ReportController>(
-      () => ReportController(repository: sl<ReportRepository>()),
-    );
-    sl.registerFactory(
-      () => FetchReviewsInfoDashBoardController(repo: sl<ReviewRepo>()),
-    );
-    sl.registerFactory<FetchCategoryDashboardController>(
-      () => FetchCategoryDashboardController(repo: sl<CategoryDashboardRepo>()),
-    );
-    sl.registerFactory<FeedbackController>(
-      () => FeedbackController(repository: sl<FeedbackRepository>()),
-    );
-    sl.registerFactory<GetFeedbackController>(
-      () => GetFeedbackController(repo: sl<GetFeedbackRepo>()),
-    );
-    sl.registerFactory<ProfileController>(
-      () => ProfileController(repository: sl<ProfileRepository>()),
-    );
-    sl.registerFactory<ChangeStatusController>(
-      () => ChangeStatusController(sl<AttendanceRepo>()),
-    );
-    sl.registerFactory<TaxRulesController>(
-      () => TaxRulesController(sl<TaxRulesRepository>()),
-    );
-    sl.registerFactory<ProductMatrixController>(
-      () => ProductMatrixController(sl<ProductMatrixRepository>()),
-    );
-    sl.registerFactory<ProfitLossController>(
-      () => ProfitLossController(repository: sl<ProfitLossRepository>()),
-    );
-    sl.registerFactory<StockAlertsController>(
-      () => StockAlertsController(repository: sl<StockAlertsRepository>()),
     );
     sl.registerFactory<StaffPermissionsController>(
-      () => StaffPermissionsController(repository: sl<StaffPermissionsRepository>()),
+      () => StaffPermissionsController(
+        repository: sl<StaffPermissionsRepository>(),
+      ),
+    );
+    //////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////
+    sl.registerFactory<PaymentIntegrationDataSourceRepo>(
+      () => PaymentIntegrationDataSourceImplmeneter(dio: dio),
+    );
+    sl.registerFactory<PaymentIntegrationRepository>(
+      () => PaymentIntegrationImplementer(
+        repo: sl<PaymentIntegrationDataSourceRepo>(),
+      ),
+    );
+    sl.registerFactory<PaymentIntegrationController>(
+      () => PaymentIntegrationController(
+        repository: sl<PaymentIntegrationRepository>(),
+      ),
+    );
+    //////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////
+    sl.registerFactory<CustomerDisplayDataSourceRepo>(
+      () => CustomerDisplayDataSourceImplementer(dio: dio),
+    );
+    sl.registerFactory<CustomerDisplayRepository>(
+      () =>
+          CustomerDisplayImplementer(repo: sl<CustomerDisplayDataSourceRepo>()),
+    );
+    sl.registerFactory<CustomerDisplayController>(
+      () => CustomerDisplayController(
+        repository: sl<CustomerDisplayRepository>(),
+      ),
     );
   }
 }

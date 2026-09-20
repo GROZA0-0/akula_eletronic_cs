@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:storecs/Core/config/call_controller.dart';
 import 'package:storecs/Core/styles/colors.dart';
+import 'package:storecs/Core/styles/sizes.dart';
 import 'package:storecs/Core/styles/text_styles.dart';
 
 class TaxRuleTemplateWidget extends StatefulWidget {
@@ -16,8 +17,8 @@ class TaxRuleTemplateWidget extends StatefulWidget {
 class _TaxRuleTemplatePageState extends State<TaxRuleTemplateWidget> {
   @override
   void dispose() {
-    taxRulesController.taxNameController.dispose();
-    taxRulesController.taxRateController.dispose();
+    taxRulesController.taxNameController.clear();
+    taxRulesController.taxRateController.clear();
     super.dispose();
   }
 
@@ -30,22 +31,24 @@ class _TaxRuleTemplatePageState extends State<TaxRuleTemplateWidget> {
         title: FadeInLeft(child: Text('Tax Rules Settings', style: textAppBar)),
         iconTheme: const IconThemeData(color: white),
         actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 16.0),
-            child: ElevatedButton.icon(
-              onPressed: () => taxRulesController.saveTaxRule(),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: accentColor,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 20,
-                  vertical: 12,
+          FadeInRight(
+            child: Padding(
+              padding: EdgeInsets.only(right: size.width * 0.016),
+              child: ElevatedButton.icon(
+                onPressed: () => taxRulesController.saveTaxRule(),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: accentColor,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 12,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
                 ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
+                icon: const Icon(Iconsax.save_2, size: 18, color: white),
+                label: Text('Save Rule', style: textBodiesStyle),
               ),
-              icon: const Icon(Iconsax.save_2, size: 18, color: white),
-              label: Text('Save Rule', style: textBodiesStyle),
             ),
           ),
         ],

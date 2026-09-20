@@ -13,7 +13,9 @@ import 'package:storecs/features/product_list/presentation/state_management/prod
 import 'package:storecs/features/profit_loss_page/presentation/state_management/profit_loss_controller.dart';
 import 'package:storecs/features/report_page/presentation/state_management/report_controller.dart';
 import 'package:storecs/features/returns&refunds/presentation/state_management/return_and_refund_controller.dart';
-import 'package:storecs/features/settings_page/presentation/state_management/product_matrix_controller.dart';
+import 'package:storecs/features/settings_page/presentation/state_management/customer_display_controller.dart';
+import 'package:storecs/features/settings_page/presentation/state_management/payment_integration_controller.dart';
+
 import 'package:storecs/features/settings_page/presentation/state_management/staff_permissions_controller.dart';
 import 'package:storecs/features/settings_page/presentation/state_management/stock_alerts_controller.dart';
 import 'package:storecs/features/settings_page/presentation/state_management/tax_rules_controller.dart';
@@ -36,7 +38,9 @@ final fetchCategoryDashboardController = sl<FetchCategoryDashboardController>();
 final feedbackController = sl<FeedbackController>();
 final getFeedbackController = sl<GetFeedbackController>();
 final taxRulesController = sl<TaxRulesController>();
-final productMatrixController = sl<ProductMatrixController>();
+
 final profitLossController = sl<ProfitLossController>();
 final stockAlertsController = sl<StockAlertsController>();
 final staffPermissionsController = sl<StaffPermissionsController>();
+final paymentIntegrationController = sl<PaymentIntegrationController>();
+final customerDisplayController = sl<CustomerDisplayController>();

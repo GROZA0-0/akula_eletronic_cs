@@ -27,18 +27,6 @@ class _StaffPermissionWidgetState extends State<StaffPermissionWidget> {
     super.dispose();
   }
 
-  void saveSettings() {
-    final settings = {
-      'pinRequired': staffPermissionsController.pinRequired,
-      'pin': staffPermissionsController.newPIN.text.trim().isNotEmpty
-          ? staffPermissionsController.newPIN.text.trim()
-          : null,
-      "hasAccess": staffPermissionsController.hasAccess,
-    };
-    print('Staff permission settings: $settings');
-    Navigator.pop(context);
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -183,28 +171,7 @@ class _StaffPermissionWidgetState extends State<StaffPermissionWidget> {
                                             ),
                                           ),
                                         ),
-                                      ) /* FilterChip(
-                                        backgroundColor: invisible,
-                                        label: Text(
-                                          level,
-                                          style: GoogleFonts.aleo(
-                                            color: isSelected ? white : black,
-                                            fontWeight: FontWeight.w400,
-                                          ),
-                                        ),
-                                        selected: isSelected,
-                                        selectedColor: isSelected
-                                            ? blueGreen
-                                            : colorGrey /* .withOpacity(
-                                          0.25,
-                                        ), */,
-                                        onSelected: (_) =>
-                                            staffPermissionsController
-                                                .toggleLevelForPage(
-                                                  pageKey,
-                                                  level,
-                                                ),
-                                      ), */,
+                                      ),
                                     );
                                   })
                                   .toList(),
@@ -214,25 +181,6 @@ class _StaffPermissionWidgetState extends State<StaffPermissionWidget> {
                       );
                     }),
 
-                    /* ...staffPermissionsController.restrictedActions.keys.map((
-                      action,
-                    ) {
-                      return SwitchListTile(
-                        contentPadding: EdgeInsets.zero,
-                        title: Text(action, style: textBodiesStyle),
-                        value: staffPermissionsController
-                            .restrictedActions[action]!,
-                        activeColor: blueGreen,
-                        onChanged: staffPermissionsController.pinRequired
-                            ? (value) => setState(
-                                () =>
-                                    staffPermissionsController
-                                            .restrictedActions[action] =
-                                        value,
-                              )
-                            : null,
-                      );
-                    }), */
                     sizeBoxHeight(size.height * 0.03),
 
                     SaveButton(

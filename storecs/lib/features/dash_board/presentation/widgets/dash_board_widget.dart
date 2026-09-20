@@ -805,9 +805,7 @@ class AppDrawer extends StatelessWidget {
       pageAccess: staffPermissionsController.hasAccess,
     );
     final hasAccessEmpPages = permissions.hasAccess('Employee Pages Access');
-    final hasAccessPAI = permissions.hasAccess(
-      'Products And Inventory Accesss',
-    );
+    final hasAccessPAI = permissions.hasAccess('Products And Inventory Access');
     final hasAccessReports = permissions.hasAccess('Reports Access');
     final hasAccessSettings = permissions.hasAccess('Settings Page Access');
     final hasAccessOrderActions = permissions.hasAccess('Order Actions Access');

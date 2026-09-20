@@ -31,7 +31,7 @@ class StaffPermissionsDataSourceImplementer
       ),
     );
     // print('Raw response: ${res.data}');
-    if (res.statusCode != 201 || res.statusCode != 200) {
+    if (res.statusCode == 201 || res.statusCode == 200) {
       if (res.data == null) {
         StaffPermissionsModel.emptyStaffPermissionsModel();
       } else {

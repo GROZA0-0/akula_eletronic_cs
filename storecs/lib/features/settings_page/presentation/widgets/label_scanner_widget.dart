@@ -159,7 +159,7 @@ class _LabelScannerWidgetState extends State<LabelScannerWidget> {
       appBar: AppBar(
         backgroundColor: invisible,
         iconTheme: IconThemeData(color: white),
-        title: FadeInRight(
+        title: FadeInLeft(
           child: Text('Barcode & Label Scanners', style: textAppBar),
         ),
       ),

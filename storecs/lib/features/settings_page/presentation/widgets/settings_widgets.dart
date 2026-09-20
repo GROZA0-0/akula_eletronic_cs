@@ -6,8 +6,10 @@ import 'package:storecs/Core/styles/animations.dart';
 import 'package:storecs/Core/styles/colors.dart';
 import 'package:storecs/Core/styles/sizes.dart';
 import 'package:storecs/Core/styles/text_styles.dart';
+import 'package:storecs/features/settings_page/presentation/page/customer_display_page.dart';
 import 'package:storecs/features/settings_page/presentation/page/label_scanner_page.dart';
-import 'package:storecs/features/settings_page/presentation/page/product_matrix_page.dart';
+import 'package:storecs/features/settings_page/presentation/page/payment_intergration_page.dart';
+
 import 'package:storecs/features/settings_page/presentation/page/staff_permissions_page.dart';
 
 import 'package:storecs/features/settings_page/presentation/page/stocks_alerts_page.dart';
@@ -68,14 +70,6 @@ class InventoryAndSerialNumberSettingsSection extends StatelessWidget {
           onTap: () =>
               Navigator.push(context, naviToAnotherPage(StocksAlertsPage())),
         ),
-        SettingsTileItem(
-          title: 'Product Matrix / Attributes',
-          subtitle:
-              'Configures variants like storage capacity, RAM, color, or carrier locking.',
-          icon: Iconsax.category,
-          onTap: () =>
-              Navigator.push(context, naviToAnotherPage(ProductMatrixPage())),
-        ),
       ],
     );
   }
@@ -103,7 +97,8 @@ class HardwareAndPeripheralsConfigurationSection extends StatelessWidget {
           subtitle:
               'Toggles second-screen totals, promotional images, or digital signature prompts.',
           icon: Iconsax.monitor,
-          onTap: () {},
+          onTap: () =>
+              Navigator.push(context, naviToAnotherPage(CustomerDisplayPage())),
         ),
       ],
     );
@@ -124,7 +119,10 @@ class PaymentsPricingAndSecuritySection extends StatelessWidget {
           subtitle:
               'Connects credit/debit card terminals, gift cards, and multi-tender or split-payment options.',
           icon: Iconsax.card_pos,
-          onTap: () {},
+          onTap: () => Navigator.push(
+            context,
+            naviToAnotherPage(PaymentIntergrationPage()),
+          ),
         ),
         SettingsTileItem(
           title: 'Tax Rules',
