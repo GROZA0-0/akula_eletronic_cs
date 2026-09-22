@@ -12,7 +12,8 @@ class ReportBloc extends Bloc<ReportBlocEvent, ReportBlocState> {
   StreamSubscription? subscription;
   ReportBloc({required this.controller}) : super(ReportBlocStateLoading()) {
     on<ReportBlocEventLoading>((event, emit) async {
-      emit(ReportBlocStateLoading());
+      // emit(ReportBlocStateLoading());
+      await controller.loadCachedData();
       /* check if there's emp level */
       if (event.level.trim().isEmpty) {
         emit(ReportBlocStateError(err: "Employee level is not available."));

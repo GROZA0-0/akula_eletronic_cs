@@ -6,17 +6,19 @@ class FetchReviewsInfoDashBoardController {
   FetchReviewsInfoDashBoardController({required this.repo});
 
   ReviewEntities entities = ReviewEntities(items: [], totalPrice: 0.0);
-  Stream<List<ReviewEntities>> getReviews() async* {
+  Stream<List<ReviewEntities>> getReviews() {
     try {
-      final reviews = await repo.reviewRepository();
-      yield reviews;
-      await for (final _ in repo.reviewStream) {
-        final updateReview = await repo.reviewRepository();
-        yield updateReview;
-      }
+      repo.reviewRepository().catchError((e) {
+        print("Background fetch failed: $e");
+      });
+      return repo.reviewStream;
     } catch (e) {
       print("error in reviews dashboard controller $e");
       throw e.toString();
     }
+  }
+
+  Future<void> loadCachedData() async {
+    await repo.reviewInfoLoadCachedData();
   }
 }

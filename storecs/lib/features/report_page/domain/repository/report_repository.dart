@@ -12,4 +12,6 @@ abstract class ReportRepository {
     String reportSubTitle,
   );
   Future<GetReportOfSupervisorEntities> getReportRepository(String level);
+  Future<void> savedToCachedData(GetReportOfSupervisorEntities entities);
+  Future<void> reportInfoLoadCachedData();
 }

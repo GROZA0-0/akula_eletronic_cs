@@ -14,12 +14,10 @@ class FetchCategoryDashboardController {
     accentColor,
   ];
 
-  Stream<List<CategoryDashboardEntities>> fetchChartDashboard() {
+  Stream<List<CategoryDashboardEntities>> fetchChartDashboard() async* {
     try {
-      repo.getChartRepo().catchError((e) {
-        print("Background fetch failed: $e");
-      });
-      return repo.getChart;
+      await repo.getChartRepo();
+      yield* repo.getChart;
     } catch (e) {
       rethrow;
     }

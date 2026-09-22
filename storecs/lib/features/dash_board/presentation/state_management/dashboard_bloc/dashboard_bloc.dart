@@ -1,4 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:storecs/features/dash_board/domain/entities/category_dashboard_entities.dart';
+import 'package:storecs/features/dash_board/domain/entities/review_entities.dart';
 import 'package:storecs/features/dash_board/presentation/state_management/change_status_controller.dart';
 import 'package:storecs/features/dash_board/presentation/state_management/dashboard_bloc/dashboard_bloc_event.dart';
 import 'package:storecs/features/dash_board/presentation/state_management/dashboard_bloc/dashboard_bloc_state.dart';
@@ -47,9 +49,9 @@ class ReviewDashboardBloc
   ReviewDashboardBloc(this.reviewBoardController)
     : super(ReviewDashboardBlocStateLoading()) {
     on<DashboardBlocEventLoading>((event, emit) async {
-      emit(ReviewDashboardBlocStateLoading());
+      await reviewBoardController.loadCachedData();
       try {
-        await emit.forEach(
+        await emit.forEach<List<ReviewEntities>>(
           reviewBoardController.getReviews(),
           onData: (enitites) =>
               ReviewDashboardBlocStateLoaded(entities: enitites),
@@ -69,9 +71,10 @@ class CategoryDashboardBloc
   CategoryDashboardBloc(this.categoryController)
     : super(CategoryChartDashboardBlocStateLoading()) {
     on<CategoryChartDashboardBlocEventLoading>((event, emit) async {
-      emit(CategoryChartDashboardBlocStateLoading());
+      // emit(CategoryChartDashboardBlocStateLoading());
+      await categoryController.loadCachedData();
       try {
-        await emit.forEach(
+        await emit.forEach<List<CategoryDashboardEntities>>(
           categoryController.fetchChartDashboard(),
           onData: (entities) =>
               CategoryChartDashboardBlocStateLoaded(entities: entities),

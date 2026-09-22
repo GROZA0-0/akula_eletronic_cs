@@ -12,6 +12,34 @@ class GetReportOfSupervisorEntities extends Equatable {
     required this.subTitle,
   });
 
+  static GetReportOfSupervisorEntities emptyReport() {
+    return GetReportOfSupervisorEntities(
+      empId: '',
+      title: '',
+      subTitle: '',
+      level: '',
+    );
+  }
+
+  factory GetReportOfSupervisorEntities.fromJson(Map<String, dynamic> json) {
+    return GetReportOfSupervisorEntities(
+      empId: json['empId'] ?? '',
+
+      level: json['empLvl'] ?? '',
+      title: json['reportTitle'] ?? '',
+      subTitle: json['reportSubTitle'] ?? '',
+    );
+  }
+
+  Map<String, dynamic> toCachedJson() {
+    return {
+      "empId": empId,
+      "empLvl": level,
+      "reportTitle": title,
+      "reportSubTitle": subTitle,
+    };
+  }
+
   @override
   List<Object?> get props => [empId, level, title, subTitle];
 }

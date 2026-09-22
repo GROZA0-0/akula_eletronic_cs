@@ -78,26 +78,19 @@ class ReportController {
     }
   }
 
-  Stream<GetReportOfSupervisorEntities> getSuperReport(String level) async* {
-    try {
-      /* initiate the report on sub */
-      final initReport = await repository.getReportRepository(level);
-      yield initReport;
-      /* listen to the future updates from reportStream*/
-      await for (final _ in repository.reportStream) {
-        final updateReport = await repository.getReportRepository(level);
-        yield updateReport;
-      }
-    } on PlatformException catch (e) {
-      print('The Error Is: ${e.message.toString()}');
-      throw e.toString();
-    } catch (e) {
-      Loader.stopLoading();
-      print("Something went wrong. $e");
-      throw e.toString();
-    } finally {
-      Loader.stopLoading();
-    }
+  Stream<GetReportOfSupervisorEntities> getSuperReport(String level) {
+    /* listen to the future updates from reportStream*/
+
+    repository.getReportRepository(level).catchError((e) {
+      print("Background fetch failed: $e");
+      return GetReportOfSupervisorEntities.emptyReport();
+    });
+    /* initiate the report on sub */
+    return repository.reportStream;
+  }
+
+  Future<void> loadCachedData() async {
+    await repository.reportInfoLoadCachedData();
   }
 
   void clearUi() {
