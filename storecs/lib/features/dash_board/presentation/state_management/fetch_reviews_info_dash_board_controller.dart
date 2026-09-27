@@ -10,6 +10,7 @@ class FetchReviewsInfoDashBoardController {
     try {
       repo.reviewRepository().catchError((e) {
         print("Background fetch failed: $e");
+        return [ReviewEntities.emptyReviewEntities()];
       });
       return repo.reviewStream;
     } catch (e) {

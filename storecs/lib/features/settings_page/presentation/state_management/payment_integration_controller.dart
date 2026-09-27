@@ -21,11 +21,13 @@ class PaymentIntegrationController extends ChangeNotifier {
   Map<String, dynamic> checkoutOptionsSubTitle = {};
 
   Future<void> storePayment() async {
+    final minAmount =
+        double.tryParse(minCardAmountController.text.trim()) ?? 0.0;
     Loader.startLoading();
     try {
       await repository.storePaymentIntegrationMoudleRepo(
         paymentMethodOptions,
-        double.parse(minCardAmountController.text.trim()),
+        minAmount,
         giftCardPrefixController.text.trim(),
         allowOptions,
       );
@@ -51,5 +53,10 @@ class PaymentIntegrationController extends ChangeNotifier {
     } on PlatformException catch (e) {
       alerts.ifErrors(e.message.toString());
     }
+  }
+
+  void toggleOption(String key, bool value) {
+    allowOptions = {...allowOptions, key: value};
+    notifyListeners();
   }
 }

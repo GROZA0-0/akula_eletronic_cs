@@ -67,17 +67,17 @@ class _StockAlertsWidgetState extends State<StockAlertsWidget> {
                     ),
                     sizeBoxHeight(size.height * 0.02),
 
-                    SwitchListTile(
-                      contentPadding: EdgeInsets.zero,
-                      title: Text(
-                        'Enable Stock Alerts',
-                        style: textBodiesStyle,
-                      ),
-                      value: alertsEnabled,
-                      activeColor: blueGreen,
-                      onChanged: (value) =>
-                          setState(() => alertsEnabled = value),
-                    ),
+                    ...stockAlertsController.stockAlert.keys.map((method) {
+                      var forAlert =
+                          paymentIntegrationController.allowOptions[method];
+                      return SwitchListTile(
+                        contentPadding: EdgeInsets.zero,
+                        title: Text(method, style: textBodiesStyle),
+                        value: forAlert!,
+                        activeColor: blueGreen,
+                        onChanged: (value) => setState(() => forAlert = value),
+                      );
+                    }),
 
                     Divider(color: white),
                     sizeBoxHeight(size.height * 0.015),

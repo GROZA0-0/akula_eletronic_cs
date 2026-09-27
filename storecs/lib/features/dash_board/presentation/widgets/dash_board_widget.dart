@@ -55,6 +55,7 @@ class _DashboardWidgetsState extends State<DashboardWidgets> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       stockAlertsController.getLowStockAlerts();
+      stockAlertsController.getStockAlertStatusMethod();
       staffPermissionsController.getActions();
     });
   }
@@ -63,6 +64,10 @@ class _DashboardWidgetsState extends State<DashboardWidgets> {
   Widget build(BuildContext context) {
     final id = FirebaseAuth.instance.currentUser!.uid;
     final email = FirebaseAuth.instance.currentUser!.email;
+    final alertStatus = StockAlertShow(
+      isAlertOn: stockAlertsController.stockAlert,
+    );
+    final alertShow = alertStatus.allowed('Stock Alert Status');
     return MultiBlocProvider(
       providers: [
         BlocProvider(
@@ -94,7 +99,7 @@ class _DashboardWidgetsState extends State<DashboardWidgets> {
           child: FadeInUp(
             child: Column(
               children: [
-                const LowStockAlertsBanner(),
+                alertShow ? const LowStockAlertsBanner() : Container(),
                 Expanded(
                   child: SingleChildScrollView(
                     child: Container(
@@ -404,7 +409,7 @@ class _InteractivePieChartSectionState
       height: size.height * 0.50,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(6),
-        border: Border.all(color: white),
+        border: Border.all(color: white, width: 3),
       ),
       child: SingleChildScrollView(
         child: MultiBlocProvider(
@@ -1277,7 +1282,10 @@ class _QuickActionsButton extends State<QuickActionsButton> {
 
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: isHovered ? widget.color : white),
+              border: Border.all(
+                color: isHovered ? widget.color : white,
+                width: isHovered ? 3 : 1,
+              ),
             ),
             child: Container(
               margin: EdgeInsets.symmetric(horizontal: size.width * 0.01),

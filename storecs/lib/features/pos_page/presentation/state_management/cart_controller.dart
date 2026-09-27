@@ -19,6 +19,7 @@ class CartController extends ChangeNotifier {
       cartItems.fold(0, (sum, item) => sum + item.totalPrice);
   double get taxAmount => subTotal * taxRate;
   double get total => subTotal + taxAmount;
+  double get payPerYear => total / 12;
   int get totalItems =>
       cartItems.fold(0, (sum, item) => sum + item.quantity.value);
   ListOfItemsPurchasedEntities? purchasedReceipt;

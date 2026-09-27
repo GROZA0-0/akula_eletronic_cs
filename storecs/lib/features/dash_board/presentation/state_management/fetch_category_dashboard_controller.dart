@@ -18,6 +18,7 @@ class FetchCategoryDashboardController {
     try {
       repo.getChartRepo().catchError((e) {
         print("Background fetch failed: $e");
+        return [CategoryDashboardEntities.emptyCategoryDashboardEntities()];
       });
       return repo.getChart;
     } catch (e) {

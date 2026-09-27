@@ -1,5 +1,6 @@
 import 'package:storecs/features/settings_page/data/data_source/data_source_repo/stocks_alert_data_source_repo.dart';
 import 'package:storecs/features/settings_page/domain/entities/stocks_Alerts_entities/low_stock_item_entities.dart';
+import 'package:storecs/features/settings_page/domain/entities/stocks_Alerts_entities/stocks_Alerts_entities.dart';
 
 import 'package:storecs/features/settings_page/domain/repository/stock_alerts_repository.dart';
 
@@ -8,9 +9,15 @@ class StockAlertsImplementer implements StockAlertsRepository {
   StockAlertsImplementer({required this.sourceRepo});
 
   @override
-  Future<void> saveStockThresholdsRepository(Map<String, int> threshold) async {
+  Future<void> saveStockThresholdsRepository(
+    Map<String, int> threshold,
+    Map<String, bool> alertShow,
+  ) async {
     try {
-      await sourceRepo.saveStockThresholdsDataSourceRepository(threshold);
+      await sourceRepo.saveStockThresholdsDataSourceRepository(
+        threshold,
+        alertShow,
+      );
     } catch (e) {
       print("any errors in store StockAlertsImplementer $e");
       throw e.toString();
@@ -35,6 +42,19 @@ class StockAlertsImplementer implements StockAlertsRepository {
       return model.map((entity) => entity.toLowStockItemEntities()).toList();
     } catch (e) {
       print("any errors in get LowStockAlertsImplementer $e");
+      throw e.toString();
+    }
+  }
+
+  @override
+  Future<StocksAlertsEntities> getStockAlertsStatus() async {
+    try {
+      final model = await sourceRepo.getStockAlertsStatus();
+      return model.toStocksAlertsEntities();
+    } catch (e) {
+      print(
+        "any errors in get stock alert status LowStockAlertsImplementer $e",
+      );
       throw e.toString();
     }
   }

@@ -9,6 +9,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:storecs/Core/config/call_controller.dart';
+import 'package:storecs/Core/config/permissions.dart';
 import 'package:storecs/Core/styles/Strings.dart';
 import 'package:storecs/Core/styles/alerts.dart';
 import 'package:storecs/Core/styles/animations.dart';
@@ -43,10 +44,17 @@ class _PosWidgetsState extends State<PosWidgets> {
     "PS5",
     "Pc's Components",
   ];
+
   @override
   void dispose() {
     cartController.cartItems = [];
     super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    paymentIntegrationController.getPayment();
   }
 
   @override
@@ -190,74 +198,176 @@ class _CartSectionState extends State<CartSection> {
   }
 
   Widget orderPriceDetails(BuildContext context, String fullName) {
-    return Container(
-      width: size.width / 3.1,
-      height: size.height / 3,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: white, width: 3),
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          Container(
-            width: size.width,
-            margin: EdgeInsets.symmetric(horizontal: size.width * 0.02),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                PriceRow(
-                  label: 'Order Price :-',
-                  value: '${cartController.subTotal.toStringAsFixed(2)} JOD',
-                ),
+    return ListenableBuilder(
+      listenable: paymentIntegrationController,
+      builder: (context, _) {
+        final allows = Allows(carts: paymentIntegrationController.allowOptions);
+        final showPartPay = allows.allowed('Allow Split Payment');
+        final showMultitender = allows.allowed('Allow Multi Tender');
 
-                sizeBoxHeight(size.height * 0.02),
-                PriceRow(
-                  label: 'Tax (5%) :-',
-                  value: '${cartController.taxAmount.toStringAsFixed(2)} JOD',
-                ),
-
-                sizeBoxHeight(size.height * 0.02),
-                PriceRow(
-                  label: 'Total Price :-',
-                  value: '${cartController.total.toStringAsFixed(2)} JOD',
-                ),
-              ],
-            ),
+        return Container(
+          width: size.width / 3.1,
+          height: size.height / 3,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(color: white, width: 3),
           ),
-
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              CardButtons(
-                callback: () async {
-                  await cartController.purchase(fullName);
+              Container(
+                width: size.width,
+                margin: EdgeInsets.symmetric(horizontal: size.width * 0.02),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    showMultitender
+                        ? Row(
+                            children: [
+                              Expanded(
+                                flex: 3,
+                                child: Text(
+                                  'Gift Card Code :-',
+                                  style: textBodiesStyle,
+                                ),
+                              ),
+                              Row(
+                                children: [
+                                  SizedBox(
+                                    width: size.width * 0.07,
+                                    child: Expanded(
+                                      flex: 2,
+                                      child: TextFormField(
+                                        controller: paymentIntegrationController
+                                            .giftCardPrefixController,
+                                        style: textBodiesStyle,
+                                        decoration: InputDecoration(
+                                          border: OutlineInputBorder(
+                                            borderRadius: BorderRadius.circular(
+                                              12,
+                                            ),
+                                            borderSide: const BorderSide(
+                                              color: white,
+                                              width: 2,
+                                            ),
+                                          ),
+                                          enabledBorder: OutlineInputBorder(
+                                            borderRadius: BorderRadius.circular(
+                                              12,
+                                            ),
+                                            borderSide: const BorderSide(
+                                              color: white,
+                                              width: 2,
+                                            ),
+                                          ),
+                                          focusedBorder: OutlineInputBorder(
+                                            borderRadius: BorderRadius.circular(
+                                              12,
+                                            ),
+                                            borderSide: const BorderSide(
+                                              color: blueGreen,
+                                              width: 2,
+                                            ),
+                                          ),
+                                          errorBorder: OutlineInputBorder(
+                                            borderRadius: BorderRadius.circular(
+                                              12,
+                                            ),
+                                            borderSide: const BorderSide(
+                                              color: redColor,
+                                            ),
+                                          ),
+                                          focusedErrorBorder:
+                                              OutlineInputBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(12),
+                                                borderSide: const BorderSide(
+                                                  color: redColor,
+                                                  width: 2,
+                                                ),
+                                              ),
+                                          filled: true,
+                                          fillColor: Colors.transparent,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  sizeBoxWidth(size.height * 0.01),
+                                  CardButtons(
+                                    callback: () {},
+                                    height: size.height / 14,
+                                    width: size.width * 0.05,
+                                    text: 'Use',
+                                  ),
+                                ],
+                              ),
+                            ],
+                          )
+                        : SizedBox.shrink(),
+                    PriceRow(
+                      label: 'Order Price :-',
+                      value:
+                          '${cartController.subTotal.toStringAsFixed(2)} JOD',
+                    ),
 
-                  if (context.mounted) {
-                    /* go to the last category that selected */
-                    final currentCategory = context
-                        .read<PosBloc>()
-                        .currentCategory;
-                    /* refresh the page of last category that selected  */
-                    context.read<PosBloc>().add(
-                      PosBlocEventLoaded(category: currentCategory),
-                    );
-                  }
-                },
-                height: size.height / 14,
-                width: size.width / 5.5,
-                text: "Confirm Processed",
+                    sizeBoxHeight(size.height * 0.02),
+                    PriceRow(
+                      label: 'Tax (5%) :-',
+                      value:
+                          '${cartController.taxAmount.toStringAsFixed(2)} JOD',
+                    ),
+
+                    sizeBoxHeight(size.height * 0.02),
+                    PriceRow(
+                      label: 'Total Price :-',
+                      value: '${cartController.total.toStringAsFixed(2)} JOD',
+                    ),
+                    sizeBoxHeight(size.height * 0.02),
+                    showPartPay
+                        ? PriceRow(
+                            label: 'Price Per Year :-',
+                            value:
+                                '${cartController.payPerYear.toStringAsFixed(2)} JOD',
+                          )
+                        : SizedBox.shrink(),
+                  ],
+                ),
               ),
-              CardButtons(
-                callback: () => _onShowReceiptPressed(context),
-                height: size.height / 14,
-                width: size.width / 9,
-                text: "Show Receipt",
+
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  CardButtons(
+                    callback: () async {
+                      await cartController.purchase(fullName);
+
+                      if (context.mounted) {
+                        /* go to the last category that selected */
+                        final currentCategory = context
+                            .read<PosBloc>()
+                            .currentCategory;
+                        /* refresh the page of last category that selected  */
+                        context.read<PosBloc>().add(
+                          PosBlocEventLoaded(category: currentCategory),
+                        );
+                      }
+                    },
+                    height: size.height / 14,
+                    width: size.width / 5.5,
+                    text: "Confirm Processed",
+                  ),
+                  CardButtons(
+                    callback: () => _onShowReceiptPressed(context),
+                    height: size.height / 14,
+                    width: size.width / 9,
+                    text: "Show Receipt",
+                  ),
+                ],
               ),
             ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 

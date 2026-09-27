@@ -19,6 +19,7 @@ class StockAlertsController extends ChangeNotifier {
     "Pc's Components": TextEditingController(text: '5'),
   };
   List<LowStockItemEntities> lowStockItems = [];
+  Map<String, bool> stockAlert = {};
   bool isLoading = false;
 
   Future<void> storeThreSholdAlerts() async {
@@ -28,7 +29,7 @@ class StockAlertsController extends ChangeNotifier {
           MapEntry(category, int.parse(controller.text.trim())),
     );
     try {
-      await repository.saveStockThresholdsRepository(threshold);
+      await repository.saveStockThresholdsRepository(threshold, stockAlert);
       Loader.stopLoading();
       alerts.ifSuccess('Stock Alerts Threshold Stored !');
       notifyListeners();
@@ -57,8 +58,17 @@ class StockAlertsController extends ChangeNotifier {
       });
       notifyListeners();
     } catch (e) {
-      Loader.stopLoading();
       print("error in get threshold Stock Alerts controller $e");
+      throw e.toString();
+    }
+  }
+
+  Future<void> getStockAlertStatusMethod() async {
+    try {
+      final data = await repository.getStockAlertsStatus();
+      stockAlert = data.stockAlert;
+    } catch (e) {
+      print("error in get threshold Stock Alerts status controller $e");
       throw e.toString();
     }
   }
@@ -69,7 +79,6 @@ class StockAlertsController extends ChangeNotifier {
       notifyListeners();
       return lowStockItems;
     } catch (e) {
-      Loader.stopLoading();
       print("error in get threshold low Stock Alerts controller $e");
       throw e.toString();
     }

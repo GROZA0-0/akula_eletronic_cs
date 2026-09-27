@@ -15,6 +15,10 @@ class CategoryDashboardEntities extends Equatable {
     );
   }
 
+  static CategoryDashboardEntities emptyCategoryDashboardEntities() {
+    return CategoryDashboardEntities(avgValue: 0.0, category: '');
+  }
+
   Map<String, dynamic> toCachedJson() {
     return {"category": category, "avgValue": avgValue};
   }

@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:storecs/Core/config/env.dart';
 import 'package:storecs/features/settings_page/data/data_source/data_source_repo/stocks_alert_data_source_repo.dart';
 import 'package:storecs/features/settings_page/data/model/stock_alerts_model/low_stock_item_model.dart';
+import 'package:storecs/features/settings_page/data/model/stock_alerts_model/stock_alerts_model.dart';
 
 class StocksAlertDataSourceImplementer implements StocksAlertDataSourceRepo {
   final Dio dio;
@@ -10,9 +11,10 @@ class StocksAlertDataSourceImplementer implements StocksAlertDataSourceRepo {
   @override
   Future<void> saveStockThresholdsDataSourceRepository(
     Map<String, int> threshold,
+    Map<String, bool> alertShow,
   ) async {
     final storeThre = '${Env.baseURL}saveStockThresholdsRoute';
-    final data = {'threshold': threshold};
+    final data = {'threshold': threshold, 'alertShow': alertShow};
     final res = await dio.post(
       storeThre,
       data: data,
@@ -72,6 +74,25 @@ class StocksAlertDataSourceImplementer implements StocksAlertDataSourceRepo {
       return {};
     } else {
       throw Exception('Failed to get thresholds: ${res.statusCode}');
+    }
+  }
+
+  @override
+  Future<StockAlertsModel> getStockAlertsStatus() async {
+    final getThre = '${Env.baseURL}getStockThresholdsRoute';
+    final res = await dio.get(
+      getThre,
+      options: Options(validateStatus: (status) => status! < 600),
+    );
+    if (res.statusCode == 200 || res.statusCode == 201) {
+      if (res.data == null) {
+        return StockAlertsModel.emptyStockAlertsModel();
+      } else {
+        final data = res.data['data'];
+        return StockAlertsModel.fromJson(data);
+      }
+    } else {
+      throw Exception('Failed to get alert status: ${res.statusCode}');
     }
   }
 }

@@ -11,6 +11,9 @@ class ReviewEntities extends Equatable {
       totalPrice: (map['totalPrice'] as num).toDouble(),
     );
   }
+  static ReviewEntities emptyReviewEntities() {
+    return ReviewEntities(items: [], totalPrice: 0.0);
+  }
 
   Map<String, dynamic> toCacheJson() {
     return {"items": items, "totalPrice": totalPrice};

@@ -10,3 +10,21 @@ class Permissions {
     return allLvls.contains(state.level);
   }
 }
+
+class Allows {
+  final Map<String, bool> carts;
+  Allows({required this.carts});
+  bool allowed(String allowKey) {
+    final cart = carts[allowKey] ?? false;
+    return cart;
+  }
+}
+
+class StockAlertShow {
+  final Map<String, bool> isAlertOn;
+  StockAlertShow({required this.isAlertOn});
+  bool allowed(String allowKey) {
+    final alert = isAlertOn[allowKey] ?? false;
+    return alert;
+  }
+}

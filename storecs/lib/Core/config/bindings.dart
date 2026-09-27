@@ -175,7 +175,7 @@ class AppBindingsControllers extends Bindings {
     sl.registerFactory<StaffListRepo>(
       () => StaffListImplementer(repo: sl<StaffListDataSourceRepo>()),
     );
-     sl.registerFactory<StaffListController>(
+    sl.registerFactory<StaffListController>(
       () => StaffListController(repository: sl<StaffListRepo>()),
     );
 
@@ -331,7 +331,7 @@ class AppBindingsControllers extends Bindings {
     sl.registerFactory<FeedbackRepository>(
       () => FeedbackImplementer(sl<FeedbackDataSourceRepo>()),
     );
-     sl.registerFactory<FeedbackController>(
+    sl.registerFactory<FeedbackController>(
       () => FeedbackController(repository: sl<FeedbackRepository>()),
     );
     //////////////////////////////////////////////////////////
@@ -344,7 +344,7 @@ class AppBindingsControllers extends Bindings {
     sl.registerFactory<GetFeedbackRepo>(
       () => GetFeedbackImplementer(sourceRepo: sl<GetFeedbackDataSourceRepo>()),
     );
-     sl.registerFactory<GetFeedbackController>(
+    sl.registerFactory<GetFeedbackController>(
       () => GetFeedbackController(repo: sl<GetFeedbackRepo>()),
     );
     //////////////////////////////////////////////////////////
@@ -395,7 +395,7 @@ class AppBindingsControllers extends Bindings {
     sl.registerFactory<TaxRulesRepository>(
       () => TaxRulesImplementer(sl<TaxRulesDataSourceRepo>()),
     );
-      sl.registerFactory<TaxRulesController>(
+    sl.registerFactory<TaxRulesController>(
       () => TaxRulesController(sl<TaxRulesRepository>()),
     );
     //////////////////////////////////////////////////////////
@@ -410,7 +410,7 @@ class AppBindingsControllers extends Bindings {
         repository: sl<ProfitLossDataSourceRepository>(),
       ),
     );
-     sl.registerFactory<ProfitLossController>(
+    sl.registerFactory<ProfitLossController>(
       () => ProfitLossController(repository: sl<ProfitLossRepository>()),
     );
     //////////////////////////////////////////////////////////
@@ -455,7 +455,8 @@ class AppBindingsControllers extends Bindings {
         repo: sl<PaymentIntegrationDataSourceRepo>(),
       ),
     );
-    sl.registerFactory<PaymentIntegrationController>(
+    /* one shared instance across the whole app */
+    sl.registerLazySingleton<PaymentIntegrationController>(
       () => PaymentIntegrationController(
         repository: sl<PaymentIntegrationRepository>(),
       ),
