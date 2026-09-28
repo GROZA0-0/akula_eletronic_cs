@@ -8,12 +8,14 @@ import 'package:storecs/features/pos_page/domain/enitities/cart_entities.dart';
 import 'package:storecs/features/pos_page/domain/enitities/list_of_items_purchased_entities.dart';
 import 'package:storecs/features/pos_page/domain/enitities/pos_entities.dart';
 import 'package:storecs/features/pos_page/domain/repository/list_of_items_purchased_repo.dart';
+import 'package:storecs/features/pos_page/presentation/state_management/customer_display_controller.dart';
 import 'package:storecs/main.dart';
 
 class CartController extends ChangeNotifier {
   final ListOfItemsPurchasedRepo repo;
   CartController({required this.repo});
   List<CartEntities> cartItems = [];
+
   final double taxRate = 0.05;
   double get subTotal =>
       cartItems.fold(0, (sum, item) => sum + item.totalPrice);
@@ -24,6 +26,11 @@ class CartController extends ChangeNotifier {
       cartItems.fold(0, (sum, item) => sum + item.quantity.value);
   ListOfItemsPurchasedEntities? purchasedReceipt;
   final Alerts alerts = Alerts(messengerKey);
+
+  void syncCustomerDisplay() async {
+    ShowCustomerDisplayController.updateCart(cartItems, total);
+  }
+
   void addToCart(PosEntities entities) {
     /*  print('Adding product ID: ${entities.id}');
     print(
@@ -49,6 +56,7 @@ class CartController extends ChangeNotifier {
         ),
       );
       notifyListeners();
+      syncCustomerDisplay();
       alerts.ifSuccess('Product has been added successfully.');
       // print('Added to cart: ${entities.name}');
     }
@@ -56,6 +64,7 @@ class CartController extends ChangeNotifier {
 
   void removeItem(String id) {
     cartItems.removeWhere((element) => element.id == id);
+    syncCustomerDisplay();
     notifyListeners();
   }
 
@@ -80,16 +89,19 @@ class CartController extends ChangeNotifier {
     /* check if the qty that user asked for more then that stored in DB */
     if (nextQuantity > availableStock) {
       alerts.ifErrors('No more stock available!');
+      syncCustomerDisplay();
       /* check if the qty that user asked for reached to the limit */
       notifyListeners();
     } else if (nextQuantity > maxLimitByPrice) {
       alerts.ifErrors(
         'You have reached the purchase limit of $maxLimitByPrice for this item.',
       );
+      syncCustomerDisplay();
       notifyListeners();
     } else {
       cartItems[index].quantity.value++;
       cartItems;
+      syncCustomerDisplay();
       notifyListeners();
     }
   }
@@ -102,11 +114,13 @@ class CartController extends ChangeNotifier {
         cartItems;
       }
     }
+    syncCustomerDisplay();
     notifyListeners();
   }
 
   void clearCart() {
     cartItems.clear();
+    syncCustomerDisplay();
     notifyListeners();
   }
 
@@ -131,6 +145,7 @@ class CartController extends ChangeNotifier {
       );
       cartItems.clear();
       alerts.ifSuccess('Purchase Successfully.');
+      syncCustomerDisplay();
       notifyListeners();
     } on PlatformException catch (e) {
       print('The Error Is: ${e.message.toString()}');
@@ -149,6 +164,7 @@ class CartController extends ChangeNotifier {
     try {
       final result = await repo.toGetReceiptRepo(orderId);
       purchasedReceipt = result;
+      syncCustomerDisplay();
       notifyListeners();
     } on PlatformException catch (e) {
       print('The Error Is: ${e.message.toString()}');

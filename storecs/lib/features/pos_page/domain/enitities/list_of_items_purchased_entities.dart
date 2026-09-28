@@ -18,6 +18,16 @@ class ListOfItemsPurchasedEntities extends Equatable {
     this.createdAt,
   });
 
+  Map<String, dynamic> toJson() {
+    return {
+      'orderId': orderId,
+      'items': items.map((e) => e.toJson()).toList(),
+      'sold_by': fullName,
+      'totalPrice': totalPrice,
+      'createdAt': createdAt,
+    };
+  }
+
   @override
   List<Object?> get props => [orderId, items, fullName, totalPrice, createdAt];
 }

@@ -67,12 +67,12 @@ dependencies:
   get_storage: ^2.1.1
   url_launcher: ^6.3.2
   dio: ^5.9.2
-  window_manager: ^0.3.8
+  window_manager: ^0.3.9
   get_it: ^9.2.1
   rxdart: ^0.28.0
   open_file: ^4.0.0
-  desktop_multi_window: ^0.3.1
-
+  desktop_multi_window: ^0.2.1
+  screen_retriever: ^0.1.9
 dev_dependencies:
   flutter_test:
     sdk: flutter

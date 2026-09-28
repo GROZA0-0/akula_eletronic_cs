@@ -6,6 +6,7 @@ import 'package:storecs/Core/config/call_controller.dart';
 import 'package:storecs/Core/styles/colors.dart';
 import 'package:storecs/Core/styles/sizes.dart';
 import 'package:storecs/Core/styles/text_styles.dart';
+import 'package:storecs/features/pos_page/presentation/state_management/customer_display_controller.dart';
 
 class CustomerDisplayWidget extends StatefulWidget {
   const CustomerDisplayWidget({super.key});
@@ -53,21 +54,26 @@ class _CustomerDisplayWidgetState extends State<CustomerDisplayWidget> {
                     ...customerDisplayController.secondScreenEnabled.keys.map((
                       method,
                     ) {
-                      return SwitchListTile(
-                        contentPadding: EdgeInsets.zero,
-                        title: Text(method, style: textBodiesStyle),
-                        subtitle: Text(
-                          'Shows a customer-facing display connected to this terminal.',
-                          style: TextStyle(color: grey, fontSize: 12),
-                        ),
-                        value: customerDisplayController
-                            .secondScreenEnabled[method]!,
-                        activeColor: blueGreen,
-                        onChanged: (value) => setState(
-                          () =>
-                              customerDisplayController
-                                      .secondScreenEnabled[method] =
-                                  value,
+                      return GestureDetector(
+                        child: SwitchListTile(
+                          contentPadding: EdgeInsets.zero,
+                          title: Text(method, style: textBodiesStyle),
+                          subtitle: Text(
+                            'Shows a customer-facing display connected to this terminal.',
+                            style: TextStyle(color: grey, fontSize: 12),
+                          ),
+                          value: customerDisplayController
+                              .secondScreenEnabled[method]!,
+                          activeColor: blueGreen,
+                          onChanged: (value) async {
+                            setState(
+                              () =>
+                                  customerDisplayController
+                                          .secondScreenEnabled[method] =
+                                      value,
+                            );
+                            await ShowCustomerDisplayController.openCustomerDisplay();
+                          },
                         ),
                       );
                     }),
