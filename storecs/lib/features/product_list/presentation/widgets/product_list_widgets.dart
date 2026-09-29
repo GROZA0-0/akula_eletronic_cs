@@ -8,7 +8,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/state_manager.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:iconsax/iconsax.dart';
-import 'package:loading_animation_widget/loading_animation_widget.dart';
+
 import 'package:storecs/Core/config/call_controller.dart';
 import 'package:storecs/Core/styles/Strings.dart';
 import 'package:storecs/Core/styles/animations.dart';
