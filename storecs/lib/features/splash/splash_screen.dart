@@ -5,6 +5,7 @@ import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:storecs/Core/config/wrapper.dart';
 import 'package:storecs/Core/styles/animations.dart';
 import 'package:storecs/Core/styles/colors.dart';
+import 'package:storecs/Core/styles/sizes.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -31,32 +32,51 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(100),
-              child: Image.asset('assets/images/app_icon.ico'),
-            ),
-            const SizedBox(height: 24),
-            Text(
-              '''
-          Akula
-For Electronics
-              ''',
-              style: GoogleFonts.pixelifySans(
-                color: white,
-                fontSize: 27,
-                fontWeight: FontWeight.w400,
-              ),
-            ),
-            const SizedBox(height: 40),
-            LoadingAnimationWidget.beat(color: Colors.white70, size: 30),
-          ],
-        ),
+    return Scaffold(body: SplashScreenWidgetLayout());
+  }
+}
+
+class SplashScreenWidgetLayout extends StatelessWidget {
+  const SplashScreenWidgetLayout({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return splashScreenWidgetMethod();
+  }
+
+  Widget splashScreenWidgetMethod() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          akulaIconWidgetMethod(),
+          sizeBoxHeight(size.height * 0.024),
+          akulaTextWidgetMethod(),
+          sizeBoxHeight(size.height * 0.040),
+          LoadingAnimationWidget.beat(color: Colors.white70, size: 30),
+        ],
       ),
+    );
+  }
+
+  Widget akulaTextWidgetMethod() {
+    return Text(
+      '''
+      Akula
+For Electronics
+          ''',
+      style: GoogleFonts.pixelifySans(
+        color: white,
+        fontSize: 27,
+        fontWeight: FontWeight.w400,
+      ),
+    );
+  }
+
+  Widget akulaIconWidgetMethod() {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(100),
+      child: Image.asset('assets/images/app_icon.ico'),
     );
   }
 }

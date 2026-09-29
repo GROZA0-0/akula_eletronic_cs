@@ -223,23 +223,6 @@ class _CustomerDisplayWidgetState extends State<CustomerDisplayWidget> {
                               ),
                             );
                           }),
-                      /* if (showPromotionalImages)
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: TextButton.icon(
-                            onPressed: () {
-                              // TODO: navigate to a promo image manager / file picker
-                            },
-                            icon: const Icon(
-                              Iconsax.gallery_add,
-                              color: blueGreen,
-                            ),
-                            label: Text(
-                              'Manage Images',
-                              style: TextStyle(color: blueGreen),
-                            ),
-                          ),
-                        ), */
                     ],
                     sizeBoxHeight(size.height * 0.02),
                     ...customerDisplayController.showThankYouScreen.keys.map((

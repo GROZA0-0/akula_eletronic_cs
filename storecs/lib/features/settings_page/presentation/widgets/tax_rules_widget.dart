@@ -94,7 +94,7 @@ class _TaxRuleTemplatePageState extends State<TaxRuleTemplateWidget> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                const SizedBox(height: 4),
+                sizeBoxHeight(size.height * 0.004),
                 Text(
                   'Used for simple retail when one flat tax rate applies to nearly everything sold. '
                   'Set as the store-wide default tax rule.',
@@ -144,7 +144,7 @@ class _TaxRuleTemplatePageState extends State<TaxRuleTemplateWidget> {
                   icon: Iconsax.tag,
                 ),
               ),
-              const SizedBox(width: 16),
+              sizeBoxHeight(size.height * 0.016),
               Expanded(
                 flex: 1,
                 child: _buildTextField(
@@ -158,7 +158,8 @@ class _TaxRuleTemplatePageState extends State<TaxRuleTemplateWidget> {
               ),
             ],
           ),
-          const SizedBox(height: 20),
+
+          sizeBoxHeight(size.height * 0.020),
 
           // Row 2: Basis and Rounding
           Row(
@@ -175,7 +176,7 @@ class _TaxRuleTemplatePageState extends State<TaxRuleTemplateWidget> {
                       setState(() => taxRulesController.taxBasis = val!),
                 ),
               ),
-              const SizedBox(width: 16),
+              sizeBoxHeight(size.height * 0.016),
               Expanded(
                 child: _buildDropdownField(
                   label: 'Rounding Rule',
@@ -191,7 +192,7 @@ class _TaxRuleTemplatePageState extends State<TaxRuleTemplateWidget> {
               ),
             ],
           ),
-          const SizedBox(height: 24),
+          sizeBoxHeight(size.height * 0.024),
 
           // Row 3: Application Scope
           Container(
@@ -234,7 +235,7 @@ class _TaxRuleTemplatePageState extends State<TaxRuleTemplateWidget> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(label, style: const TextStyle(color: colorGrey, fontSize: 13)),
-        const SizedBox(height: 8),
+        sizeBoxHeight(size.height * 0.008),
         TextField(
           controller: controller,
           keyboardType: keyboardType,
@@ -271,7 +272,7 @@ class _TaxRuleTemplatePageState extends State<TaxRuleTemplateWidget> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(label, style: const TextStyle(color: colorGrey, fontSize: 13)),
-        const SizedBox(height: 8),
+        sizeBoxHeight(size.height * 0.008),
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 12),
           decoration: BoxDecoration(

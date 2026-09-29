@@ -11,6 +11,7 @@ import 'package:iconsax/iconsax.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:storecs/Core/config/call_controller.dart';
 import 'package:storecs/Core/styles/Strings.dart';
+import 'package:storecs/Core/styles/animations.dart';
 import 'package:storecs/Core/styles/colors.dart';
 import 'package:storecs/Core/styles/sizes.dart';
 import 'package:storecs/Core/styles/text_styles.dart';
@@ -81,54 +82,7 @@ class _SwapSectionState extends State<SwapSection> {
         height: size.height / 0.75,
         child: Column(
           children: [
-            SizedBox(
-              width: size.width / 1.2,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: productActions.asMap().entries.map((entry) {
-                  final indx = entry.key;
-                  final action = entry.value;
-                  final isSelected = action == selected;
-                  return GestureDetector(
-                    onTap: () => setState(() {
-                      selected = action;
-                      pageController.animateToPage(
-                        indx,
-                        duration: Duration(milliseconds: 300),
-                        curve: Curves.easeInOut,
-                      );
-                    }),
-                    child: Container(
-                      margin: EdgeInsets.only(
-                        top: size.height * 0.01,
-                        right: size.width * 0.008,
-                      ),
-                      padding: EdgeInsets.symmetric(
-                        horizontal: size.width * 0.016,
-                        vertical: size.width * 0.005,
-                      ),
-                      decoration: BoxDecoration(
-                        color: invisible,
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(
-                          color: isSelected ? blueGreen : white,
-                          width: 2,
-                        ),
-                      ),
-                      child: Text(
-                        action,
-                        style: TextStyle(
-                          color: isSelected ? blueGreen : white,
-                          fontWeight: isSelected
-                              ? FontWeight.bold
-                              : FontWeight.normal,
-                        ),
-                      ),
-                    ),
-                  );
-                }).toList(),
-              ),
-            ),
+            productActionsRowMethod(),
             sizeBoxHeight(size.height * 0.02),
             Expanded(
               child: PageView(
@@ -142,6 +96,55 @@ class _SwapSectionState extends State<SwapSection> {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget productActionsRowMethod() {
+    return SizedBox(
+      width: size.width / 1.2,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: productActions.asMap().entries.map((entry) {
+          final indx = entry.key;
+          final action = entry.value;
+          final isSelected = action == selected;
+          return GestureDetector(
+            onTap: () => setState(() {
+              selected = action;
+              pageController.animateToPage(
+                indx,
+                duration: Duration(milliseconds: 300),
+                curve: Curves.easeInOut,
+              );
+            }),
+            child: Container(
+              margin: EdgeInsets.only(
+                top: size.height * 0.01,
+                right: size.width * 0.008,
+              ),
+              padding: EdgeInsets.symmetric(
+                horizontal: size.width * 0.016,
+                vertical: size.width * 0.005,
+              ),
+              decoration: BoxDecoration(
+                color: invisible,
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                  color: isSelected ? blueGreen : white,
+                  width: 2,
+                ),
+              ),
+              child: Text(
+                action,
+                style: TextStyle(
+                  color: isSelected ? blueGreen : white,
+                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                ),
+              ),
+            ),
+          );
+        }).toList(),
       ),
     );
   }
@@ -288,109 +291,9 @@ void showProductsModal(BuildContext context, String categoryName) {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(categoryName, style: textAppBar),
+              categoryNameMethod(categoryName),
               const Divider(color: white),
-              Expanded(
-                child: BlocBuilder<ProductListBloc, ProductListStateBloc>(
-                  builder: (context, state) {
-                    if (state is ProductListStateBlocLoading) {
-                      return Center(
-                        child: LoadingAnimationWidget.beat(
-                          color: white,
-                          size: 55,
-                        ),
-                      );
-                    } else if (state is ProductListStateBlocLoadedEmpty) {
-                      return SizedBox(
-                        width: size.width,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Stack(
-                              children: [
-                                Positioned(
-                                  top: size.height * 0.01,
-                                  left: size.width * 0.0045,
-                                  child: Icon(
-                                    size: 15,
-                                    FontAwesomeIcons.x,
-                                    color: white,
-                                  ),
-                                ),
-                                Icon(
-                                  size: 30,
-                                  Iconsax.search_normal_1,
-                                  color: white,
-                                ),
-                              ],
-                            ),
-                            Text(
-                              "No products found in this category.",
-                              style: textBodiesStyle,
-                            ),
-                          ],
-                        ),
-                      );
-                    } else if (state is ProductListStateBlocLoaded) {
-                      return ListView.builder(
-                        primary: true,
-                        itemCount: state.entities.length,
-                        itemBuilder: (context, idx) {
-                          final product = state.entities[idx];
-                          return ListTile(
-                            title: Text(
-                              '${product.brand} - ${product.name}',
-                              style: GoogleFonts.aleo(
-                                color: white,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                            subtitle: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  "Price: ${product.price} JOD",
-                                  style: GoogleFonts.aleo(
-                                    color: grey,
-                                    fontWeight: FontWeight.w400,
-                                  ),
-                                ),
-                                Text(
-                                  "Quantitiy: ${product.qty}",
-                                  style: GoogleFonts.aleo(
-                                    color: product.qty > 10 ? grey : redColor,
-                                    fontWeight: FontWeight.w400,
-                                  ),
-                                ),
-                              ],
-                            ),
-
-                            leading: Image.memory(
-                              repeat: ImageRepeat.repeat,
-                              filterQuality: FilterQuality.medium,
-                              width: size.width * 0.04,
-                              height: size.width * 0.04,
-                              base64Decode(product.img),
-                              fit: BoxFit.cover,
-                            ),
-                          );
-                        },
-                      );
-                    }
-
-                    if (state is ProductListStateBlocError) {
-                      return Center(
-                        child: Text(
-                          "Error: ${state.err}",
-                          style: textBodiesStyle2,
-                        ),
-                      );
-                    }
-
-                    return const SizedBox.shrink();
-                  },
-                ),
-              ),
+              blocOfCategoryDataMethod(),
             ],
           ),
         ),
@@ -398,6 +301,98 @@ void showProductsModal(BuildContext context, String categoryName) {
     },
   );
 }
+
+Widget blocOfCategoryDataMethod() {
+  return Expanded(
+    child: BlocBuilder<ProductListBloc, ProductListStateBloc>(
+      builder: (context, state) {
+        if (state is ProductListStateBlocLoading) {
+          return loadingStateBodies();
+        } else if (state is ProductListStateBlocLoadedEmpty) {
+          return emptyCategoryMethod();
+        } else if (state is ProductListStateBlocLoaded) {
+          return listOfCategoryDataMethod(state);
+        }
+
+        if (state is ProductListStateBlocError) {
+          return errCategoryDataMethod(state);
+        }
+
+        return const SizedBox.shrink();
+      },
+    ),
+  );
+}
+
+Widget errCategoryDataMethod(ProductListStateBlocError state) {
+  return Center(child: Text("Error: ${state.err}", style: textBodiesStyle2));
+}
+
+Widget listOfCategoryDataMethod(ProductListStateBlocLoaded state) {
+  return ListView.builder(
+    primary: true,
+    itemCount: state.entities.length,
+    itemBuilder: (context, idx) {
+      final product = state.entities[idx];
+      return ListTile(
+        title: Text(
+          '${product.brand} - ${product.name}',
+          style: GoogleFonts.aleo(color: white, fontWeight: FontWeight.w600),
+        ),
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "Price: ${product.price} JOD",
+              style: GoogleFonts.aleo(color: grey, fontWeight: FontWeight.w400),
+            ),
+            Text(
+              "Quantitiy: ${product.qty}",
+              style: GoogleFonts.aleo(
+                color: product.qty > 10 ? grey : redColor,
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+          ],
+        ),
+
+        leading: Image.memory(
+          repeat: ImageRepeat.repeat,
+          filterQuality: FilterQuality.medium,
+          width: size.width * 0.04,
+          height: size.width * 0.04,
+          base64Decode(product.img),
+          fit: BoxFit.cover,
+        ),
+      );
+    },
+  );
+}
+
+Widget emptyCategoryMethod() {
+  return SizedBox(
+    width: size.width,
+    child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Stack(
+          children: [
+            Positioned(
+              top: size.height * 0.01,
+              left: size.width * 0.0045,
+              child: Icon(size: 15, FontAwesomeIcons.x, color: white),
+            ),
+            Icon(size: 30, Iconsax.search_normal_1, color: white),
+          ],
+        ),
+        Text("No products found in this category.", style: textBodiesStyle),
+      ],
+    ),
+  );
+}
+
+Widget categoryNameMethod(String categoryName) =>
+    Text(categoryName, style: textAppBar);
 
 class CreatingProductWidget extends StatelessWidget {
   const CreatingProductWidget({super.key});
@@ -418,67 +413,8 @@ class CreatingProductWidget extends StatelessWidget {
           icon: Icon(Iconsax.receipt_item, color: white),
           controller: productListController.brand,
         ),
-        SizedBox(
-          width: size.width / 4,
-          child: Obx(
-            () => DropdownButton<String>(
-              dropdownColor: grey,
-              hint: Text(
-                "Category",
-                style: GoogleFonts.aleo(
-                  color: white,
-                  fontWeight: FontWeight.w400,
-                ),
-              ),
-              value: productListController.selectedCategory.value.isEmpty
-                  ? null
-                  : productListController.selectedCategory.value,
-              items: productListController.categories.map((String value) {
-                return DropdownMenuItem<String>(
-                  value: value,
-                  child: Text(
-                    value,
-                    style: GoogleFonts.aleo(
-                      color: white,
-                      fontWeight: FontWeight.w400,
-                    ),
-                  ),
-                );
-              }).toList(),
-              onChanged: (newValue) {
-                if (newValue != null) {
-                  productListController.changeCategory(
-                    newValue,
-                  ); // Updates controller state
-                }
-              },
-            ),
-          ),
-        ),
-        Obx(
-          () => InkWell(
-            onTap: () => productListController.uploadProductPic(),
-            child: productListController.selectedFile.value != null
-                ? ClipRRect(
-                    borderRadius: BorderRadius.circular(12),
-                    child: SizedBox(
-                      width: size.height / 4,
-                      height: size.height / 4,
-                      child: Image.file(
-                        productListController.selectedFile.value!,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  )
-                : Column(
-                    children: [
-                      Icon(Iconsax.document_upload, color: white, size: 60),
-
-                      Text("Choose a item picture.", style: textAppBar),
-                    ],
-                  ),
-          ),
-        ),
+        dropDownMenuOfCategoriesMethods(),
+        uploadItempictureMethod(),
         InsertProductTextFieldTemplate(
           lines: 1,
           text: 'Barcode',
@@ -524,6 +460,70 @@ class CreatingProductWidget extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+
+  Widget uploadItempictureMethod() {
+    return Obx(
+      () => InkWell(
+        onTap: () => productListController.uploadProductPic(),
+        child: productListController.selectedFile.value != null
+            ? ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: SizedBox(
+                  width: size.height / 4,
+                  height: size.height / 4,
+                  child: Image.file(
+                    productListController.selectedFile.value!,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              )
+            : Column(
+                children: [
+                  Icon(Iconsax.document_upload, color: white, size: 60),
+
+                  Text("Choose a item picture.", style: textAppBar),
+                ],
+              ),
+      ),
+    );
+  }
+
+  Widget dropDownMenuOfCategoriesMethods() {
+    return SizedBox(
+      width: size.width / 4,
+      child: Obx(
+        () => DropdownButton<String>(
+          dropdownColor: grey,
+          hint: Text(
+            "Category",
+            style: GoogleFonts.aleo(color: white, fontWeight: FontWeight.w400),
+          ),
+          value: productListController.selectedCategory.value.isEmpty
+              ? null
+              : productListController.selectedCategory.value,
+          items: productListController.categories.map((String value) {
+            return DropdownMenuItem<String>(
+              value: value,
+              child: Text(
+                value,
+                style: GoogleFonts.aleo(
+                  color: white,
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+            );
+          }).toList(),
+          onChanged: (newValue) {
+            if (newValue != null) {
+              productListController.changeCategory(
+                newValue,
+              ); // Updates controller state
+            }
+          },
+        ),
+      ),
     );
   }
 }

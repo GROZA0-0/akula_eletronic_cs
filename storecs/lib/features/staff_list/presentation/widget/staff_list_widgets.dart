@@ -51,7 +51,7 @@ class _StaffListWidgetsState extends State<StaffListWidgets> {
           width: double.infinity,
           // height: size.height / 1.1,
           child: Column(
-            children: [empColumns(), empData(alerts, widget.entities)],
+            children: [empRow(), empData(alerts, widget.entities)],
           ),
         ),
       ),
@@ -377,7 +377,7 @@ class _StaffListWidgetsState extends State<StaffListWidgets> {
     );
   }
 
-  Widget empColumns() {
+  Widget empRow() {
     return Container(
       margin: EdgeInsets.only(right: size.width * 0.05),
       child: Container(

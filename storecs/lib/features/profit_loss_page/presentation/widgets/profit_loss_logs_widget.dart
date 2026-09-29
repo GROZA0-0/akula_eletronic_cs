@@ -1,10 +1,12 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:storecs/Core/config/call_controller.dart';
+import 'package:storecs/Core/styles/alerts.dart';
 import 'package:storecs/Core/styles/animations.dart';
 import 'package:storecs/Core/styles/colors.dart';
 import 'package:storecs/Core/styles/sizes.dart';
@@ -14,6 +16,7 @@ import 'package:storecs/features/profit_loss_page/presentation/state_management/
 import 'package:storecs/features/profit_loss_page/presentation/state_management/profit_loss_logs_bloc/profit_loss_logs_bloc.dart';
 import 'package:storecs/features/profit_loss_page/presentation/state_management/profit_loss_logs_bloc/profit_loss_logs_bloc_event.dart';
 import 'package:storecs/features/profit_loss_page/presentation/state_management/profit_loss_logs_bloc/profit_loss_logs_bloc_state.dart';
+import 'package:storecs/main.dart';
 
 class ProfitLossLogsWidget extends StatefulWidget {
   const ProfitLossLogsWidget({super.key});
@@ -69,6 +72,10 @@ class TransactionLogsWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    return transactionLogsWidgetLayout();
+  }
+
+  Widget transactionLogsWidgetLayout() {
     return Expanded(
       child: Container(
         width: size.width * 0.80,
@@ -89,7 +96,7 @@ class TransactionLogsWidget extends StatelessWidget {
               if (state is ProfitLossLogsBlocStateLoading) {
                 return loadingStateBlocMethod(size);
               } else if (state is ProfitLossLogsBlocStateError) {
-                Center(child: Text(state.err, style: textBodiesStyle2));
+                return Center(child: Text(state.err, style: textBodiesStyle2));
               } else if (state is ProfitLossLogsBlocStateLoaded) {
                 List<ProfitLossEntities> list = List.from(state.entities);
                 return tranInfo(list);
@@ -103,6 +110,7 @@ class TransactionLogsWidget extends StatelessWidget {
   }
 
   Widget tranInfo(List<ProfitLossEntities> list) {
+    final Alerts alerts = Alerts(messengerKey);
     return ListView.builder(
       itemCount: list.length,
       shrinkWrap: true,
@@ -120,7 +128,7 @@ class TransactionLogsWidget extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  orderIdTxt(list, index),
+                  orderIdTxt(list, index, alerts),
                   totalPriceTxt(list, index),
                   profit
                       ? PurhcaseRefundSectionWidget(
@@ -161,8 +169,14 @@ class TransactionLogsWidget extends StatelessWidget {
     ),
   );
 
-  Widget orderIdTxt(List<ProfitLossEntities> list, int index) =>
-      Text(list[index].orderId, style: textBodiesStyle);
+  Widget orderIdTxt(List<ProfitLossEntities> list, int index, Alerts alerts) =>
+      GestureDetector(
+        onTap: () {
+          Clipboard.setData(ClipboardData(text: list[index].orderId));
+          alerts.ifSuccess('Order ID Copied !');
+        },
+        child: Text(list[index].orderId, style: textBodiesStyle),
+      );
 }
 
 class PurhcaseRefundSectionWidget extends StatelessWidget {

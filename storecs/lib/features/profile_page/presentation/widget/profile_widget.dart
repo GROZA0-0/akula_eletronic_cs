@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'dart:typed_data';
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -8,6 +9,7 @@ import 'package:iconsax/iconsax.dart';
 import 'package:storecs/Core/config/call_controller.dart';
 import 'package:storecs/Core/styles/animations.dart';
 import 'package:storecs/Core/styles/colors.dart';
+import 'package:storecs/Core/styles/sizes.dart';
 import 'package:storecs/Core/styles/text_styles.dart';
 import 'package:storecs/features/profile_page/domain/entities/profile_entities.dart';
 import 'package:storecs/features/profile_page/presentation/state_management/profile_bloc/profile_bloc.dart';
@@ -80,8 +82,10 @@ class ProfileCardView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
+    return profileCardViewLayout();
+  }
 
+  Widget profileCardViewLayout() {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
@@ -120,8 +124,6 @@ class ProfileAvatarWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
-
     if (base64Image.isEmpty) {
       return const CircleAvatar(
         backgroundColor: grey,
@@ -138,24 +140,32 @@ class ProfileAvatarWidget extends StatelessWidget {
       sanitizedBase64 = sanitizedBase64.replaceAll(RegExp(r'\s+'), '');
       final bytes = base64Decode(sanitizedBase64);
 
-      return Container(
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          border: Border.all(color: white, width: 2),
-        ),
-        child: CircleAvatar(radius: 80, backgroundImage: MemoryImage(bytes)),
-      );
+      return fetchProfilePictureWidgetMethod(bytes);
     } catch (e) {
       debugPrint("Error rendering Base64 image: $e");
-      return Container(
-        margin: EdgeInsets.only(right: size.width * 0.03),
-        child: const CircleAvatar(
-          radius: 20,
-          backgroundColor: Colors.redAccent,
-          child: Icon(Icons.error_outline, color: white, size: 16),
-        ),
-      );
+      return errOfProfilePictureMethod();
     }
+  }
+
+  Widget errOfProfilePictureMethod() {
+    return Container(
+      margin: EdgeInsets.only(right: size.width * 0.03),
+      child: const CircleAvatar(
+        radius: 20,
+        backgroundColor: Colors.redAccent,
+        child: Icon(Icons.error_outline, color: white, size: 16),
+      ),
+    );
+  }
+
+  Widget fetchProfilePictureWidgetMethod(Uint8List bytes) {
+    return Container(
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        border: Border.all(color: white, width: 2),
+      ),
+      child: CircleAvatar(radius: 80, backgroundImage: MemoryImage(bytes)),
+    );
   }
 }
 
@@ -171,8 +181,10 @@ class ProfileInfoDetailsWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
+    return profileInformationWidgetMethod();
+  }
 
+  Widget profileInformationWidgetMethod() {
     return SizedBox(
       width: size.width > 600 ? size.width * 0.5 : size.width * 0.9,
       child: Column(

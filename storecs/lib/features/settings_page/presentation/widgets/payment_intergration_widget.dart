@@ -35,7 +35,7 @@ class _PaymentIntergrationWidgetState extends State<PaymentIntergrationWidget> {
   }
 
   void connectCardTerminal() {
-    // TODO: hook into actual terminal SDK/driver (e.g. Stripe Terminal, Square, Verifone) via USB/serial/network
+    //hook into actual terminal SDK/driver (e.g. Stripe Terminal, Square, Verifone) via USB/serial/network
     setState(() => cardTerminalStatus = 'Searching for terminal...');
   }
 

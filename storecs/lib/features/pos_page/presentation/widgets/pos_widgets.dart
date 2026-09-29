@@ -93,59 +93,77 @@ class _PosWidgetsState extends State<PosWidgets> {
             ),
           ],
         ),
-        body: SafeArea(
-          child: FadeInUp(
-            child: Column(
-              children: [
-                const LowStockAlertsBanner(),
-                Expanded(
-                  child: Container(
-                    width: double.infinity,
-                    height: double.infinity,
-                    margin: screenSize,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        border: Border.all(color: white, width: 3),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
+        body: PosWidgetLayout(categories: categories, passMouse: passMouse, widget: widget),
+      ),
+    );
+  }
+}
 
-                      padding: EdgeInsets.symmetric(
-                        vertical: size.height * 0.032,
-                        horizontal: size.width * 0.008,
-                      ),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Container(
-                              decoration: BoxDecoration(
-                                border: Border.all(color: white),
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              height: size.height * 1.250,
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  CategoryTabs(categories: categories),
-                                  Expanded(child: ProductsGrid()),
-                                ],
-                              ),
-                            ),
-                          ),
-                          sizeBoxWidth(size.width * 0.02),
+class PosWidgetLayout extends StatelessWidget {
+  const PosWidgetLayout({
+    super.key,
+    required this.categories,
+    required this.passMouse,
+    required this.widget,
+  });
 
-                          CartSection(
-                            passMouse: passMouse,
-                            categories: categories,
-                            fullName: widget.fullName,
+  final List<String> categories;
+  final bool passMouse;
+  final PosWidgets widget;
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: FadeInUp(
+        child: Column(
+          children: [
+            const LowStockAlertsBanner(),
+            Expanded(
+              child: Container(
+                width: double.infinity,
+                height: double.infinity,
+                margin: screenSize,
+                child: Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(color: white, width: 3),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+    
+                  padding: EdgeInsets.symmetric(
+                    vertical: size.height * 0.032,
+                    horizontal: size.width * 0.008,
+                  ),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Container(
+                          decoration: BoxDecoration(
+                            border: Border.all(color: white),
+                            borderRadius: BorderRadius.circular(10),
                           ),
-                        ],
+                          height: size.height * 1.250,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              CategoryTabs(categories: categories),
+                              Expanded(child: ProductsGrid()),
+                            ],
+                          ),
+                        ),
                       ),
-                    ),
+                      sizeBoxWidth(size.width * 0.02),
+    
+                      CartSection(
+                        passMouse: passMouse,
+                        categories: categories,
+                        fullName: widget.fullName,
+                      ),
+                    ],
                   ),
                 ),
-              ],
+              ),
             ),
-          ),
+          ],
         ),
       ),
     );
@@ -820,46 +838,50 @@ class _CategoryTabsState extends State<CategoryTabs> {
         final String selected = state is PosBlocStateLoaded
             ? state.category
             : 'Phones';
-        return Container(
-          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-          child: SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children: widget.categories.map((cat) {
-                final isSelected = cat == selected;
-                return GestureDetector(
-                  onTap: () => context.read<PosBloc>().add(
-                    PosBlocEventChangeCategory(category: cat),
-                  ),
-
-                  child: Container(
-                    margin: EdgeInsets.only(right: size.width * 0.008),
-                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    decoration: BoxDecoration(
-                      color: Colors.transparent,
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(
-                        color: isSelected ? blueGreen : white,
-                        width: 2,
-                      ),
-                    ),
-                    child: Text(
-                      cat,
-                      style: TextStyle(
-                        color: isSelected ? blueGreen : white,
-                        fontWeight: isSelected
-                            ? FontWeight.bold
-                            : FontWeight.normal,
-                      ),
-                    ),
-                  ),
-                );
-              }).toList(),
-            ),
-          ),
-        );
+        return listOfCategoriesActionsMethod(selected, context);
       },
     );
+  }
+
+  Widget listOfCategoriesActionsMethod(String selected, BuildContext context) {
+    return Container(
+        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        child: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            children: widget.categories.map((cat) {
+              final isSelected = cat == selected;
+              return GestureDetector(
+                onTap: () => context.read<PosBloc>().add(
+                  PosBlocEventChangeCategory(category: cat),
+                ),
+
+                child: Container(
+                  margin: EdgeInsets.only(right: size.width * 0.008),
+                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  decoration: BoxDecoration(
+                    color: Colors.transparent,
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(
+                      color: isSelected ? blueGreen : white,
+                      width: 2,
+                    ),
+                  ),
+                  child: Text(
+                    cat,
+                    style: TextStyle(
+                      color: isSelected ? blueGreen : white,
+                      fontWeight: isSelected
+                          ? FontWeight.bold
+                          : FontWeight.normal,
+                    ),
+                  ),
+                ),
+              );
+            }).toList(),
+          ),
+        ),
+      );
   }
 }
 
@@ -873,47 +895,55 @@ class ProductsGrid extends StatelessWidget {
         if (state is PosBlocStateLoading) {
           return loadingStateBodies();
         } else if (state is PosBlocStateEmpty) {
-          return SizedBox(
-            width: size.width,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Stack(
-                  children: [
-                    Positioned(
-                      top: size.height * 0.01,
-                      left: size.width * 0.0045,
-                      child: Icon(size: 15, FontAwesomeIcons.x, color: white),
-                    ),
-                    Icon(size: 30, Iconsax.search_normal_1, color: white),
-                  ],
-                ),
-                Text(
-                  "No products found in this category.",
-                  style: textBodiesStyle,
-                ),
-              ],
-            ),
-          );
+          return emptyCategoryMethod();
         } else if (state is PosBlocStateLoaded) {
-          return GridView.builder(
-            padding: EdgeInsets.all(16),
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 4, // 4 columns
-              crossAxisSpacing: 12,
-              mainAxisSpacing: 12,
-              childAspectRatio: 0.68,
-            ),
-            itemCount: state.entities.length,
-            itemBuilder: (context, index) {
-              // final product = state.entities[index];
-              return ProductCard(state: state, index: index);
-            },
-          );
+          return listOfDataMethod(state);
         }
         return Container();
       },
     );
+  }
+
+  Widget listOfDataMethod(PosBlocStateLoaded state) {
+    return GridView.builder(
+          padding: EdgeInsets.all(16),
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 4, // 4 columns
+            crossAxisSpacing: 12,
+            mainAxisSpacing: 12,
+            childAspectRatio: 0.68,
+          ),
+          itemCount: state.entities.length,
+          itemBuilder: (context, index) {
+            // final product = state.entities[index];
+            return ProductCard(state: state, index: index);
+          },
+        );
+  }
+
+  Widget emptyCategoryMethod() {
+    return SizedBox(
+          width: size.width,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Stack(
+                children: [
+                  Positioned(
+                    top: size.height * 0.01,
+                    left: size.width * 0.0045,
+                    child: Icon(size: 15, FontAwesomeIcons.x, color: white),
+                  ),
+                  Icon(size: 30, Iconsax.search_normal_1, color: white),
+                ],
+              ),
+              Text(
+                "No products found in this category.",
+                style: textBodiesStyle,
+              ),
+            ],
+          ),
+        );
   }
 }
 

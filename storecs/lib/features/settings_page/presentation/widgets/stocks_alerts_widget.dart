@@ -93,7 +93,7 @@ class _StockAlertsWidgetState extends State<StockAlertsWidget> {
                     ...stockAlertsController.thresholdController.entries.map((
                       entry,
                     ) {
-                      return Padding(
+                      return Container(
                         padding: EdgeInsets.only(bottom: size.height * 0.015),
                         child: Row(
                           children: [

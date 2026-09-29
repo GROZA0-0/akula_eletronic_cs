@@ -37,42 +37,7 @@ class _OrderPurchasedHistoryWidgetsState
         ),
         iconTheme: IconThemeData(color: white),
       ),
-      body: SafeArea(
-        child: FadeInUp(
-          child: MultiBlocProvider(
-            providers: [
-              BlocProvider(
-                create: (context) => OrderPurchasedHistoryBloc(
-                  sl<OrderPurchasedHistoryController>(),
-                )..add(OrderPurchasedHistoryBlocEventLoading()),
-              ),
-            ],
-            child:
-                BlocBuilder<
-                  OrderPurchasedHistoryBloc,
-                  OrderPurchasedHistoryBlocState
-                >(
-                  builder: (context, state) {
-                    if (state is OrderPurchasedHistoryBlocStateLoading) {
-                      return loadingStateBlocMethod(size);
-                    } else if (state is OrderPurchasedHistoryBlocStateEmpty) {
-                      return noOrderReviewedtext();
-                    } else if (state is OrderPurchasedHistoryBlocStateError) {
-                      return Text(state.err, style: textBodiesStyle2);
-                    } else if (state is OrderPurchasedHistoryBlocStateLoaded) {
-                      final groupedMap = state.entities;
-                      final dateHeadersList = groupedMap.keys.toList();
-                      return ListSoldOrderData(
-                        dateHeadersList: dateHeadersList,
-                        groupedMap: groupedMap,
-                      );
-                    }
-                    return Container();
-                  },
-                ),
-          ),
-        ),
-      ),
+      body: OrderPurchasedHistoricalWidgetLayout(noOrderReviewedtext: noOrderReviewedtext())
     );
   }
 
@@ -85,6 +50,54 @@ class _OrderPurchasedHistoryWidgetsState
           fontSize: 30,
           color: black,
           fontWeight: FontWeight.w300,
+        ),
+      ),
+    );
+  }
+}
+
+class OrderPurchasedHistoricalWidgetLayout extends StatelessWidget {
+  final Widget  noOrderReviewedtext;
+  const OrderPurchasedHistoricalWidgetLayout({
+    super.key,
+    required this.noOrderReviewedtext,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: FadeInUp(
+        child: MultiBlocProvider(
+          providers: [
+            BlocProvider(
+              create: (context) => OrderPurchasedHistoryBloc(
+                sl<OrderPurchasedHistoryController>(),
+              )..add(OrderPurchasedHistoryBlocEventLoading()),
+            ),
+          ],
+          child:
+              BlocBuilder<
+                OrderPurchasedHistoryBloc,
+                OrderPurchasedHistoryBlocState
+              >(
+                builder: (context, state) {
+                  if (state is OrderPurchasedHistoryBlocStateLoading) {
+                    return loadingStateBlocMethod(size);
+                  } else if (state is OrderPurchasedHistoryBlocStateEmpty) {
+                    return noOrderReviewedtext;
+                  } else if (state is OrderPurchasedHistoryBlocStateError) {
+                    return Text(state.err, style: textBodiesStyle2);
+                  } else if (state is OrderPurchasedHistoryBlocStateLoaded) {
+                    final groupedMap = state.entities;
+                    final dateHeadersList = groupedMap.keys.toList();
+                    return ListSoldOrderData(
+                      dateHeadersList: dateHeadersList,
+                      groupedMap: groupedMap,
+                    );
+                  }
+                  return Container();
+                },
+              ),
         ),
       ),
     );

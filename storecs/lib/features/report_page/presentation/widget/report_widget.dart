@@ -63,7 +63,7 @@ class _ReportWidgetState extends State<ReportWidget> {
     );
   }
 
-  MouseRegion reportStoreMethod() {
+  Widget reportStoreMethod() {
     return MouseRegion(
       onExit: (event) => setState(() => isHovered = false),
       onEnter: (event) => setState(() => isHovered = true),

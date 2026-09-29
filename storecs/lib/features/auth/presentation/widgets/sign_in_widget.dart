@@ -27,17 +27,23 @@ class _SignInWidgetsState extends State<SignInWidgets> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: invisible,
-      body: SafeArea(
-        child: Container(
-          margin: screenSize,
-          child: SingleChildScrollView(
-            child: Container(
-              color: invisible,
-              height: size.height,
-              child: Center(child: SignInBody()),
-            ),
+    return Scaffold(backgroundColor: invisible, body: SignInWidgetLayout());
+  }
+}
+
+class SignInWidgetLayout extends StatelessWidget {
+  const SignInWidgetLayout({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Container(
+        margin: screenSize,
+        child: SingleChildScrollView(
+          child: Container(
+            color: invisible,
+            height: size.height,
+            child: Center(child: SignInBody()),
           ),
         ),
       ),
@@ -79,9 +85,22 @@ class _SignInBodyState extends State<SignInBody> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             sizeBoxHeight(size.height * 0.05),
-            emailTextField(),
+            SignInTextFieldTemplate(
+              width: size.width * 0.3,
+              passVisible: false,
+              text: "Email",
+              icon: Icon(Iconsax.user, color: white),
+              controller: signInController.email,
+            ),
             sizeBoxHeight(size.height * 0.05),
-            passwordTextField(),
+            SignInTextFieldTemplate(
+              width: size.width * 0.3,
+              text: "Password",
+              icon: Icon(Iconsax.lock_1, color: white),
+              controller: signInController.password,
+              passVisible: signInController.isPassVisible,
+              suffixIcon: togglePassword(),
+            ),
             sizeBoxHeight(size.height * 0.1),
             signbutton(),
           ],
@@ -99,50 +118,6 @@ class _SignInBodyState extends State<SignInBody> {
         child: Text(
           "Continue",
           style: GoogleFonts.aleo(color: black, fontWeight: FontWeight.w400),
-        ),
-      ),
-    );
-  }
-
-  Container passwordTextField() {
-    return Container(
-      margin: EdgeInsets.symmetric(horizontal: size.width * 0.025),
-      width: size.width * 0.3,
-      child: TextFormField(
-        controller: signInController.password,
-        obscureText: signInController.isPassVisible,
-        onFieldSubmitted: (value) => signInController.signInTrigger(),
-        style: textBodiesStyle,
-        decoration: InputDecoration(
-          labelText: "Password",
-          labelStyle: GoogleFonts.aleo(
-            color: white,
-            fontWeight: FontWeight.w400,
-          ),
-          suffixIcon: togglePassword(),
-          prefixIcon: const Icon(Iconsax.lock_1, color: white),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(color: white, width: 2),
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(color: white, width: 2),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(color: blueGreen, width: 2),
-          ),
-          errorBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(color: redColor),
-          ),
-          focusedErrorBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(color: redColor, width: 2),
-          ),
-          filled: true,
-          fillColor: Colors.transparent,
         ),
       ),
     );
@@ -197,6 +172,70 @@ class _SignInBodyState extends State<SignInBody> {
       child: signInController.isPassVisible
           ? const Icon(Iconsax.eye_slash, color: white)
           : const Icon(Iconsax.eye, color: white),
+    );
+  }
+}
+
+class SignInTextFieldTemplate extends StatelessWidget {
+  const SignInTextFieldTemplate({
+    super.key,
+    required this.text,
+    required this.icon,
+    this.suffixIcon,
+    required this.controller,
+    required this.passVisible,
+    required this.width,
+  });
+  final String text;
+  final Icon icon;
+  final Widget? suffixIcon;
+  final TextEditingController controller;
+  final bool passVisible;
+  final double width;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: size.width * 0.025),
+      width: width,
+
+      child: TextFormField(
+        controller: controller,
+        style: textBodiesStyle,
+        obscureText: passVisible,
+        decoration: InputDecoration(
+          labelText: text,
+          labelStyle: GoogleFonts.aleo(
+            color: white,
+            // fontSize: 30,
+            fontWeight: FontWeight.w400,
+          ),
+          suffixIcon: suffixIcon,
+          prefixIcon: icon,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: const BorderSide(color: white, width: 2),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: const BorderSide(color: white, width: 2),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: const BorderSide(color: blueGreen, width: 2),
+          ),
+          errorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: const BorderSide(color: redColor),
+          ),
+          focusedErrorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: const BorderSide(color: redColor, width: 2),
+          ),
+          filled: true,
+          fillColor: Colors.transparent,
+        ),
+      ),
     );
   }
 }
