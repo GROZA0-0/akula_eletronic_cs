@@ -14,6 +14,7 @@ import 'package:storecs/features/profit_loss_page/presentation/state_management/
 import 'package:storecs/features/report_page/presentation/state_management/report_controller.dart';
 import 'package:storecs/features/returns&refunds/presentation/state_management/return_and_refund_controller.dart';
 import 'package:storecs/features/settings_page/presentation/state_management/customer_display_controller.dart';
+import 'package:storecs/features/settings_page/presentation/state_management/label_scanner_controller.dart';
 import 'package:storecs/features/settings_page/presentation/state_management/payment_integration_controller.dart';
 
 import 'package:storecs/features/settings_page/presentation/state_management/staff_permissions_controller.dart';
@@ -44,3 +45,4 @@ final stockAlertsController = sl<StockAlertsController>();
 final staffPermissionsController = sl<StaffPermissionsController>();
 final paymentIntegrationController = sl<PaymentIntegrationController>();
 final customerDisplayController = sl<CustomerDisplayController>();
+final labelScannerController = sl<LabelScannerController>();

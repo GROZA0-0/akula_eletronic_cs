@@ -87,26 +87,31 @@ import 'package:storecs/features/sales_export/data/data_source/export_reports_da
 import 'package:storecs/features/sales_export/data/repository/export_reports_implementer.dart';
 import 'package:storecs/features/sales_export/domain/repository/export_reports_repo.dart';
 import 'package:storecs/features/settings_page/data/data_source/data_source_implementer/customer_display_data_source_implementer.dart';
+import 'package:storecs/features/settings_page/data/data_source/data_source_implementer/label_scanner_data_source_implementer.dart';
 import 'package:storecs/features/settings_page/data/data_source/data_source_implementer/payment_integration_data_source_implmeneter.dart';
 import 'package:storecs/features/settings_page/data/data_source/data_source_implementer/staff_permissions_data_source_implementer.dart';
 import 'package:storecs/features/settings_page/data/data_source/data_source_implementer/stocks_alert_data_source_implementer.dart';
 import 'package:storecs/features/settings_page/data/data_source/data_source_implementer/tax_rules_data_source_implementer.dart';
 import 'package:storecs/features/settings_page/data/data_source/data_source_repo/customer_display_data_source_repo.dart';
+import 'package:storecs/features/settings_page/data/data_source/data_source_repo/label_scanner_data_source_repo.dart';
 import 'package:storecs/features/settings_page/data/data_source/data_source_repo/payment_integration_data_source_repo.dart';
 import 'package:storecs/features/settings_page/data/data_source/data_source_repo/staff_permissions_data_source_repo.dart';
 import 'package:storecs/features/settings_page/data/data_source/data_source_repo/stocks_alert_data_source_repo.dart';
 import 'package:storecs/features/settings_page/data/data_source/data_source_repo/tax_rules_data_source_repo.dart';
 import 'package:storecs/features/settings_page/data/repository/customer_display_implementer.dart';
+import 'package:storecs/features/settings_page/data/repository/label_scanner_imeplementer.dart';
 import 'package:storecs/features/settings_page/data/repository/payment_integration_implementer.dart';
 import 'package:storecs/features/settings_page/data/repository/staff_permissions_implementer.dart';
 import 'package:storecs/features/settings_page/data/repository/stock_alerts_implementer.dart';
 import 'package:storecs/features/settings_page/data/repository/tax_rules_implementer.dart';
 import 'package:storecs/features/settings_page/domain/repository/customer_display_repository.dart';
+import 'package:storecs/features/settings_page/domain/repository/label_scanner_repository.dart';
 import 'package:storecs/features/settings_page/domain/repository/payment_integration_repository.dart';
 import 'package:storecs/features/settings_page/domain/repository/staff_permissions_repository.dart';
 import 'package:storecs/features/settings_page/domain/repository/stock_alerts_repository.dart';
 import 'package:storecs/features/settings_page/domain/repository/tax_rules_repository.dart';
 import 'package:storecs/features/settings_page/presentation/state_management/customer_display_controller.dart';
+import 'package:storecs/features/settings_page/presentation/state_management/label_scanner_controller.dart';
 import 'package:storecs/features/settings_page/presentation/state_management/payment_integration_controller.dart';
 import 'package:storecs/features/settings_page/presentation/state_management/staff_permissions_controller.dart';
 import 'package:storecs/features/settings_page/presentation/state_management/stock_alerts_controller.dart';
@@ -475,6 +480,23 @@ class AppBindingsControllers extends Bindings {
     sl.registerFactory<CustomerDisplayController>(
       () => CustomerDisplayController(
         repository: sl<CustomerDisplayRepository>(),
+      ),
+    );
+    //////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////
+    
+     sl.registerFactory<LabelScannerDataSourceRepo>(
+      () => LabelScannerDataSourceImplementer(dio: dio),
+    );
+    sl.registerFactory<LabelScannerRepository>(
+      () =>
+          LabelScannerImeplementer(repo: sl<LabelScannerDataSourceRepo>()),
+    );
+    sl.registerFactory<LabelScannerController>(
+      () => LabelScannerController(
+        repository: sl<LabelScannerRepository>(),
       ),
     );
   }
