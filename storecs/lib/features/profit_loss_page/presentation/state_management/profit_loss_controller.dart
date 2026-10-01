@@ -14,9 +14,16 @@ class ProfitLossController {
     String orderId,
     String orderType,
     double totalPrice,
+    String fullName,
   ) async {
     try {
-      await repository.storeProfitLossRepo(orderId, orderType, totalPrice);
+      await repository.storeProfitLossRepo(
+        orderId,
+        orderType,
+        totalPrice,
+        fullName,
+      );
+      // print('Who sold/refunded the order in profit controller $fullName');
     } catch (e) {
       print("Something went wrong. $e");
       alerts.ifErrors("Something went wrong.");

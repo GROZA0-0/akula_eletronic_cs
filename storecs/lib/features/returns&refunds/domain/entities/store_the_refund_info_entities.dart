@@ -6,14 +6,22 @@ class StoreTheRefundInfoEntities extends Equatable {
   final String refundReason;
   final double totalRefundAmount;
   final List<RefundItemModel> items;
+  final String fullName;
 
   const StoreTheRefundInfoEntities({
     required this.orderId,
     required this.refundReason,
     required this.totalRefundAmount,
     required this.items,
+    required this.fullName,
   });
 
   @override
-  List<Object?> get props => [orderId, refundReason, totalRefundAmount, items];
+  List<Object?> get props => [
+    orderId,
+    refundReason,
+    totalRefundAmount,
+    items,
+    fullName,
+  ];
 }

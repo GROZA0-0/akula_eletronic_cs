@@ -10,17 +10,17 @@ class ProfitLossImplementer implements ProfitLossRepository {
   Future<ProfitLossEntities> storeProfitLossRepo(
     String orderId,
     String orderType,
-
-    /*  List<dynamic> orderList, */
     double totalPrice,
+    String fullName,
   ) async {
     try {
       final model = await repository.storeProfitLossDataSourceRepo(
         orderId,
         orderType,
-        /*  orderList, */
         totalPrice,
+        fullName,
       );
+      // print('Who sold/refunded the order in repository $fullName');
       return model.toProfitLossEntities();
     } catch (e) {
       print(e.toString());

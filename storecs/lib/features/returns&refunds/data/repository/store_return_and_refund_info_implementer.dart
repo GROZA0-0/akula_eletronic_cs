@@ -15,6 +15,7 @@ class StoreReturnAndRefundInfoImplementer
     String refundReason,
     double totalRefundAmount,
     List<RefundItemModel> items,
+    String fullName,
   ) async {
     try {
       final model = await repository.toStoreTheRefundInfoRepo(
@@ -23,7 +24,9 @@ class StoreReturnAndRefundInfoImplementer
         refundReason,
         totalRefundAmount,
         items,
+        fullName,
       );
+
       return model.toStoreTheRefundInfoEntities();
     } catch (e) {
       print("any errors in StoreReturnAndRefundInfoImplementer $e");

@@ -4,12 +4,14 @@ class ProfitLossModel {
   final String orderId;
   final String orderType;
   final double totalPrice;
+  final String fullName;
   DateTime? createdAt;
 
   ProfitLossModel({
     required this.orderId,
     required this.totalPrice,
     required this.orderType,
+    required this.fullName,
     this.createdAt,
   });
 
@@ -18,6 +20,7 @@ class ProfitLossModel {
       orderId: '',
       orderType: '',
       totalPrice: 0.0,
+      fullName: '',
       createdAt: DateTime.now(),
     );
   }
@@ -27,14 +30,17 @@ class ProfitLossModel {
       "orderId": orderId,
       "orderType": orderType,
       "totalPrice": totalPrice,
+      "fullName": fullName,
     };
   }
 
   factory ProfitLossModel.fromJson(Map<String, dynamic> map) {
+    // print('who sold/refuned the order in model ${map['fullName']}');
     return ProfitLossModel(
       orderId: map['orderId'] ?? '',
       orderType: map['orderType'] ?? '',
       totalPrice: (map['totalPrice'] as num?)?.toDouble() ?? 0.0,
+      fullName: map['fullName'] ?? '',
       createdAt: map['createdAt'] != null
           ? DateTime.parse(map['createdAt'])
           : null,
@@ -47,6 +53,7 @@ class ProfitLossModel {
       createdAt: createdAt,
       orderType: orderType,
       totalPrice: totalPrice,
+      fullName: fullName,
     );
   }
 }

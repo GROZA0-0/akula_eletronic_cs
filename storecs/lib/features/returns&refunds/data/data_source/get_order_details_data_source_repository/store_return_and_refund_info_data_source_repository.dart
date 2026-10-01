@@ -8,5 +8,6 @@ abstract class StoreReturnAndRefundInfoDataSourceRepository {
     String refundReason,
     double totalRefundAmount,
     List<RefundItemModel> item,
+    String fullName,
   );
 }

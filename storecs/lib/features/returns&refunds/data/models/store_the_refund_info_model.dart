@@ -8,24 +8,25 @@ class StoreTheRefundInfoModel {
   final double totalRefundAmount;
   final List<RefundItemModel> items;
   final DateTime createAt;
+  final String fullName;
 
   StoreTheRefundInfoModel({
     required this.orderId,
-
     required this.refundReason,
     required this.totalRefundAmount,
     required this.items,
     required this.createAt,
+    required this.fullName,
   });
 
   static StoreTheRefundInfoModel emptyRefund() {
     return StoreTheRefundInfoModel(
       orderId: '',
-
       refundReason: '',
       totalRefundAmount: 0.0,
       items: [],
       createAt: DateTime.now(),
+      fullName: '',
     );
   }
 
@@ -34,12 +35,12 @@ class StoreTheRefundInfoModel {
     "refundReason": refundReason,
     "totalRefundAmount": totalRefundAmount,
     "items": items.map((e) => e.toJson()),
+    "fullName": fullName,
   };
 
   factory StoreTheRefundInfoModel.fromJson(Map<String, dynamic> map) {
     return StoreTheRefundInfoModel(
       orderId: map['orderId']?.toString() ?? '',
-
       refundReason: map['refundReason'] ?? '',
       totalRefundAmount: (map['totalRefundAmount'] ?? 0.0),
       items: map['items'] != null
@@ -50,6 +51,7 @@ class StoreTheRefundInfoModel {
       createAt: map['createdAt'] != null
           ? DateTime.parse(map['createdAt'])
           : DateTime.now(),
+      fullName: map['fullName'] ?? '',
     );
   }
 
@@ -59,6 +61,7 @@ class StoreTheRefundInfoModel {
       refundReason: refundReason,
       totalRefundAmount: totalRefundAmount,
       items: items,
+      fullName: fullName,
     );
   }
 }

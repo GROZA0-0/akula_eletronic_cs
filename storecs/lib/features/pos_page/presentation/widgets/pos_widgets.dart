@@ -69,31 +69,12 @@ class _PosWidgetsState extends State<PosWidgets> {
           backgroundColor: invisible,
           iconTheme: IconThemeData(color: white),
           title: FadeInLeft(child: Text(POSPage, style: textAppBar)),
-          actions: [
-            FadeInRight(
-              child: Container(
-                margin: EdgeInsets.symmetric(
-                  horizontal: size.width * 0.13,
-                  vertical: size.width * 0.0011,
-                ),
-                width: size.width / 3,
-                child: CupertinoSearchTextField(
-                  cursorColor: white,
-                  itemColor: white,
-                  placeholder: 'Search Product',
-                  placeholderStyle: textBodiesStyle,
-                  style: textBodiesStyle,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(color: white),
-                  ),
-                  onTap: () {},
-                ),
-              ),
-            ),
-          ],
         ),
-        body: PosWidgetLayout(categories: categories, passMouse: passMouse, widget: widget),
+        body: PosWidgetLayout(
+          categories: categories,
+          passMouse: passMouse,
+          widget: widget,
+        ),
       ),
     );
   }
@@ -128,7 +109,7 @@ class PosWidgetLayout extends StatelessWidget {
                     border: Border.all(color: white, width: 3),
                     borderRadius: BorderRadius.circular(10),
                   ),
-    
+
                   padding: EdgeInsets.symmetric(
                     vertical: size.height * 0.032,
                     horizontal: size.width * 0.008,
@@ -152,7 +133,7 @@ class PosWidgetLayout extends StatelessWidget {
                         ),
                       ),
                       sizeBoxWidth(size.width * 0.02),
-    
+
                       CartSection(
                         passMouse: passMouse,
                         categories: categories,
@@ -845,43 +826,43 @@ class _CategoryTabsState extends State<CategoryTabs> {
 
   Widget listOfCategoriesActionsMethod(String selected, BuildContext context) {
     return Container(
-        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-        child: SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: Row(
-            children: widget.categories.map((cat) {
-              final isSelected = cat == selected;
-              return GestureDetector(
-                onTap: () => context.read<PosBloc>().add(
-                  PosBlocEventChangeCategory(category: cat),
-                ),
+      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Row(
+          children: widget.categories.map((cat) {
+            final isSelected = cat == selected;
+            return GestureDetector(
+              onTap: () => context.read<PosBloc>().add(
+                PosBlocEventChangeCategory(category: cat),
+              ),
 
-                child: Container(
-                  margin: EdgeInsets.only(right: size.width * 0.008),
-                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  decoration: BoxDecoration(
-                    color: Colors.transparent,
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(
-                      color: isSelected ? blueGreen : white,
-                      width: 2,
-                    ),
-                  ),
-                  child: Text(
-                    cat,
-                    style: TextStyle(
-                      color: isSelected ? blueGreen : white,
-                      fontWeight: isSelected
-                          ? FontWeight.bold
-                          : FontWeight.normal,
-                    ),
+              child: Container(
+                margin: EdgeInsets.only(right: size.width * 0.008),
+                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                decoration: BoxDecoration(
+                  color: Colors.transparent,
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(
+                    color: isSelected ? blueGreen : white,
+                    width: 2,
                   ),
                 ),
-              );
-            }).toList(),
-          ),
+                child: Text(
+                  cat,
+                  style: TextStyle(
+                    color: isSelected ? blueGreen : white,
+                    fontWeight: isSelected
+                        ? FontWeight.bold
+                        : FontWeight.normal,
+                  ),
+                ),
+              ),
+            );
+          }).toList(),
         ),
-      );
+      ),
+    );
   }
 }
 
@@ -906,44 +887,41 @@ class ProductsGrid extends StatelessWidget {
 
   Widget listOfDataMethod(PosBlocStateLoaded state) {
     return GridView.builder(
-          padding: EdgeInsets.all(16),
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 4, // 4 columns
-            crossAxisSpacing: 12,
-            mainAxisSpacing: 12,
-            childAspectRatio: 0.68,
-          ),
-          itemCount: state.entities.length,
-          itemBuilder: (context, index) {
-            // final product = state.entities[index];
-            return ProductCard(state: state, index: index);
-          },
-        );
+      padding: EdgeInsets.all(16),
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 4, // 4 columns
+        crossAxisSpacing: 12,
+        mainAxisSpacing: 12,
+        childAspectRatio: 0.68,
+      ),
+      itemCount: state.entities.length,
+      itemBuilder: (context, index) {
+        // final product = state.entities[index];
+        return ProductCard(state: state, index: index);
+      },
+    );
   }
 
   Widget emptyCategoryMethod() {
     return SizedBox(
-          width: size.width,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+      width: size.width,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Stack(
             children: [
-              Stack(
-                children: [
-                  Positioned(
-                    top: size.height * 0.01,
-                    left: size.width * 0.0045,
-                    child: Icon(size: 15, FontAwesomeIcons.x, color: white),
-                  ),
-                  Icon(size: 30, Iconsax.search_normal_1, color: white),
-                ],
+              Positioned(
+                top: size.height * 0.01,
+                left: size.width * 0.0045,
+                child: Icon(size: 15, FontAwesomeIcons.x, color: white),
               ),
-              Text(
-                "No products found in this category.",
-                style: textBodiesStyle,
-              ),
+              Icon(size: 30, Iconsax.search_normal_1, color: white),
             ],
           ),
-        );
+          Text("No products found in this category.", style: textBodiesStyle),
+        ],
+      ),
+    );
   }
 }
 
@@ -971,6 +949,12 @@ class _ProductCardState extends State<ProductCard> {
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            Text(
+              maxLines: 1,
+              entities.id,
+              textAlign: TextAlign.center,
+              style: textBodiesStyle,
+            ),
             widget.state.entities[widget.index].image.isNotEmpty
                 ? fetchItemImage(entities)
                 : itemHasNoImage(),

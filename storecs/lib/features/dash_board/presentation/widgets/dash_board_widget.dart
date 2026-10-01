@@ -350,16 +350,59 @@ class ChartSectionWidget extends StatelessWidget {
               } else if (state is CategoryChartDashboardBlocStateError) {
                 return Text(state.err, style: textBodiesStyle2);
               } else if (state is CategoryChartDashboardBlocStateLoaded) {
+                final List<PieChartSectionData> emptySection = [];
                 final mappedSalesData =
                     FetchCategoryDashboardController.mapCategoryAvgToSalesData(
                       state.entities,
                     );
                 if (mappedSalesData.isEmpty) {
-                  return Center(
-                    child: Text(
-                      "No sales data available per category",
-                      style: textBodiesStyle2,
-                    ),
+                  return LayoutBuilder(
+                    builder: (context, _) {
+                      return SizedBox(
+                        height: size.height / 2,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(
+                              child: PieChart(
+                                PieChartData(
+                                  pieTouchData: PieTouchData(
+                                    touchCallback:
+                                        (
+                                          FlTouchEvent event,
+                                          pieTouchResponse,
+                                        ) {},
+                                  ),
+                                  centerSpaceRadius: 50,
+                                  sectionsSpace: 3,
+                                  sections:
+                                      (emptySection.isEmpty
+                                              ? [0]
+                                              : emptySection)
+                                          .asMap()
+                                          .entries
+                                          .map((section) {
+                                            return PieChartSectionData(
+                                              radius: /* isTouched ? 70 : */ 55,
+                                              value: 100,
+                                              color: lightGrey,
+
+                                              title: 'No Data',
+                                              titleStyle: textBodiesStyle
+                                                  .copyWith(color: black),
+                                              badgePositionPercentageOffset:
+                                                  1.2,
+                                            );
+                                          })
+                                          .toList(),
+                                ),
+                              ),
+                            ),
+                            reportSection(),
+                          ],
+                        ),
+                      );
+                    },
                   );
                 }
                 return InteractivePieChartSection(salesData: mappedSalesData);
@@ -369,6 +412,74 @@ class ChartSectionWidget extends StatelessWidget {
           ),
     );
   }
+}
+
+Widget reportSection() {
+  final userLevel = fetchEmployeeInfoDashBoardController.blocEntities.level;
+  return Container(
+    width: size.width * 0.30,
+    height: size.height * 0.50,
+    decoration: BoxDecoration(
+      borderRadius: BorderRadius.circular(6),
+      border: Border.all(color: white, width: 3),
+    ),
+    child: SingleChildScrollView(
+      child: MultiBlocProvider(
+        providers: [
+          BlocProvider(
+            create: (context) =>
+                ReportBloc(controller: sl<ReportController>())..add(
+                  ReportBlocEventLoading(
+                    level: userLevel.isNotEmpty ? userLevel : 'Supervisor',
+                  ),
+                ),
+          ),
+        ],
+        child: BlocBuilder<ReportBloc, ReportBlocState>(
+          builder: (context, state) {
+            if (state is ReportBlocStateLoading) {
+              return reportSectionLoading();
+            } else if (state is ReportBlocStateError) {
+              return SizedBox(
+                height: size.height / 2.01,
+                child: Center(
+                  child: Text("Somthing went wrong!", style: textBodiesStyle2),
+                ),
+              );
+            } else if (state is ReportBlocStateLoaded) {
+              return Container(
+                margin: EdgeInsets.symmetric(
+                  horizontal: size.width * 0.002,
+                  vertical: size.height * 0.002,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      state.entities.title,
+                      style: GoogleFonts.aleo(
+                        fontSize: 24,
+                        color: white,
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
+                    Text(
+                      state.entities.subTitle,
+                      style: GoogleFonts.aleo(
+                        color: white,
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }
+            return Container();
+          },
+        ),
+      ),
+    ),
+  );
 }
 
 class InteractivePieChartSection extends StatefulWidget {
@@ -398,77 +509,6 @@ class _InteractivePieChartSectionState
           ),
           reportSection(),
         ],
-      ),
-    );
-  }
-
-  Widget reportSection() {
-    final userLevel = fetchEmployeeInfoDashBoardController.blocEntities.level;
-    return Container(
-      width: size.width * 0.30,
-      height: size.height * 0.50,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(6),
-        border: Border.all(color: white, width: 3),
-      ),
-      child: SingleChildScrollView(
-        child: MultiBlocProvider(
-          providers: [
-            BlocProvider(
-              create: (context) =>
-                  ReportBloc(controller: sl<ReportController>())..add(
-                    ReportBlocEventLoading(
-                      level: userLevel.isNotEmpty ? userLevel : 'Supervisor',
-                    ),
-                  ),
-            ),
-          ],
-          child: BlocBuilder<ReportBloc, ReportBlocState>(
-            builder: (context, state) {
-              if (state is ReportBlocStateLoading) {
-                return reportSectionLoading();
-              } else if (state is ReportBlocStateError) {
-                return SizedBox(
-                  height: size.height / 2.01,
-                  child: Center(
-                    child: Text(
-                      "Somthing went wrong!",
-                      style: textBodiesStyle2,
-                    ),
-                  ),
-                );
-              } else if (state is ReportBlocStateLoaded) {
-                return Container(
-                  margin: EdgeInsets.symmetric(
-                    horizontal: size.width * 0.002,
-                    vertical: size.height * 0.002,
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        state.entities.title,
-                        style: GoogleFonts.aleo(
-                          fontSize: 24,
-                          color: white,
-                          fontWeight: FontWeight.w400,
-                        ),
-                      ),
-                      Text(
-                        state.entities.subTitle,
-                        style: GoogleFonts.aleo(
-                          color: white,
-                          fontWeight: FontWeight.w400,
-                        ),
-                      ),
-                    ],
-                  ),
-                );
-              }
-              return Container();
-            },
-          ),
-        ),
       ),
     );
   }
@@ -515,10 +555,10 @@ class _InteractivePieChartSectionState
               color: data['color'],
 
               title: '${data['value'].toInt()}%',
-              titleStyle: TextStyle(
+              titleStyle: textBodiesStyle.copyWith(
                 fontSize: isTouched ? 16 : 12,
                 fontWeight: FontWeight.bold,
-                color: white,
+                color: isTouched ? gold : white,
               ),
               badgePositionPercentageOffset: 1.2,
             );
@@ -535,6 +575,8 @@ class _InteractivePieChartSectionState
         final index = entry.key;
         final data = entry.value;
         final isTouched = index == touchedIndex;
+        final forWidth = size.width;
+        final forHeight = size.height;
 
         return Padding(
           padding: EdgeInsets.symmetric(vertical: 4),
@@ -543,8 +585,8 @@ class _InteractivePieChartSectionState
               // Color dot
               AnimatedContainer(
                 duration: Duration(milliseconds: 200),
-                width: isTouched ? 14 : 10,
-                height: isTouched ? 14 : 10,
+                width: isTouched ? forWidth * 0.025 : forWidth * 0.02,
+                height: isTouched ? forHeight * 0.025 : forHeight * 0.02,
                 decoration: BoxDecoration(
                   color: data['color'],
                   shape: BoxShape.circle,
@@ -553,11 +595,15 @@ class _InteractivePieChartSectionState
               sizeBoxWidth(size.width * 0.008),
               Text(
                 '${data['label']}  ${data['value'].toInt()}%',
-                style: TextStyle(
+                style: textBodiesStyle.copyWith(
+                  color: isTouched ? gold : white,
+                  fontSize: isTouched ? 22 : 20,
+                  fontWeight: isTouched ? FontWeight.bold : FontWeight.normal,
+                ) /* TextStyle(
                   color: isTouched ? white : lightGrey,
                   fontSize: 20,
                   fontWeight: isTouched ? FontWeight.bold : FontWeight.normal,
-                ),
+                ), */,
               ),
             ],
           ),
@@ -664,6 +710,7 @@ class QuickActionsSection extends StatelessWidget {
       'Sales Report Access',
     );
     final hasAccessInReportsAccess = permissions.hasAccess('Reports Access');
+    final fullname = employee.name;
     return Column(
       children: [
         Container(
@@ -715,7 +762,9 @@ class QuickActionsSection extends StatelessWidget {
                   ? Navigator.push(context, naviToAnotherPage(ReportPage()))
                   : Navigator.push(
                       context,
-                      naviToAnotherPage(ReturnsAndRefundsPage()),
+                      naviToAnotherPage(
+                        ReturnsAndRefundsPage(fullName: fullname),
+                      ),
                     ),
               icon: hasAccessInSalesReportAccess
                   ? Iconsax.ticket
@@ -836,7 +885,12 @@ class AppDrawer extends StatelessWidget {
                   ? productsExpansionTile(context, state.enitities)
                   : Container(),
               hasAccessOrderActions
-                  ? ordersAndTransactions(context, state.enitities, permissions)
+                  ? ordersAndTransactions(
+                      context,
+                      state.enitities,
+                      permissions,
+                      fullName,
+                    )
                   : Container(),
 
               hasAccessEmpPages
@@ -1006,6 +1060,7 @@ class AppDrawer extends StatelessWidget {
     BuildContext context,
     EmployeeInfoEntities entities,
     Permissions permissions,
+    String fullName,
   ) {
     return ExpansionTile(
       splashColor: invisible,
@@ -1033,7 +1088,7 @@ class AppDrawer extends StatelessWidget {
               text: 'Returns / Refunds Page',
               icons: Icons.compare_arrows,
               entities: entities,
-              widget: ReturnsAndRefundsPage(),
+              widget: ReturnsAndRefundsPage(fullName: fullName),
             ),
             sizeBoxHeight(size.height * 0.012),
             permissions.hasAccess('Orders Puschased Access')

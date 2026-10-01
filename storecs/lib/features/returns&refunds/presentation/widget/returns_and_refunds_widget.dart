@@ -11,7 +11,8 @@ import 'package:storecs/Core/styles/text_styles.dart';
 import 'package:storecs/features/returns&refunds/presentation/state_management/return_and_refund_controller.dart';
 
 class ReturnsAndRefundsWidget extends StatefulWidget {
-  const ReturnsAndRefundsWidget({super.key});
+  final String fullName;
+  const ReturnsAndRefundsWidget({super.key, required this.fullName});
 
   @override
   State<ReturnsAndRefundsWidget> createState() =>
@@ -40,11 +41,11 @@ class _ReturnsAndRefundsWidgetState extends State<ReturnsAndRefundsWidget> {
         title: FadeInLeft(child: Text("Returns/Refunds", style: textAppBar)),
         iconTheme: IconThemeData(color: white),
       ),
-      body: returnAndRefundBodyMethod(),
+      body: returnAndRefundBodyMethod(widget.fullName),
     );
   }
 
-  Widget returnAndRefundBodyMethod() {
+  Widget returnAndRefundBodyMethod(String fullName) {
     return FadeInUp(
       child: Dialog(
         backgroundColor: surfaceCardColor,
@@ -82,7 +83,7 @@ class _ReturnsAndRefundsWidgetState extends State<ReturnsAndRefundsWidget> {
                 ),
                 sizeBoxHeight(size.height * 0.016),
                 const Divider(),
-                fetchOrderDataStatusMethod(),
+                fetchOrderDataStatusMethod(fullName),
               ],
             ) /* */,
           ),
@@ -91,7 +92,7 @@ class _ReturnsAndRefundsWidgetState extends State<ReturnsAndRefundsWidget> {
     );
   }
 
-  Widget fetchOrderDataStatusMethod() {
+  Widget fetchOrderDataStatusMethod(String fullName) {
     return ListenableBuilder(
       listenable: returnAndRefundController,
       builder: (context, child) {
@@ -111,6 +112,7 @@ class _ReturnsAndRefundsWidgetState extends State<ReturnsAndRefundsWidget> {
           case ReturnStatus.success:
             return BuildSuccessOrderReturnLayout(
               controller: returnAndRefundController,
+              fullName: fullName,
             );
         }
       },
@@ -159,7 +161,11 @@ class _ReturnsAndRefundsWidgetState extends State<ReturnsAndRefundsWidget> {
 
 class BuildSuccessOrderReturnLayout extends StatelessWidget {
   final ReturnAndRefundController controller;
-  const BuildSuccessOrderReturnLayout({super.key, required this.controller});
+  final String fullName;
+  const BuildSuccessOrderReturnLayout({super.key,
+   required this.controller,
+   required this.fullName
+   });
 
   @override
   Widget build(BuildContext context) {
@@ -191,7 +197,7 @@ class BuildSuccessOrderReturnLayout extends StatelessWidget {
           height: size.height * 0.048,
           child: ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor: redColor),
-            onPressed: () => controller.submitReturn(),
+            onPressed: () => controller.submitReturn(fullName),
             child: const Text(
               "Confirm Return",
               style: TextStyle(color: white, fontSize: 16),

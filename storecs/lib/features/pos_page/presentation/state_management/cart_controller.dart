@@ -140,9 +140,10 @@ class CartController extends ChangeNotifier {
       await profitLossController.storeCase(
         purchasedReceipt!.orderId,
         'Purchased',
-
         purchasedReceipt!.totalPrice,
+        fullName,
       );
+      print('Who sold the order in controller $fullName');
       cartItems.clear();
       alerts.ifSuccess('Purchase Successfully.');
       syncCustomerDisplay();

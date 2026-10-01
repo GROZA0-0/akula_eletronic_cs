@@ -54,7 +54,7 @@ class ShowCustomerDisplayController {
   ) async {
     try {
       if (customerwindowController == null) {
-        print('Customer display not open, skipping update');
+        // print('Customer display not open, skipping update');
         return;
       }
       final data = {

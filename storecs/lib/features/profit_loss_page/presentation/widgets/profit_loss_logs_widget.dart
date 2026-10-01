@@ -36,10 +36,12 @@ class _ProfitLossLogsWidgetState extends State<ProfitLossLogsWidget> {
       ),
       body: SafeArea(
         child: FadeInUp(
-          child: Container(
-            margin: screenSize,
-            width: double.infinity,
-            child: Column(children: [orderColumn(), TransactionLogsWidget()]),
+          child: Center(
+            child: Container(
+              margin: screenSize,
+              width: size.width * 0.90,
+              child: Column(children: [orderColumn(), TransactionLogsWidget()]),
+            ),
           ),
         ),
       ),
@@ -52,18 +54,29 @@ class _ProfitLossLogsWidgetState extends State<ProfitLossLogsWidget> {
         horizontal: size.width * 0.01,
         vertical: size.height * 0.01,
       ),
-      width: size.width / 1.43,
+      width: double.infinity,
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text('OrderId', style: textBodiesStyle),
-          Text('Order Details', style: textBodiesStyle),
-          Text('Order Type', style: textBodiesStyle),
-          Text('Log Order at', style: textBodiesStyle),
+          OrderTitle(text: 'OrderId'),
+          OrderTitle(text: 'Order Details'),
+          OrderTitle(text: 'Order Type'),
+          OrderTitle(text: 'Sold/Refund By'),
+          OrderTitle(text: 'Log Order at'),
         ],
       ),
     );
+  }
+}
+
+class OrderTitle extends StatelessWidget {
+  final String text;
+  const OrderTitle({super.key, required this.text});
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(text, style: textBodiesStyle);
   }
 }
 
@@ -78,7 +91,7 @@ class TransactionLogsWidget extends StatelessWidget {
   Widget transactionLogsWidgetLayout() {
     return Expanded(
       child: Container(
-        width: size.width * 0.80,
+        width: double.infinity,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
           border: Border.all(color: white),
@@ -141,6 +154,11 @@ class TransactionLogsWidget extends StatelessWidget {
                           color: redColor,
                           icon: FontAwesomeIcons.arrowDown,
                         ),
+                  SizedBox(
+                    width: size.width * 0.13,
+
+                    child: Text(list[index].fullName, style: textBodiesStyle),
+                  ),
                   createdAtTxt(list, index),
                 ],
               ),

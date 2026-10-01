@@ -2,10 +2,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:storecs/features/returns&refunds/presentation/widget/returns_and_refunds_widget.dart';
 
 class ReturnsAndRefundsPage extends StatelessWidget {
-  const ReturnsAndRefundsPage({super.key});
+  final String fullName;
+  const ReturnsAndRefundsPage({super.key, required this.fullName});
 
   @override
   Widget build(BuildContext context) {
-    return ReturnsAndRefundsWidget();
+    return ReturnsAndRefundsWidget(fullName: fullName);
   }
 }

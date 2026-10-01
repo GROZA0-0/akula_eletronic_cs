@@ -5,6 +5,7 @@ abstract class ProfitLossRepository {
     String orderId,
     String orderType,
     double totalPrice,
+    String fullName,
   );
 
   Future<List<ProfitLossEntities>> getProfitLossLogsRepo();

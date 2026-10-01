@@ -131,7 +131,7 @@ class ReturnAndRefundController extends ChangeNotifier {
     return total;
   }
 
-  Future<void> submitReturn() async {
+  Future<void> submitReturn(String fullName) async {
     final selectedReturns = itemsDetailsModel
         .where((item) => item.isSelected)
         .toList();
@@ -159,11 +159,13 @@ class ReturnAndRefundController extends ChangeNotifier {
         refundReason,
         calculatedReturnAmount,
         payload,
+        fullName,
       );
       await profitLossController.storeCase(
         entities.orderId,
         'Refunded',
         calculatedReturnAmount,
+        fullName,
       );
       status = ReturnStatus.success;
       final mess = 'Refund success';

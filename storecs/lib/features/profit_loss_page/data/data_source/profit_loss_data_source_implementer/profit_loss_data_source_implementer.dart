@@ -13,14 +13,15 @@ class ProfitLossDataSourceImplementer
     String orderId,
     String orderType,
     double totalPrice,
+    String fullName,
   ) async {
     final storeProfitLossCase =
         '${Env.baseURL}storePurchaseOrRefundOrderDetailsRoute';
     final data = {
       "orderId": orderId,
       "orderType": orderType,
-
       "totalPrice": totalPrice,
+      "fullName": fullName,
     };
     final res = await dio.post(
       storeProfitLossCase,
@@ -30,6 +31,7 @@ class ProfitLossDataSourceImplementer
         validateStatus: (status) => status! < 600,
       ),
     );
+    // print('Who sold/refunded the order in data source $fullName');
     if (res.statusCode == 200 || res.statusCode == 201) {
       if (res.data == null) {
         return ProfitLossModel.emptyProfitLossModel();

@@ -16,6 +16,7 @@ class StoreReturnAndRefundInfoDataSourceImplementer
     String refundReason,
     double totalRefundAmount,
     List<RefundItemModel> item,
+    String fullName,
   ) async {
     final storeRefund = '${Env.baseURL}storeReturnAndRefundInfoRoute';
     final Map<String, dynamic> info = {
@@ -24,6 +25,7 @@ class StoreReturnAndRefundInfoDataSourceImplementer
       'refundReason': refundReason,
       'totalRefundAmount': totalRefundAmount,
       'items': item.map((e) => e.toJson()).toList(),
+      'fullName': fullName,
     };
     final res = await dio.post(
       storeRefund,

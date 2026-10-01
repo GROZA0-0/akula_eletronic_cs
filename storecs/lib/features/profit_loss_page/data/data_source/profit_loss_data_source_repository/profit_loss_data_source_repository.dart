@@ -5,6 +5,7 @@ abstract class ProfitLossDataSourceRepository {
     String orderId,
     String orderType,
     double totalPrice,
+    String fullName,
   );
   Future<List<ProfitLossModel>> getProfitLossLogsDataSourceRepo();
 }
