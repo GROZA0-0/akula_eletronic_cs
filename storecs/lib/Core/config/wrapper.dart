@@ -94,7 +94,7 @@ class _WrapperState extends State<Wrapper> {
     }
     final user = FirebaseAuth.instance.currentUser;
     if (user != null) {
-      print('Inactivity limit reached. Auto signing out...');
+      print('Inactivity limit reached. Auto signing out..');
       if (Get.isRegistered<SignOutController>()) {
         await Get.find<SignOutController>().signOutTrigger();
       } else {
