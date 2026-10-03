@@ -33,7 +33,6 @@ migrate_working_dir/
 /build/
 /coverage/
 lib/Core/config/env.dart
-lib/Core/config/base_url.dart
 # Symbolication related
 app.*.symbols
 
