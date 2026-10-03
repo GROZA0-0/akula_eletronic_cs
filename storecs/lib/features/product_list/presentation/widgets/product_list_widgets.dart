@@ -445,20 +445,13 @@ class CreatingProductWidget extends StatelessWidget {
           icon: Icon(Iconsax.receipt_item, color: white),
           controller: productListController.stock,
         ),
-        InkWell(
-          onTap: () => productListController.storeProductInfo(),
-          child: Container(
-            decoration: BoxDecoration(
-              border: Border.all(color: white),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            width: size.width * 0.4,
-            height: size.height * 0.05,
-            child: Center(
-              child: Text("Create Product", style: textStyleForButtons(24)),
-            ),
-          ),
+        SaveButton(
+          callback: () => productListController.storeProductInfo(),
+          height: size.height * 0.07,
+          width: size.width * 0.4,
+          text: "Create Product",
         ),
+        sizeBoxHeight(size.height * 0.02),
       ],
     );
   }
@@ -584,6 +577,61 @@ class InsertProductTextFieldTemplate extends StatelessWidget {
           ),
           filled: true,
           fillColor: Colors.transparent,
+        ),
+      ),
+    );
+  }
+}
+
+class SaveButton extends StatefulWidget {
+  final VoidCallback callback;
+  final double width, height;
+  final String text;
+
+  const SaveButton({
+    super.key,
+    required this.callback,
+    required this.height,
+    required this.width,
+    required this.text,
+  });
+
+  @override
+  State<SaveButton> createState() => _SaveButtonState();
+}
+
+class _SaveButtonState extends State<SaveButton> {
+  bool passMouse = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: MouseRegion(
+        onEnter: (event) => setState(() => passMouse = true),
+        onExit: (event) => setState(() => passMouse = false),
+        child: InkWell(
+          splashColor: invisible,
+          onTap: widget.callback,
+          child: Container(
+            width: widget.width,
+            height: widget.height,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(
+                color: passMouse ? blueGreen : white,
+                width: 3,
+              ),
+            ),
+            child: Center(
+              child: Text(
+                widget.text,
+                style: textStyleForButtons(24).copyWith(
+                  color: passMouse ? blueGreen : white,
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+            ),
+          ),
         ),
       ),
     );

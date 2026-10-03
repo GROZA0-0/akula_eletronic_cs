@@ -102,24 +102,16 @@ class _SignInBodyState extends State<SignInBody> {
               suffixIcon: togglePassword(),
             ),
             sizeBoxHeight(size.height * 0.1),
-            signbutton(),
+            SaveButton(
+              callback: () => signInController.signInTrigger(),
+              height: size.height / 14,
+              width: size.width * 0.3,
+              text: 'Sign In',
+            ),
+            // signbutton(),
           ],
         ),
       ],
-    );
-  }
-
-  Container signbutton() {
-    return Container(
-      width: size.width * 0.3,
-      margin: EdgeInsets.symmetric(horizontal: size.width * 0.03),
-      child: ElevatedButton(
-        onPressed: () => signInController.signInTrigger(),
-        child: Text(
-          "Continue",
-          style: GoogleFonts.aleo(color: black, fontWeight: FontWeight.w400),
-        ),
-      ),
     );
   }
 
@@ -234,6 +226,61 @@ class SignInTextFieldTemplate extends StatelessWidget {
           ),
           filled: true,
           fillColor: Colors.transparent,
+        ),
+      ),
+    );
+  }
+}
+
+class SaveButton extends StatefulWidget {
+  final VoidCallback callback;
+  final double width, height;
+  final String text;
+
+  const SaveButton({
+    super.key,
+    required this.callback,
+    required this.height,
+    required this.width,
+    required this.text,
+  });
+
+  @override
+  State<SaveButton> createState() => _SaveButtonState();
+}
+
+class _SaveButtonState extends State<SaveButton> {
+  bool passMouse = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: MouseRegion(
+        onEnter: (event) => setState(() => passMouse = true),
+        onExit: (event) => setState(() => passMouse = false),
+        child: InkWell(
+          splashColor: invisible,
+          onTap: widget.callback,
+          child: Container(
+            width: widget.width,
+            height: widget.height,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(
+                color: passMouse ? blueGreen : white,
+                width: 3,
+              ),
+            ),
+            child: Center(
+              child: Text(
+                widget.text,
+                style: GoogleFonts.aleo(
+                  color: passMouse ? blueGreen : white,
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+            ),
+          ),
         ),
       ),
     );

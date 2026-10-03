@@ -63,22 +63,64 @@ class _ReturnsAndRefundsWidgetState extends State<ReturnsAndRefundsWidget> {
                 Row(
                   children: [
                     Expanded(
-                      child: TextField(
+                      child: TextFormField(
+                        cursorColor: black,
                         controller: returnAndRefundController.orderIdText,
-                        style: textBodiesStyle,
+                        textAlign: TextAlign.start,
+
+                        style: textBodiesStyle.copyWith(
+                          color: grey,
+                          fontWeight: FontWeight.w400,
+                        ),
                         decoration: InputDecoration(
-                          labelText: "Enter Order ID / Scan Receipt Barcode",
-                          labelStyle: textBodiesStyle,
                           prefixIcon: Icon(Icons.search, color: white),
                           border: OutlineInputBorder(),
+                          labelText: 'Enter Order ID / Scan Receipt Barcode',
+                          contentPadding: EdgeInsets.zero,
+                          labelStyle: textBodiesStyle,
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: const BorderSide(
+                              color: white,
+                              width: 2,
+                            ),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: const BorderSide(
+                              color: blueGreen,
+                              width: 2,
+                            ),
+                          ),
+                          errorBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: const BorderSide(color: redColor),
+                          ),
+                          focusedErrorBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: const BorderSide(
+                              color: redColor,
+                              width: 2,
+                            ),
+                          ),
+                          filled: true,
+                          fillColor: invisible,
                         ),
-                        onSubmitted: (_) => returnAndRefundController
+                        maxLines: 1,
+                        onFieldSubmitted: (_) => returnAndRefundController
                             .getOrderBySearchingOnOrderId(),
                       ),
                     ),
                     sizeBoxWidth(size.width * 0.012),
-
-                    orderSearchButton(),
+                    SaveButton(
+                      callback: () => returnAndRefundController
+                          .getOrderBySearchingOnOrderId(),
+                      height: size.height * 0.07,
+                      width: size.width * 0.07,
+                      text: 'Search',
+                      color: milkyblue,
+                    ),
+                    // orderSearchButton(),
                   ],
                 ),
                 sizeBoxHeight(size.height * 0.016),
@@ -143,7 +185,7 @@ class _ReturnsAndRefundsWidgetState extends State<ReturnsAndRefundsWidget> {
     );
   }
 
-  Widget orderSearchButton() {
+  /* Widget orderSearchButton() {
     return ElevatedButton.icon(
       style: ElevatedButton.styleFrom(
         shape: ContinuousRectangleBorder(
@@ -156,30 +198,31 @@ class _ReturnsAndRefundsWidgetState extends State<ReturnsAndRefundsWidget> {
       icon: const Icon(Iconsax.search_normal_1, color: white),
       label: Text("Search", style: textBodiesStyle),
     );
-  }
+  } */
 }
 
 class BuildSuccessOrderReturnLayout extends StatelessWidget {
   final ReturnAndRefundController controller;
   final String fullName;
-  const BuildSuccessOrderReturnLayout({super.key,
-   required this.controller,
-   required this.fullName
-   });
+  const BuildSuccessOrderReturnLayout({
+    super.key,
+    required this.controller,
+    required this.fullName,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
         orderIdTextView(),
-        SizedBox(height: size.height * 0.010),
+        sizeBoxHeight(size.height * 0.010),
 
         rowOfReturnsAndRefundKeysMethod(),
 
         /* --- ORDER ITEMS LIST --- */
         rowOfReturnsAndRefundDataMethod(),
 
-        SizedBox(height: size.height * 0.016),
+        sizeBoxHeight(size.height * 0.016),
 
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -189,20 +232,14 @@ class BuildSuccessOrderReturnLayout extends StatelessWidget {
             coloumnOfRefundValueMethod(),
           ],
         ),
+        sizeBoxHeight(size.height * 0.016),
 
-        SizedBox(height: size.height * 0.016),
-
-        SizedBox(
-          width: double.infinity,
+        SaveButton(
+          callback: () => controller.submitReturn(fullName),
           height: size.height * 0.048,
-          child: ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: redColor),
-            onPressed: () => controller.submitReturn(fullName),
-            child: const Text(
-              "Confirm Return",
-              style: TextStyle(color: white, fontSize: 16),
-            ),
-          ),
+          width: double.infinity,
+          text: "Confirm Return",
+          color: redColor,
         ),
       ],
     );
@@ -254,7 +291,7 @@ class BuildSuccessOrderReturnLayout extends StatelessWidget {
               filled: true,
               fillColor: Colors.transparent,
             ),
-            maxLines: 2,
+            maxLines: 1,
             onChanged: (val) => controller.refundReason = val,
           ),
         ],
@@ -313,6 +350,8 @@ class BuildSuccessOrderReturnLayout extends StatelessWidget {
               Expanded(
                 flex: 1,
                 child: Checkbox(
+                  checkColor: white,
+                  activeColor: blueGreen,
                   value: item.isSelected,
                   onChanged: (val) =>
                       controller.itemSection(index, val ?? false),
@@ -363,16 +402,59 @@ class BuildSuccessOrderReturnLayout extends StatelessWidget {
                       width: 60,
                       height: 35,
                       child: TextFormField(
+                        cursorColor: black,
                         key: ValueKey('${item.id}_$index'),
                         initialValue: item.returnQuantity == 0
                             ? ''
                             : '${item.returnQuantity}',
-                        keyboardType: TextInputType.number,
                         textAlign: TextAlign.center,
-                        decoration: const InputDecoration(
-                          contentPadding: EdgeInsets.zero,
-                          border: OutlineInputBorder(),
+
+                        style: GoogleFonts.aleo(
+                          color: grey,
+                          fontWeight: FontWeight.w400,
                         ),
+                        decoration: InputDecoration(
+                          contentPadding: EdgeInsets.zero,
+                          labelStyle: GoogleFonts.aleo(
+                            color: white,
+                            fontWeight: FontWeight.w400,
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: const BorderSide(
+                              color: white,
+                              width: 2,
+                            ),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: const BorderSide(
+                              color: black,
+                              width: 2,
+                            ),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: const BorderSide(
+                              color: blueGreen,
+                              width: 2,
+                            ),
+                          ),
+                          errorBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: const BorderSide(color: redColor),
+                          ),
+                          focusedErrorBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: const BorderSide(
+                              color: redColor,
+                              width: 2,
+                            ),
+                          ),
+                          filled: true,
+                          fillColor: invisible,
+                        ),
+                        maxLines: 1,
                         onChanged: (value) {
                           final qty = int.tryParse(value) ?? 0;
                           controller.updateReturnQty(index, qty);
@@ -474,6 +556,66 @@ class BuildSuccessOrderReturnLayout extends StatelessWidget {
           fontSize: 18,
           color: white,
           fontWeight: FontWeight.w400,
+        ),
+      ),
+    );
+  }
+}
+
+// ignore: must_be_immutable
+class SaveButton extends StatefulWidget {
+  final VoidCallback callback;
+  final double width, height;
+  final String text;
+
+  final Color color;
+
+  const SaveButton({
+    super.key,
+    required this.callback,
+    required this.height,
+    required this.width,
+    required this.text,
+
+    required this.color,
+  });
+
+  @override
+  State<SaveButton> createState() => _SaveButtonState();
+}
+
+class _SaveButtonState extends State<SaveButton> {
+  bool passMouse = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: MouseRegion(
+        onEnter: (event) => setState(() => passMouse = true),
+        onExit: (event) => setState(() => passMouse = false),
+        child: InkWell(
+          splashColor: invisible,
+          onTap: widget.callback,
+          child: Container(
+            width: widget.width,
+            height: widget.height,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(
+                color: passMouse ? widget.color : white,
+                width: 3,
+              ),
+            ),
+            child: Center(
+              child: Text(
+                widget.text,
+                style: GoogleFonts.aleo(
+                  color: passMouse ? widget.color : white,
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+            ),
+          ),
         ),
       ),
     );

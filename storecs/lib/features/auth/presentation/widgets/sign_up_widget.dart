@@ -42,7 +42,7 @@ class _SignUpWidgetState extends State<SignUpWidget> {
         ),
         iconTheme: IconThemeData(color: white),
       ),
-      body: SignUpWidgetLayout(togglePassword: togglePassword())
+      body: SignUpWidgetLayout(togglePassword: togglePassword()),
     );
   }
 
@@ -122,6 +122,7 @@ class SignUpTextFieldTemplate extends StatelessWidget {
     );
   }
 }
+
 class SignUpWidgetLayout extends StatelessWidget {
   final Widget togglePassword;
   const SignUpWidgetLayout({super.key, required this.togglePassword});
@@ -129,157 +130,181 @@ class SignUpWidgetLayout extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-        child: SingleChildScrollView(
-          child: FadeInUp(
-            child: ListenableBuilder(
-              listenable: signUpController,
-              builder: (context, _) {
-                return Container(
-                  margin: EdgeInsets.symmetric(
-                    horizontal: size.width * 0.008,
-                    vertical: size.height * 0.010,
-                  ),
-                  width: double.infinity,
-                  height: size.height / 0.80,
-                  decoration: BoxDecoration(
-                    border: Border.all(color: white),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Column(
-                    children: [
-                      SignUpTextFieldTemplate(
-                        text: EmailTextField,
-                        controller: signUpController.email,
-                        passVisible: false,
-                        icon: Icon(Icons.email_rounded, color: white),
-                      ),
-                      SignUpTextFieldTemplate(
-                        text: PasswordTextField,
-                        controller: signUpController.password,
-                        passVisible: signUpController.passVisible,
-                        suffixIcon: togglePassword,
-                        icon: Icon(RemixIcons.lock_password_fill, color: white),
-                      ),
-                      SignUpTextFieldTemplate(
-                        text: NameTextField,
-                        controller: signUpController.name,
-                        passVisible: false,
-                        icon: Icon(RemixIcons.user_2_line, color: white),
-                      ),
-                      listOfFieldsWidget(),
-                      SignUpTextFieldTemplate(
-                        text: PhoneTextField,
-                        controller: signUpController.phone,
-                        passVisible: false,
-                        icon: Icon(FontAwesomeIcons.phone, color: white),
-                      ),
-                      sizeBoxHeight(size.height * 0.04),
-                      uploadEmployeePicWidget(),
-                      sizeBoxHeight(size.height * 0.09),
-                      createAccountButtonWidget(),
-                    ],
-                  ),
-                );
-              },
-            ),
+      child: SingleChildScrollView(
+        child: FadeInUp(
+          child: ListenableBuilder(
+            listenable: signUpController,
+            builder: (context, _) {
+              return Container(
+                margin: EdgeInsets.symmetric(
+                  horizontal: size.width * 0.008,
+                  vertical: size.height * 0.010,
+                ),
+                width: double.infinity,
+                height: size.height / 0.80,
+                decoration: BoxDecoration(
+                  border: Border.all(color: white),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Column(
+                  children: [
+                    SignUpTextFieldTemplate(
+                      text: EmailTextField,
+                      controller: signUpController.email,
+                      passVisible: false,
+                      icon: Icon(Icons.email_rounded, color: white),
+                    ),
+                    SignUpTextFieldTemplate(
+                      text: PasswordTextField,
+                      controller: signUpController.password,
+                      passVisible: signUpController.passVisible,
+                      suffixIcon: togglePassword,
+                      icon: Icon(RemixIcons.lock_password_fill, color: white),
+                    ),
+                    SignUpTextFieldTemplate(
+                      text: NameTextField,
+                      controller: signUpController.name,
+                      passVisible: false,
+                      icon: Icon(RemixIcons.user_2_line, color: white),
+                    ),
+                    listOfFieldsWidget(),
+                    SignUpTextFieldTemplate(
+                      text: PhoneTextField,
+                      controller: signUpController.phone,
+                      passVisible: false,
+                      icon: Icon(FontAwesomeIcons.phone, color: white),
+                    ),
+                    sizeBoxHeight(size.height * 0.04),
+                    uploadEmployeePicWidget(),
+                    sizeBoxHeight(size.height * 0.09),
+                    SaveButton(
+                      callback: () =>
+                          signUpController.createEmployeeAccController(),
+                      height: size.height * 0.07,
+                      width: size.width * 0.4,
+                      text: 'Create an Account',
+                    ),
+                  ],
+                ),
+              );
+            },
           ),
         ),
-      );
-  }
-
-  Widget createAccountButtonWidget() {
-    return InkWell(
-                      onTap: () =>
-                          signUpController.createEmployeeAccController(),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          border: Border.all(color: white),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        width: size.width * 0.4,
-                        height: size.height * 0.05,
-                        child: Center(
-                          child: Text(
-                            "Create an Account",
-                            style: textStyleForButtons(24),
-                          ),
-                        ),
-                      ),
-                    );
+      ),
+    );
   }
 
   Widget uploadEmployeePicWidget() {
     return InkWell(
-                      onTap: () => signUpController.uploadPic(),
-                      child: signUpController.selectedFile != null
-                          ? ClipRRect(
-                              borderRadius: BorderRadius.circular(12),
-                              child: SizedBox(
-                                width: size.height / 4,
-                                height: size.height / 4,
-                                child: Image.file(
-                                  signUpController.selectedFile!,
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
-                            )
-                          : Column(
-                              children: [
-                                Icon(
-                                  Iconsax.document_upload,
-                                  color: white,
-                                  size: 60,
-                                ),
+      onTap: () => signUpController.uploadPic(),
+      child: signUpController.selectedFile != null
+          ? ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: SizedBox(
+                width: size.height / 4,
+                height: size.height / 4,
+                child: Image.file(
+                  signUpController.selectedFile!,
+                  fit: BoxFit.cover,
+                ),
+              ),
+            )
+          : Column(
+              children: [
+                Icon(Iconsax.document_upload, color: white, size: 60),
 
-                                Text(
-                                  "Choose a profile picture.",
-                                  style: textAppBar,
-                                ),
-                              ],
-                            ),
-                    );
+                Text("Choose a profile picture.", style: textAppBar),
+              ],
+            ),
+    );
   }
 
   Widget listOfFieldsWidget() {
     return Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      width: size.width / 4,
-                      child: DropdownButton<String>(
-                        dropdownColor: grey,
-                        hint: Text(
-                          "Postions",
-                          style: GoogleFonts.aleo(
-                            color: white,
-                            fontWeight: FontWeight.w400,
-                          ),
-                        ),
-                        value: signUpController.selectedlevel.isEmpty
-                            ? null
-                            : signUpController.selectedlevel,
-                        items: signUpController.staffLevels.map((
-                          String value,
-                        ) {
-                          return DropdownMenuItem<String>(
-                            value: value,
-                            child: Text(
-                              value,
-                              style: GoogleFonts.aleo(
-                                color: white,
-                                fontWeight: FontWeight.w400,
-                              ),
-                            ),
-                          );
-                        }).toList(),
-                        onChanged: (newValue) {
-                          if (newValue != null) {
-                            signUpController.changeLevel(
-                              newValue,
-                            ); // Updates controller state
-                          }
-                        },
-                      ),
-                    );
+      decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
+      width: size.width / 4,
+      child: DropdownButton<String>(
+        dropdownColor: grey,
+        hint: Text(
+          "Postions",
+          style: GoogleFonts.aleo(color: white, fontWeight: FontWeight.w400),
+        ),
+        value: signUpController.selectedlevel.isEmpty
+            ? null
+            : signUpController.selectedlevel,
+        items: signUpController.staffLevels.map((String value) {
+          return DropdownMenuItem<String>(
+            value: value,
+            child: Text(
+              value,
+              style: GoogleFonts.aleo(
+                color: white,
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+          );
+        }).toList(),
+        onChanged: (newValue) {
+          if (newValue != null) {
+            signUpController.changeLevel(newValue); // Updates controller state
+          }
+        },
+      ),
+    );
+  }
+}
+
+class SaveButton extends StatefulWidget {
+  final VoidCallback callback;
+  final double width, height;
+  final String text;
+
+  const SaveButton({
+    super.key,
+    required this.callback,
+    required this.height,
+    required this.width,
+    required this.text,
+  });
+
+  @override
+  State<SaveButton> createState() => _SaveButtonState();
+}
+
+class _SaveButtonState extends State<SaveButton> {
+  bool passMouse = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: MouseRegion(
+        onEnter: (event) => setState(() => passMouse = true),
+        onExit: (event) => setState(() => passMouse = false),
+        child: InkWell(
+          splashColor: invisible,
+          onTap: widget.callback,
+          child: Container(
+            width: widget.width,
+            height: widget.height,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(
+                color: passMouse ? blueGreen : white,
+                width: 3,
+              ),
+            ),
+            child: Center(
+              child: Text(
+                widget.text,
+                style: textStyleForButtons(24).copyWith(
+                  color: passMouse ? blueGreen : white,
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }

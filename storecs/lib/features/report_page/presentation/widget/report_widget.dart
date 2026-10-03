@@ -53,7 +53,8 @@ class _ReportWidgetState extends State<ReportWidget> {
                     lines: 200,
                     txtFieldSize: size.height / 2,
                   ),
-                  reportStoreMethod(),
+                  SaveButton(callback: () => reportController.storeReport(), height:size.height * 0.07, width:size.width * 0.4, text: 'Create an Report')
+                  
                 ],
               ),
             ),
@@ -63,21 +64,56 @@ class _ReportWidgetState extends State<ReportWidget> {
     );
   }
 
-  Widget reportStoreMethod() {
-    return MouseRegion(
-      onExit: (event) => setState(() => isHovered = false),
-      onEnter: (event) => setState(() => isHovered = true),
-      child: InkWell(
-        onTap: () => reportController.storeReport(),
-        child: Container(
-          decoration: BoxDecoration(
-            border: Border.all(color: isHovered ? green : white, width: 3),
-            borderRadius: BorderRadius.circular(10),
-          ),
-          width: size.width * 0.4,
-          height: size.height * 0.07,
-          child: Center(
-            child: Text("Create an Report", style: textStyleForButtons(24)),
+  
+}
+class SaveButton extends StatefulWidget {
+  final VoidCallback callback;
+  final double width, height;
+  final String text;
+
+  const SaveButton({
+    super.key,
+    required this.callback,
+    required this.height,
+    required this.width,
+    required this.text,
+  });
+
+  @override
+  State<SaveButton> createState() => _SaveButtonState();
+}
+
+class _SaveButtonState extends State<SaveButton> {
+  bool passMouse = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: MouseRegion(
+        onEnter: (event) => setState(() => passMouse = true),
+        onExit: (event) => setState(() => passMouse = false),
+        child: InkWell(
+          splashColor: invisible,
+          onTap: widget.callback,
+          child: Container(
+            width: widget.width,
+            height: widget.height,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(
+                color: passMouse ? blueGreen : white,
+                width: 3,
+              ),
+            ),
+            child: Center(
+              child: Text(
+                widget.text,
+                style: textStyleForButtons(24).copyWith(
+                  color: passMouse ? blueGreen : white,
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+            ),
           ),
         ),
       ),
