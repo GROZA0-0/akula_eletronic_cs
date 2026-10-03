@@ -34,6 +34,7 @@ migrate_working_dir/
 /coverage/
 lib/Core/config/env.dart
 lib/Core/config/base_url.dart
+lib/Core/config/firebase_options.dart
 # Symbolication related
 app.*.symbols
 
