@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:storecs/Core/config/account_status.dart';
 import 'package:storecs/Core/config/env.dart';
 import 'package:storecs/features/staff_list/data/data_source/data_source_repo/staff_list_data_source_repo.dart';
 import 'package:storecs/features/staff_list/data/model/staff_list_model.dart';
@@ -29,9 +30,10 @@ class StaffListDataSourceImplementer implements StaffListDataSourceRepo {
     String id,
     String phone,
     String field,
+    UserAccountStatus status,
   ) async {
     final updateStaff = '${Env.baseURL}updateEmployeeDataRoute/$id';
-    final data = {"empPhone": phone, "empLvl": field};
+    final data = {"empPhone": phone, "empLvl": field, "empStatus": status.name};
     final res = await dio.patch(
       updateStaff,
       data: data,

@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
-import 'package:get/get.dart';
+import 'package:storecs/Core/config/account_status.dart';
+import 'package:storecs/Core/config/call_controller.dart';
 import 'package:storecs/Core/styles/alerts.dart';
 import 'package:storecs/Core/styles/loader.dart';
 import 'package:storecs/features/staff_list/domain/entities/staff_list_entities.dart';
@@ -10,7 +11,6 @@ class StaffListController extends ChangeNotifier {
   final StaffListRepo repository;
   StaffListController({required this.repository});
 
-  RxBool loading = false.obs;
   List<StaffListEntities> entities = [];
   Alerts alerts = Alerts(messengerKey);
   StaffListEntities specificEntities = StaffListEntities(
@@ -54,17 +54,29 @@ class StaffListController extends ChangeNotifier {
     }
   }
 
-  Future<StaffListEntities> updateStaffInfo(String id) async {
+  Future<StaffListEntities> updateStaffInfo(
+    String id,
+    String email,
+    UserAccountStatus status, {
+    String? phoneOverride,
+    String? levelOverride,
+  }) async {
     Loader.startLoading();
     try {
+      final phoneToUpdate = phoneOverride ?? txtPhone.text.trim();
+      final levelToUpdate = levelOverride ?? selectedlevel;
       final updateStaff = await repository.toUpdateStaffRepository(
         id,
-        txtPhone.text.trim(),
-        selectedlevel,
+        phoneToUpdate,
+        levelToUpdate,
+        status,
       );
-      specificEntities.phone = txtPhone.text.trim();
-      // specificEntities.level = staffLevels[index];
+      final index = entities.indexWhere((element) => element.id == id);
+      if (index != -1) {
+        return entities[index] = updateStaff;
+      }
       specificEntities = updateStaff;
+      await changeStatusController.changeStats(email, status);
       Loader.stopLoading();
       alerts.ifSuccess('Employee Updated !');
       clearFields();
@@ -92,6 +104,6 @@ class StaffListController extends ChangeNotifier {
 
   void clearFields() {
     txtPhone.clear();
-    selectedlevel.isEmpty;
+    selectedlevel = '';
   }
 }

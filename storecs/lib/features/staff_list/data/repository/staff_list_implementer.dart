@@ -1,3 +1,4 @@
+import 'package:storecs/Core/config/account_status.dart';
 import 'package:storecs/features/staff_list/data/data_source/data_source_repo/staff_list_data_source_repo.dart';
 import 'package:storecs/features/staff_list/data/model/staff_list_model.dart';
 import 'package:storecs/features/staff_list/domain/entities/staff_list_entities.dart';
@@ -22,12 +23,14 @@ class StaffListImplementer implements StaffListRepo {
     String id,
     String phone,
     String field,
+    UserAccountStatus status,
   ) async {
     try {
       final model = await repo.toUpdateStaffDataSourceRepository(
         id,
         phone,
         field,
+        status,
       );
       return model.toStaffListEntities();
     } catch (e) {

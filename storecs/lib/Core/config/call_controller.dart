@@ -2,6 +2,7 @@ import 'package:get_it/get_it.dart';
 import 'package:storecs/features/auth/presentation/state_management/sign_in_controller.dart';
 import 'package:storecs/features/auth/presentation/state_management/sign_out_controller.dart';
 import 'package:storecs/features/auth/presentation/state_management/sign_up_controller.dart';
+import 'package:storecs/features/dash_board/presentation/state_management/change_status_controller.dart';
 import 'package:storecs/features/dash_board/presentation/state_management/fetch_category_dashboard_controller.dart';
 import 'package:storecs/features/dash_board/presentation/state_management/fetch_employee_info_dash_board_controller.dart';
 import 'package:storecs/features/feedback_page/presentation/state_management/get_feedback_controller.dart';
@@ -39,7 +40,7 @@ final fetchCategoryDashboardController = sl<FetchCategoryDashboardController>();
 final feedbackController = sl<FeedbackController>();
 final getFeedbackController = sl<GetFeedbackController>();
 final taxRulesController = sl<TaxRulesController>();
-
+final changeStatusController = sl<ChangeStatusController>();
 final profitLossController = sl<ProfitLossController>();
 final stockAlertsController = sl<StockAlertsController>();
 final staffPermissionsController = sl<StaffPermissionsController>();

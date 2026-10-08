@@ -1,24 +1,23 @@
 import 'dart:convert';
-
 import 'package:animate_do/animate_do.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
-
 import 'package:iconsax/iconsax.dart';
 import 'package:storecs/Core/Styles/alerts.dart';
 import 'package:storecs/Core/config/account_status.dart';
 import 'package:storecs/Core/config/call_controller.dart';
 import 'package:storecs/Core/config/permissions.dart';
-
 import 'package:storecs/Core/styles/Strings.dart';
 import 'package:storecs/Core/styles/animations.dart';
 import 'package:storecs/Core/styles/colors.dart';
 import 'package:storecs/Core/styles/sizes.dart';
 import 'package:storecs/Core/styles/text_styles.dart';
 import 'package:storecs/features/dash_board/domain/entities/employee_info_entities.dart';
+
 import 'package:storecs/features/staff_list/domain/entities/staff_list_entities.dart';
 import 'package:storecs/features/staff_list/presentation/state_management/staff_list_bloc/staff_list_bloc.dart';
 import 'package:storecs/features/staff_list/presentation/state_management/staff_list_bloc/staff_list_bloc_event.dart';
@@ -36,6 +35,7 @@ class StaffListWidgets extends StatefulWidget {
 
 class _StaffListWidgetsState extends State<StaffListWidgets> {
   int? editingIndex;
+  final id = FirebaseAuth.instance.currentUser!.uid;
   @override
   Widget build(BuildContext context) {
     final Alerts alerts = Alerts(messengerKey);
@@ -50,9 +50,7 @@ class _StaffListWidgetsState extends State<StaffListWidgets> {
           margin: screenSize,
           width: double.infinity,
           // height: size.height / 1.1,
-          child: Column(
-            children: [empRow(), empData(alerts, widget.entities)],
-          ),
+          child: Column(children: [empRow(), empData(alerts, widget.entities)]),
         ),
       ),
     );
@@ -109,6 +107,7 @@ class _StaffListWidgetsState extends State<StaffListWidgets> {
                               hasPermission,
                               staffEntities,
                               alerts,
+                              state,
                             ),
 
                             SizedBox(width: size.width * 0.01),
@@ -148,14 +147,21 @@ class _StaffListWidgetsState extends State<StaffListWidgets> {
         EmpButtonActions(
           onTap: () async {
             if (isEditingTtisRow) {
+              final currentPhone = staffListController.txtPhone.text.trim();
+              final currentLevel = staffListController.selectedlevel;
               /* in edit mode, click on check to save */
-              if (staffListController.selectedlevel == employee.level) {
+              if (currentLevel == employee.level &&
+                  currentPhone == (employee.phone ?? '')) {
+                staffListController.clearFields();
                 setState(() {
                   editingIndex = null;
                 });
+                return;
               } else {
                 final updateStaff = await staffListController.updateStaffInfo(
                   employee.id,
+                  employee.email,
+                  employee.empStatus,
                 );
                 setState(() {
                   state.entities[index] =
@@ -167,6 +173,8 @@ class _StaffListWidgetsState extends State<StaffListWidgets> {
               setState(() {
                 staffListController.txtPhone.text = employee.phone ?? '';
                 staffListController.selectedlevel = employee.level ?? '';
+                staffListController.specificEntities.empStatus =
+                    employee.empStatus;
                 editingIndex = index;
               });
             }
@@ -191,12 +199,14 @@ class _StaffListWidgetsState extends State<StaffListWidgets> {
     bool hasPermission,
     EmployeeInfoEntities staffEntities,
     Alerts alerts,
+    StaffListBlocStateLoaded stateChange,
   ) {
     return ListenableBuilder(
       listenable: staffListController,
       builder: (context, _) {
         return Expanded(
           child: Container(
+            height: size.height * 0.08,
             padding: hasPermission
                 ? null
                 : EdgeInsets.symmetric(
@@ -213,7 +223,10 @@ class _StaffListWidgetsState extends State<StaffListWidgets> {
               children: [
                 /* Emp Pic */
                 Container(
-                  margin: EdgeInsets.only(top: size.height * 0.004),
+                  margin: EdgeInsets.only(
+                    top: size.height * 0.004,
+                    left: size.width * 0.002,
+                  ),
                   child: buildProfileImage(employee.pic, index),
                 ),
                 /* Emp Name */
@@ -285,13 +298,159 @@ class _StaffListWidgetsState extends State<StaffListWidgets> {
                         ),
                       ),
                 /* Emp Status */
-                empStatus(currentStatus, index),
+                empStatus(currentStatus, index, isEditingTtisRow, stateChange),
               ],
             ),
           ),
         );
       },
     );
+  }
+
+  Widget empStatus(
+    List<StaffListEntities> currentStatus,
+    int index,
+    bool isEditingTtisRow,
+    StaffListBlocStateLoaded stateChange,
+  ) {
+    final employee = currentStatus[index];
+    Widget theStatus = Container(
+      clipBehavior: Clip.none,
+      width: size.width * 0.02,
+      height: size.height * 0.03,
+      decoration: BoxDecoration(
+        color: currentStatus[index].empStatus.color,
+        shape: BoxShape.circle,
+        border: Border.all(color: white, width: 2),
+      ),
+    );
+    if (isEditingTtisRow) {
+      return theStatus;
+    }
+    return PopupMenuButton<UserAccountStatus>(
+      onSelected: (UserAccountStatus newStatus) async {
+        final email = currentStatus[index].email;
+        final empId = currentStatus[index].id;
+        final updateStaff = await staffListController.updateStaffInfo(
+          levelOverride: employee.level ?? '',
+          phoneOverride: employee.phone ?? '',
+          empId,
+          email,
+          newStatus,
+        );
+        setState(() {
+          stateChange.entities[index] = updateStaff;
+        });
+      },
+      itemBuilder: (context) {
+        final changeEmpStatus = currentStatus[index].empStatus;
+        return circleUserStatus(changeEmpStatus).toList();
+      },
+      child: Container(
+        clipBehavior: Clip.none,
+        width: size.width * 0.02,
+        height: size.height * 0.03,
+        decoration: BoxDecoration(
+          color: currentStatus[index].empStatus.color,
+          shape: BoxShape.circle,
+          border: Border.all(color: white, width: 2),
+        ),
+      ),
+    );
+  }
+
+  Widget empRow() {
+    return Container(
+      margin: EdgeInsets.only(right: size.width * 0.05),
+      child: Container(
+        padding: EdgeInsets.symmetric(
+          horizontal: size.width * 0.02,
+          vertical: size.height * 0.01,
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            StaffListColoums(text: 'Employee Picture'),
+            StaffListColoums(text: 'Employee Name'),
+            StaffListColoums(text: 'Employee Phone Number'),
+            StaffListColoums(text: 'Employee Department'),
+            StaffListColoums(text: 'Employee Status'),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget buildProfileImage(String base64Image, int index) {
+    if (base64Image.isEmpty) {
+      return GestureDetector(
+        onTap: () => print(staffListController.entities[index].name),
+        child: const CircleAvatar(
+          backgroundColor: grey,
+          radius: 20,
+          child: Icon(color: white, Iconsax.user),
+        ),
+      );
+    } else {
+      try {
+        String sanitizedBase64 = base64Image.contains(',')
+            ? base64Image.split(',').last
+            : base64Image;
+
+        sanitizedBase64 = sanitizedBase64.replaceAll(RegExp(r'\s+'), '');
+        final bytes = base64Decode(sanitizedBase64);
+        return Container(
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            // borderRadius: BorderRadius.circular(100),
+            border: Border.all(color: white),
+          ),
+          child: CircleAvatar(
+            radius: 20,
+            // backgroundColor: invisible,
+            backgroundImage: MemoryImage(bytes),
+          ),
+        );
+      } catch (e) {
+        print("error rending base64 : $e");
+        return const CircleAvatar(
+          radius: 20,
+          backgroundColor: Colors.redAccent,
+          child: Icon(Icons.error_outline, color: white, size: 16),
+        );
+      }
+    }
+  }
+
+  Iterable<PopupMenuItem<UserAccountStatus>> circleUserStatus(
+    UserAccountStatus status,
+  ) {
+    return status.availableTransitionsAccStatus.map((usrStatus) {
+      return PopupMenuItem(
+        value: usrStatus,
+        child: Row(
+          children: [
+            Container(
+              width: size.width * 0.02,
+              height: size.height * 0.02,
+              decoration: BoxDecoration(
+                color: usrStatus.color,
+                shape: BoxShape.circle,
+                border: Border.all(color: deepViolet, width: 2),
+              ),
+            ),
+            Text(
+              usrStatus.label,
+              style: GoogleFonts.aleo(
+                color: deepViolet,
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+          ],
+        ),
+      );
+    });
   }
 
   Future<Object?> termniateStaffAccountDialog(
@@ -338,11 +497,16 @@ class _StaffListWidgetsState extends State<StaffListWidgets> {
               ),
               actions: [
                 TextButton(
-                  onPressed: () {
-                    staffListController.terminateStaffAccount(employee.id);
-                    innerContext.read<StaffListBloc>().add(
-                      StaffListBlocEventLoading(),
+                  onPressed: () async {
+                    Navigator.pop(dialogContext);
+                    await staffListController.terminateStaffAccount(
+                      employee.id,
                     );
+                    if (innerContext.mounted) {
+                      innerContext.read<StaffListBloc>().add(
+                        StaffListBlocEventLoading(),
+                      );
+                    }
                   },
                   child: const Text(
                     "Terminate",
@@ -360,87 +524,15 @@ class _StaffListWidgetsState extends State<StaffListWidgets> {
       ),
     );
   }
+}
 
-  Widget empStatus(List<StaffListEntities> currentStatus, int index) {
-    return Container(
-      height: size.height * 0.03,
-      clipBehavior: Clip.none,
-      child: Container(
-        width: size.width * 0.02,
-        height: size.height * 0.02,
-        decoration: BoxDecoration(
-          color: currentStatus[index].empStatus.color,
-          shape: BoxShape.circle,
-          border: Border.all(color: white, width: 2),
-        ),
-      ),
-    );
-  }
+class StaffListColoums extends StatelessWidget {
+  final String text;
+  const StaffListColoums({super.key, required this.text});
 
-  Widget empRow() {
-    return Container(
-      margin: EdgeInsets.only(right: size.width * 0.05),
-      child: Container(
-        padding: EdgeInsets.symmetric(
-          horizontal: size.width * 0.02,
-          vertical: size.height * 0.01,
-        ),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text('Employee Picture', style: textBodiesStyle),
-            // sizeBoxWidth(size.width * 0.165),
-            Text('Employee Name', style: textBodiesStyle),
-            // sizeBoxWidth(size.width * 0.165),
-            Text('Employee Phone', style: textBodiesStyle),
-            // sizeBoxWidth(size.width * 0.165),
-            Text('Employee Department', style: textBodiesStyle),
-            Text('Employee Status', style: textBodiesStyle),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget buildProfileImage(String base64Image, int index) {
-    if (base64Image.isEmpty) {
-      return GestureDetector(
-        onTap: () => print(staffListController.entities[index].name),
-        child: const CircleAvatar(
-          backgroundColor: grey,
-          radius: 20,
-          child: Icon(color: white, Iconsax.user),
-        ),
-      );
-    } else {
-      try {
-        String sanitizedBase64 = base64Image.contains(',')
-            ? base64Image.split(',').last
-            : base64Image;
-
-        sanitizedBase64 = sanitizedBase64.replaceAll(RegExp(r'\s+'), '');
-        final bytes = base64Decode(sanitizedBase64);
-        return Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(100),
-            border: Border.all(color: white),
-          ),
-          child: CircleAvatar(
-            radius: 20,
-            // backgroundColor: invisible,
-            backgroundImage: MemoryImage(bytes),
-          ),
-        );
-      } catch (e) {
-        print("error rending base64 : $e");
-        return const CircleAvatar(
-          radius: 20,
-          backgroundColor: Colors.redAccent,
-          child: Icon(Icons.error_outline, color: white, size: 16),
-        );
-      }
-    }
+  @override
+  Widget build(BuildContext context) {
+    return Text(text, style: textBodiesStyle);
   }
 }
 

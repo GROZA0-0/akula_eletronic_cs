@@ -9,7 +9,7 @@ class StaffListEntities extends Equatable {
   String? phone;
   final String pic;
   String? level;
-  final UserAccountStatus empStatus;
+   UserAccountStatus empStatus;
 
   StaffListEntities({
     required this.id,
