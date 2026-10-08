@@ -39,23 +39,11 @@ class _IssuesOrSuggestionsWidgetsState
       ),
       body: IssuesOrsuggestionWidgetsLayout(
         addANotePrompt: addANotePrompt(),
-        sendReportButton: sendReportButton(),
-      ),
-    );
-  }
-
-  Widget sendReportButton() {
-    return InkWell(
-      onTap: () => feedbackController.storeFeedback(),
-      child: Container(
-        decoration: BoxDecoration(
-          border: Border.all(color: white, width: 3),
-          borderRadius: BorderRadius.circular(10),
-        ),
-        width: size.width * 0.4,
-        height: size.height * 0.07,
-        child: Center(
-          child: Text("Submit Report", style: textStyleForButtons(24)),
+        sendReportButton: SaveButton(
+          callback: () async => await feedbackController.storeFeedback(),
+          height: size.height / 14,
+          width: size.width / 2,
+          text: "Submit Report",
         ),
       ),
     );
@@ -282,6 +270,61 @@ class IssueCategoriesTabs extends StatelessWidget {
           fontSize: 24,
           color: white,
           fontWeight: FontWeight.w400,
+        ),
+      ),
+    );
+  }
+}
+
+class SaveButton extends StatefulWidget {
+  final VoidCallback callback;
+  final double width, height;
+  final String text;
+
+  const SaveButton({
+    super.key,
+    required this.callback,
+    required this.height,
+    required this.width,
+    required this.text,
+  });
+
+  @override
+  State<SaveButton> createState() => _SaveButtonState();
+}
+
+class _SaveButtonState extends State<SaveButton> {
+  bool passMouse = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: MouseRegion(
+        onEnter: (event) => setState(() => passMouse = true),
+        onExit: (event) => setState(() => passMouse = false),
+        child: InkWell(
+          splashColor: invisible,
+          onTap: widget.callback,
+          child: Container(
+            width: widget.width,
+            height: widget.height,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(
+                color: passMouse ? blueGreen : white,
+                width: 2,
+              ),
+            ),
+            child: Center(
+              child: Text(
+                widget.text,
+                style: GoogleFonts.aleo(
+                  color: passMouse ? blueGreen : white,
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+            ),
+          ),
         ),
       ),
     );

@@ -194,12 +194,12 @@ class SignInTextFieldTemplate extends StatelessWidget {
       child: TextFormField(
         controller: controller,
         style: textBodiesStyle,
+        onFieldSubmitted: (value) => signInController.signInTrigger(),
         obscureText: passVisible,
         decoration: InputDecoration(
           labelText: text,
           labelStyle: GoogleFonts.aleo(
             color: white,
-            // fontSize: 30,
             fontWeight: FontWeight.w400,
           ),
           suffixIcon: suffixIcon,
