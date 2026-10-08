@@ -300,6 +300,9 @@ class _SalesExportWidgetState extends State<SalesExportWidget> {
 
   Widget exportFiltering() {
     return TextFormField(
+      onFieldSubmitted: (value) => context.read<ExportReportsBloc>().add(
+        PreviewExportEvent(reportsModel: _buildParams()),
+      ),
       style: textBodiesStyle,
       controller: _searchController,
       decoration: InputDecoration(

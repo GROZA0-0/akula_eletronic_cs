@@ -298,7 +298,13 @@ class _StaffListWidgetsState extends State<StaffListWidgets> {
                         ),
                       ),
                 /* Emp Status */
-                empStatus(currentStatus, index, isEditingTtisRow, stateChange),
+                empStatus(
+                  currentStatus,
+                  index,
+                  isEditingTtisRow,
+                  stateChange,
+                  staffEntities,
+                ),
               ],
             ),
           ),
@@ -312,7 +318,9 @@ class _StaffListWidgetsState extends State<StaffListWidgets> {
     int index,
     bool isEditingTtisRow,
     StaffListBlocStateLoaded stateChange,
+    EmployeeInfoEntities entities,
   ) {
+    final id = FirebaseAuth.instance.currentUser!.uid;
     final employee = currentStatus[index];
     Widget theStatus = Container(
       clipBehavior: Clip.none,
@@ -325,6 +333,9 @@ class _StaffListWidgetsState extends State<StaffListWidgets> {
       ),
     );
     if (isEditingTtisRow) {
+      return theStatus;
+    }
+    if (employee.id == id) {
       return theStatus;
     }
     return PopupMenuButton<UserAccountStatus>(
